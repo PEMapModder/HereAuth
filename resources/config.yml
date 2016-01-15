@@ -1,0 +1,190 @@
+---
+# HereAuth configuration file
+
+# Default settings for each account (players can change them if they have the permission)
+DefaultSettings:
+  # Enable these methods for automatic authentication
+  AutoAuth:
+    # Automatically authenticate if the client secret is same as the last login
+    # "Client secret" is a password automatically sent by the client, and is different for every
+    #   server (so other servers can't steal it) and changes with device.
+    ClientSecretAuth: true
+    # Automatically authenticate if the player joins from the IP address same as the last login
+    # IP (Internet Protocol) address identifies the network that the player connects from. People
+    #   from the same network (e.g. having the same Wi-Fi) have the same IP address. Also, two
+    #   players with dynamic IP may have overlapping IP address record (but it is a rare case).
+    IPAuth: false
+    # Automatically authenticate if the player has the same UUID as the last login
+    # UUID is the combination of IP address and client ID (and username too).
+    # Client ID is a value that can be easily stolen, so using it alone is not reliable.
+    UUIDAuth: false
+  # Mask some data about the player before authenticating
+  Masking:
+    # If the player cannot be automatically authenticated, teleport him to another location (e.g. spawn).
+    # He will be teleported back when he is authenticated. This may cause extra chunk loading time,
+    #   but players can choose to enable/disable this and/or set their own values
+    # This will not work if player joins the server too fast, before the database returned the data for the player
+    Location:
+      Enabled: false
+      # Where is the default "another location"?
+      # Format for spawn in world "some_level": "?spawn?@some_level"
+      # Format for spawn in the player's world: "?spawn?@?current?"
+      # Format for specific coordinates (x, y, z) in world "some_level": "x,y,z@some_level"
+      # Format for specific coordinates (x, y, z) in the player's world: "x,y,z@?current?"
+      Value: "?spawn?@?current?"
+    # Do not send the inventory to the player unless he is auto-authenticated.
+    Inventory: true
+  # Multi-factor authentication
+  # Apart from checking the password (or through AutoAuth), also check these:
+  MultiAuth:
+    # Player must use the same skin as the last login
+    Skin: false
+    # Players may be unable to login without realizing that they have dynamic IP if you enable this.
+    IP: false
+
+# Disallow these if the player is registered but not authenticated
+# "Chat" and "Command" are unavailable options, because HereAuth will consider all chat messages as register information
+# "true" = disallow, "false" = allow
+Blocking:
+  # Move
+  Move:
+    # Move from one place to one place.
+    Locomotion: true
+    # Rotate head
+    Rotation: true
+  # Get hurt
+  Damage: true
+  # Touch other entities
+  Attack: true
+  # Drop items from inventory
+  DropItem: true
+  # Touch blocks/air, including placing/breaking blocks, opening chests, shooting arrows and throwing snowballs
+  Touch: true
+  # Pick a dropped item into inventory
+  Pick: true
+  # Eat food by long-clicking the screen
+  Eat: true
+
+# Block the player from directly talking his password into chat
+# This won't block the message if it contains anything other than the pssword, including spaces.
+BlockPasswordChat: true
+
+# Force players to register before playing
+ForceRegister:
+  # If this is set to false, players have to execute /register to register.
+  Enabled: true
+  Reminder: "[HereAuth] Protip: type '/register' in chat to register so that other people can't impersonate you."
+
+# The place to store data
+Database:
+  # The type of database to use.
+  # Currently, only "JSON" and "MySQL" are available.
+  # JSON: one JSON per account, plus one metadata JSON file, plus one lightweight SQLite database for storing
+  #   registering rate against IP addresses
+  Type: JSON
+  # Please check this if you are using JSON.
+  JSON:
+    # The path of the accounts data folder
+    # If you want to specify an absolute path, use "accounts" instead.
+    DataFolder: accounts
+    # If this is set to "true", the file for "steve" will be located at .../s/steve.json
+    # If this is set to "false", the file for "steve" will be located at .../steve.json
+    EnableLeadingIndex: false
+  # You MUST correct these if you are using MySQL
+  MySQL:
+    # The connection details of your database
+    Connection:
+      # IP address/DNS address to your MySQL database
+      # If it is hosted on the same machine, "localhost" is also OK, but it sometimes doesn't work
+      #   (or you need to fill in the "socket" line)
+      Address: example.com
+      # Port of the MySQL database. It is 3306 by default.
+      Port: 3306
+      # Username to the MySQL account.
+      # Avoid using "root", in case the plugin accidentally does complete destruction to your whole database
+      #   (e.g. including other schemas)
+      Username: root
+      # Password to the MySQL account.
+      # Yes, this has to be in plaintext, so make sure to keep this file secret (unless your password is blank,
+      #   which is highly discouraged).
+      Password: ""
+      # Schema for HereAuth in the MySQL database.
+      # If it is not created yet, HereAuth will automatically create it.
+      Schema: hereauth
+    # Prefix for table names
+    # If your database provider only provides you with one schema, you may want to add a prefix to the table names to
+    #   avoid duplicating table names.
+    TablePrefix: hereauth_
+
+# Options related to registering
+Registration:
+  # Minimum password length, in UTF-8 bytes. (i.e. if you put 6 here, you have to at least type two Chinese characters,
+  #   since one Chinese character takes 3 bytes in UTF-8)
+  MinLength: 4
+  # Maximum password length, in UTF-8 bytes.
+  # Put -1 for infinity (non-modded MCPE will limit it, though)
+  MaxLength: -1
+  # Enable this to disallow the password to be purely letters (26 alphabets of two cases)
+  BanPureLetters: false
+  # Enable this to disallow the password to be purely numbers
+  BanPureNumbers: false
+  # Disallow passwords starting with slashes
+  # This may be useful for stopping players from typing their passwords with /register or /login
+  DisallowSlashes: true
+  # Require the player to repeat their password after typing for the first time.
+  RequireConfirm: true
+  # Extra information to require (mandatory) when registering
+  # These data will be stored into the database (into the `opts` column), but HereAuth will not automatically do
+  # anything about it.
+  # If you want these data to be handled, e.g. if you want an email to be sent to that address, please request/make
+  #   another plugin that will handle them. The developer documentation has a tutorial for that.
+  # The "RegExp" line is optional. If the player input does **not** match your regular expression (if any), it will be
+  #   rejected, just like how password is rejected if it is too short.
+  # The RegExp used here is interpreted using PCRE (Perl-Compatible Regular Expression). Please be careful to comply
+  #   with YAML formats (especially with backslashes).
+  # The "ErrorMessage" line is required if the "RegExp" line is present. It will be sent if the regular experssion is
+  #   violated.
+  ExtraFields:
+#  - Message: "[HereAuth] Please enter your email."
+#    FieldName: email
+#    RegExp: "/^[A-z0-9_\-]+[@][A-z0-9_\-]+([.][A-z0-9_\-]+)+[A-z.]{2,4}$/"
+#    ErrorMessage: This is not a valid email address!
+  ## Delete the # on the above three lines to enable. You can also duplicate it to make another field.
+
+# Options related to login
+Login:
+  # Kick the player if he can't login in this number of attempts.
+  MaxAttempts: 5
+  # Kick the player if he can't login in this period. Unit: seconds
+  Timeout: 120
+
+# Messages that are sent to players
+Messages:
+  Login:
+    # This message is shown when a player has to type password to login.
+    Query: "Please type your password directly into chat. If you didn't register this account, please choose another username."
+    # This message is shown when a player has typed the password wrongly.
+    # $CHANCES will be replaced by the number of chances left.
+    WrongPass: "Wrong password! Please try again. You have $CHANCES more chance(s)."
+  # Messages related to registration
+  Register:
+    # This message is shown if the player is required to register without doing /register first
+    ImplicitRegister: This server uses HereAuth to protect your account from being impersonated.
+    # This is to ask the player for the first password input.
+    PasswordInput: "Please type your password directly into chat. Other players can't see it."
+    # This is to notify that the password is too short. Remember to change the "4" if you changed the config above too.
+    PasswordUnderflow: Your password is too short. Please type a longer password (at least 4 characters).
+    # This is to notify that the password is too long. Remember to edit this if you enabled it.
+    PasswordOverflow: Your password is too long. Please type a longer password (at most 16 characters).
+    # This is to notify that the password must contain something more than letters.
+    PasswordPureLetters: Your password only contains English letters. It is insecure. Maybe add some numbers into it?
+    # This is to notify that the password must contain something more than numbers.
+    PasswordPureNumbers: Your password only contains numbers. It is insecure. Maybe add some letters into it?
+    # This is to notify that the password must not start with slashes
+    PasswordSlashes: Your password must not start with slashes! Remember, type your password into chat DIRECTLY.
+    # This is to ask the player to confirm the second password input.
+    PasswordConfirm: Please type your password again to confirm.
+    # This is the message when the player typed the password wrongly the second time.
+    PasswordMismatch: The two passwords you typed are not the same! Please type again. You can type a different password this time.
+    Completion: "Congratulations! Your account has been registered."
+...

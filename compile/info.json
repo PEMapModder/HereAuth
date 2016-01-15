@@ -1,0 +1,13 @@
+{
+    "name": "HereAuth",
+    "author": "PEMapModder",
+    "main": "HereAuth\\HereAuth",
+    "api": [
+        "1.12.0"
+    ],
+    "version": {
+        "major": 1,
+        "minor": 0
+    },
+    "nextBuild": 2
+}

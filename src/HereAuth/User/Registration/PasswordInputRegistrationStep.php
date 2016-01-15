@@ -1,0 +1,69 @@
+<?php
+
+/*
+ * HereAuth
+ *
+ * Copyright (C) 2016 PEMapModder
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * @author PEMapModder
+ */
+
+namespace HereAuth\User\Registration;
+
+use HereAuth\HereAuth;
+use HereAuth\User\User;
+
+/** @noinspection PhpInternalEntityUsedInspection */
+final class PasswordInputRegistrationStep implements PasswordRegistrationStep{
+	/** @type User */
+	private $user;
+
+	public function __construct(User $user){
+		$this->user = $user;
+	}
+
+	public function getMessage(){
+		return $this->user->getMain()->getConfig()->getNested("Messages.Register.PasswordInput", "Please type password");
+	}
+
+	public function onSubmit($value){
+		if($this->validatePassword($value)){
+			$this->user->getRegistration()->setTempHash(HereAuth::hash($value, $this->user->getPlayer()));
+			return true;
+		}
+		return false;
+	}
+
+	private function validatePassword($value){
+		$length = strlen($value);
+		$config = $this->user->getMain()->getConfig();
+		$minLength = $config->getNested("Registration.MinLength", 4);
+		if($length < $minLength){
+			$this->user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordUnderflow", "too short"));
+			return false;
+		}
+		$maxLength = $config->getNested("Registration.MaxLength", -1);
+		if($maxLength !== -1 and $length > $maxLength){
+			$this->user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordOverflow", "too long"));
+			return false;
+		}
+		if($config->getNested("Registration.BanPureLetters", false) and preg_match('/^[a-z]+$/i', $value)){
+			$this->user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordPureLetters", "only letters"));
+			return false;
+		}
+		if($config->getNested("Registration.BanPureNumbers", false) and preg_match('/^[0-9]+$/', $value)){
+			$this->user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordPureNumbers", "only numbers"));
+			return false;
+		}
+		if($config->getNested("Registration.DisallowSlashes", true) and $value{0} === "/"){
+			$this->user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordSlashes", "do not start with slashes"));
+			return false;
+		}
+		return true;
+	}
+}
