@@ -78,7 +78,12 @@ class EventRouter implements Listener{
 				continue; // too lazy to check if this would happen
 			}
 			if(strtolower($newPlayer->getName()) === strtolower($oldPlayer->getName())){ // we are having trouble
-				if($oldPlayer->getClientSecret() === $newPlayer->getClientSecret()){
+				$checkIp = $this->main->getConfig()->getNested("MultiSesCtrl.CheckIP", true);
+				$cond = $oldPlayer->getClientSecret() === $newPlayer->getClientSecret();
+				if($checkIp){
+					$cond = ($cond and $oldPlayer->getAddress() === $newPlayer->getAddress()); // don't forget these parentheses! :) PHP operator precedence >.<
+				}
+				if($cond){
 					$oldPlayer->kick("Login from the same device from another location", false);
 				}else{
 					$event->setCancelled();
