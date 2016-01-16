@@ -126,3 +126,6 @@ addDir($phar, "src", "src");
 addDir($phar, "entry", "entry");
 addDir($phar, "resources", "resources");
 $phar->stopBuffering();
+if(is_file("priv/postCompile.php")){
+	include_once "priv/postCompile.php";
+}

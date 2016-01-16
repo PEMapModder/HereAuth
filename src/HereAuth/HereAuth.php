@@ -35,7 +35,17 @@ class HereAuth extends PluginBase implements Listener{
 	/** @type Database */
 	private $database;
 
+	public function onLoad(){
+		self::$NAME = $this->getName();
+		if(!is_dir($this->getDataFolder())){
+			mkdir($this->getDataFolder(), 0777, true);
+		}
+	}
+
 	public function onEnable(){
+		if(!is_file($this->getDataFolder() . "config.yml")){
+			$this->saveResource("config.yml");
+		}
 		$this->router = new EventRouter($this);
 		if(!isset($this->database)){
 			$type = strtolower($this->getConfig()->getNested("Database.Type", "JSON"));

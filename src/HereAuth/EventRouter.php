@@ -18,6 +18,7 @@ namespace HereAuth;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\EventPriority;
+use pocketmine\event\inventory\InventoryPickupItemEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
@@ -28,6 +29,7 @@ use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\event\server\DataPacketSendEvent;
+use pocketmine\inventory\PlayerInventory;
 use pocketmine\network\protocol\ContainerSetContentPacket;
 use pocketmine\network\protocol\Info;
 use pocketmine\Player;
@@ -96,6 +98,21 @@ class EventRouter implements Listener{
 
 	public function onEat(PlayerItemConsumeEvent $event){
 		$user = $this->main->getUserByPlayer($event->getPlayer());
+		if($user === null or !$user->isPlaying()){
+			$event->setCancelled();
+		}
+	}
+
+	public function onPick(InventoryPickupItemEvent $event){
+		$inv = $event->getInventory();
+		if(!($inv instanceof PlayerInventory)){
+			return;
+		}
+		$player = $inv->getHolder();
+		if(!($player instanceof Player)){
+			return;
+		}
+		$user = $this->main->getUserByPlayer($player);
 		if($user === null or !$user->isPlaying()){
 			$event->setCancelled();
 		}
