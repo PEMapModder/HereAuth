@@ -127,6 +127,8 @@ addDir($phar, "src", "src");
 addDir($phar, "entry", "entry");
 addDir($phar, "resources", "resources");
 $phar->stopBuffering();
+
+exec("git add " . escapeshellarg($file));
 if(is_file("priv/postCompile.php")){
 	include_once "priv/postCompile.php";
 }

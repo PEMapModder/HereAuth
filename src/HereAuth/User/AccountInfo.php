@@ -41,7 +41,7 @@ class AccountInfo implements \Serializable{
 	public static function defaultInstance(HereAuth $main, Player $player){
 		$info = new self;
 		$info->name = strtolower($player->getName());
-		$info->passwordHash = null;
+		$info->passwordHash = "";
 		$info->registerTime = -1;
 		$info->lastLogin = -1;
 		$info->lastIp = null;
@@ -101,7 +101,7 @@ class AccountInfo implements \Serializable{
 	public static function fromDatabaseRow($row){
 		$info = new self;
 		$info->name = $row["name"];
-		$info->passwordHash = $row["hash"];
+		$info->passwordHash = (int) $row["hash"];
 		$info->registerTime = (int) $row["register"];
 		$info->lastLogin = (int) $row["login"];
 		$info->lastIp = $row["ip"];

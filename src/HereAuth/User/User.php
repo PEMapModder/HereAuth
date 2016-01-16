@@ -48,7 +48,7 @@ class User{
 		$this->main = $main;
 		$this->player = $player;
 		$this->accountInfo = $info;
-		if($info->passwordHash === null){
+		if(!$info->passwordHash){
 			if(!$main->getConfig()->getNested("ForceRegister.Enabled", true)){ // no registration involved
 				$this->onAuth();
 				$reminder = $main->getConfig()->getNested("ForceRegister.Reminder", "");
@@ -172,6 +172,13 @@ class User{
 
 	public function isPlaying(){
 		return $this->state === self::STATE_PLAYING;
+	}
+
+	public function isRegistering(){
+		return $this->state === self::STATE_REGISTERING;
+	}
+	public function isLoggingIn(){
+		return $this->state === self::STATE_PENDING_LOGIN;
 	}
 
 	/**

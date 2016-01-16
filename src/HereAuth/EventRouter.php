@@ -77,17 +77,29 @@ class EventRouter implements Listener{
 			if($oldPlayer === $newPlayer){
 				continue; // too lazy to check if this would happen
 			}
-			if(strtolower($newPlayer->getName()) === strtolower($oldPlayer->getName())){ // we are having trouble
+			if(($lowName = strtolower($newPlayer->getName())) === strtolower($oldPlayer->getName())){ // we are having trouble
 				$checkIp = $this->main->getConfig()->getNested("MultiSesCtrl.CheckIP", true);
 				$cond = $oldPlayer->getClientSecret() === $newPlayer->getClientSecret();
 				if($checkIp){
 					$cond = ($cond and $oldPlayer->getAddress() === $newPlayer->getAddress()); // don't forget these parentheses! :) PHP operator precedence >.<
 				}
 				if($cond){
-					$oldPlayer->kick("Login from the same device from another location", false);
+					$oldPlayer->kick("Login from the same device", false);
 				}else{
 					$event->setCancelled();
-					$event->setKickMessage("Player is already online");
+					$user = $this->main->getUserByPlayer($oldPlayer);
+					if($user === null){
+						$status = "loading HereAuth account";
+					}elseif($user->isRegistering()){
+						$status = "registering with HereAuth";
+					}elseif($user->isLoggingIn()){
+						$status = "pending to login with HereAuth";
+					}elseif($user->getAccountInfo()->passwordHash){
+						$status = "logged in with HereAuth";
+					}else{
+						$status = "account not registered with HereAuth";
+					}
+					$event->setKickMessage("Player of the same name ($lowName) from another device is already online ($status)");
 				}
 			}
 		}
