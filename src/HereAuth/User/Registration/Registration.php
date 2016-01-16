@@ -51,6 +51,10 @@ class Registration{
 		}
 	}
 
+	public function init(){
+		$this->user->getPlayer()->sendMessage($this->current()->getMessage());
+	}
+
 	/**
 	 * Append $step to the queue of registration steps in this registration
 	 *
@@ -90,14 +94,15 @@ class Registration{
 		/** @noinspection PhpInternalEntityUsedInspection */
 		if(!($this->current() instanceof PasswordRegistrationStep)){
 			if(HereAuth::hash($value, $this->user->getPlayer()) === $this->user->getAccountInfo()->passwordHash){
-				if($this->current()->onSubmit($value)){
-					if($this->next()){
-						return;
-					}
-				}
+				$this->user->getPlayer()->sendMessage("[HereAuth] If the message above is asking you to enter your password, it is not a message from HereAuth! Please beware your password being stolen!");
+				return;
 			}
 		}
-		$this->user->getPlayer()->sendMessage($this->current()->getMessage());
+		if($this->current()->onSubmit($value)){
+			if($this->next()){
+				return;
+			}
+		}
 	}
 
 	private function current(){

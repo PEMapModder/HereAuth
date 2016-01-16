@@ -81,6 +81,7 @@ class User{
 		$this->main->getServer()->getPluginManager()->callEvent($ev = new HereAuthRegistrationCreationEvent($this));
 		$this->registration = $ev->getRegistration();
 		$this->getPlayer()->sendMessage($this->getMain()->getConfig()->getNested("Messages.Register.ImplicitRegister", "This server uses HereAuth to protect your account."));
+		$this->registration->init();
 	}
 
 	/**
@@ -156,6 +157,7 @@ class User{
 			if($hash === $this->accountInfo->passwordHash and $this->getMain()->getConfig()->getNested("BlockPasswordChat", true)){
 				$event->setCancelled();
 				$event->setMessage("");
+				$this->getPlayer()->sendMessage($this->getMain()->getConfig()->getNested("Messages.Chat.DirectPass", "Don't tell your password"));
 			}
 		}elseif($this->state === self::STATE_REGISTERING){
 			$this->registration->handle($message);

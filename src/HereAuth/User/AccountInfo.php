@@ -53,9 +53,9 @@ class AccountInfo implements \Serializable{
 	}
 
 	public function serialize(){
-		return json_encode([
+		$output = json_encode([
 			"name" => $this->name,
-			"passwordHash" => base64_decode($this->passwordHash),
+			"passwordHash" => base64_encode($this->passwordHash),
 			"registerTime" => $this->registerTime,
 			"lastLogin" => $this->lastLogin,
 			"lastIp" => $this->lastIp,
@@ -64,6 +64,7 @@ class AccountInfo implements \Serializable{
 			"lastSkin" => base64_encode($this->lastSkin),
 			"opts" => $this->opts,
 		]);
+		return $output;
 	}
 
 	public function unserialize($string){

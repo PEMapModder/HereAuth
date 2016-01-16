@@ -187,4 +187,7 @@ Messages:
     # This is the message when the player typed the password wrongly the second time.
     PasswordMismatch: The two passwords you typed are not the same! Please type again. You can type a different password this time.
     Completion: "Congratulations! Your account has been registered."
+  Chat:
+    # This is to warn that the player is typing his password unnecessarily
+    DirectPass: "Don't tell other players your password!"
 ...
