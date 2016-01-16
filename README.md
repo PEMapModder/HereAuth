@@ -20,6 +20,9 @@ Features
     * disable this in config
 * Players can choose not to register (but using the /register command to start registering)
     * enable this in config
+* Advanced session control system over PocketMine's default one
+    * PocketMine by default kicks the old player if a player joins with the same name as an online player.
+    * HereAuth checks if the players have the same client secret (and IP address too, optional in config). If they do, that means it is from the same genuine player, so kick the old player. If they aren't, this most likely means that the new player is trying to get the old player kicked. This event has to be logged (TODO) for future reference. 
 * MySQL (W.I.P.) or filesystem (JSON) database support
 * Count-limit or rate-limit accounts per IP (account-throttle)
 * Time-based and attempts-based brute-force protection
