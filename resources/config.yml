@@ -65,6 +65,16 @@ Blocking:
   # Eat food by long-clicking the screen
   Eat: true
 
+# Do not let multiple players of the same name be online together!
+# This plugin uses an intelligent system that uses client secret and IP to identify the client.
+# If the client secret is the same and IP address (theoretically, client secret should never be stolen unless the
+#   database of this server is leaked), kick the old player (possibly he crashed and rejoins).
+# Otherwise, don't let the new player join (possibly trying to kick the new player using the poor implementation of
+#   this mechanism in PocketMine core).
+MultiSesCtrl:
+  # If you want to disable this, you must first be an advanced user who knows exactly the possible consequences.
+  Enabled: true
+
 # Block the player from directly talking his password into chat
 # This won't block the message if it contains anything other than the pssword, including spaces.
 BlockPasswordChat: true

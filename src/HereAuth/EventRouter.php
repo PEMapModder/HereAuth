@@ -26,6 +26,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\event\server\DataPacketSendEvent;
@@ -41,6 +42,9 @@ class EventRouter implements Listener{
 
 	public function __construct(HereAuth $main){
 		$this->main = $main;
+		if($this->main->getConfig()->getNested("MultiSesCtrl.Enabled", true)){
+			$this->registerHandler(PlayerPreLoginEvent::class, "onPreLogin", EventPriority::NORMAL, true);
+		}
 		$this->registerHandler(PlayerLoginEvent::class, "onLogin", EventPriority::MONITOR, true);
 		$this->registerHandler(PlayerQuitEvent::class, "onQuit", EventPriority::MONITOR, true);
 		$this->registerHandler(PlayerCommandPreprocessEvent::class, "onMessage", EventPriority::LOWEST, false);
@@ -65,6 +69,23 @@ class EventRouter implements Listener{
 	private function registerHandler($event, $method, $priority, $ignoreCancelled){
 		assert(is_callable([$this, $method]), "Attempt to register nonexistent event handler " . static::class . "::$method");
 		$this->main->getServer()->getPluginManager()->registerEvent($event, $this, $priority, new MethodEventExecutor($method), $this->main, $ignoreCancelled);
+	}
+
+	public function onPreLogin(PlayerPreLoginEvent $event){
+		$newPlayer = $event->getPlayer();
+		foreach($this->main->getServer()->getOnlinePlayers() as $oldPlayer){
+			if($oldPlayer === $newPlayer){
+				continue; // too lazy to check if this would happen
+			}
+			if(strtolower($newPlayer->getName()) === strtolower($oldPlayer->getName())){ // we are having trouble
+				if($oldPlayer->getClientSecret() === $newPlayer->getClientSecret()){
+					$oldPlayer->kick("Login from the same device from another location", false);
+				}else{
+					$event->setCancelled();
+					$event->setKickMessage("Player is already online");
+				}
+			}
+		}
 	}
 
 	public function onLogin(PlayerLoginEvent $event){

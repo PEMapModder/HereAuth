@@ -121,6 +121,7 @@ $phar->addFromString("plugin.yml", yaml_emit([
 	"version" => $VERSION,
 	"commands" => $info->commands ?? [],
 	"permissions" => $permissions,
+	"generated" => date(DATE_ISO8601)
 ]));
 addDir($phar, "src", "src");
 addDir($phar, "entry", "entry");
