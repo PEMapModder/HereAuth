@@ -99,9 +99,9 @@ class JsonDatabase implements Database{
 	}
 
 	public function close(){
-		$data = json_decode(file_get_contents($this->path));
+		$data = json_decode(file_get_contents($this->path . ".hadb"));
 		$data->lastClosed = time();
-		file_put_contents($this->path, json_encode($data, JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING | JSON_UNESCAPED_SLASHES));
+		file_put_contents($this->path . ".hadb", json_encode($data, JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING | JSON_UNESCAPED_SLASHES));
 		$this->sql->close();
 	}
 }
