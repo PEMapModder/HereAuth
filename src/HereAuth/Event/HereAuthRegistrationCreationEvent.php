@@ -19,6 +19,8 @@ use HereAuth\User\Registration\Registration;
 use HereAuth\User\User;
 
 class HereAuthRegistrationCreationEvent extends HereAuthUserEvent{
+	public static $handlerList = null;
+
 	/** @type Registration */
 	private $registration;
 
