@@ -35,6 +35,14 @@ class MySQLDatabase implements Database{
 		// TODO: Implement saveData() method.
 	}
 
+	public function renameAccount($oldName, $newName){
+		// TODO: Implement renameAccount() method.
+	}
+
+	public function unregisterAccount($name){
+		// TODO: Implement unregisterAccount() method.
+	}
+
 	public function close(){
 		// TODO: Implement close() method.
 	}

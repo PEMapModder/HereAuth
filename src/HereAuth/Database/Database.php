@@ -22,5 +22,9 @@ interface Database{
 
 	public function saveData($name, AccountInfo $info);
 
+	public function renameAccount($oldName, $newName);
+
+	public function unregisterAccount($name);
+
 	public function close();
 }

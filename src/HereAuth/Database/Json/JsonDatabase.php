@@ -104,4 +104,12 @@ class JsonDatabase implements Database{
 		file_put_contents($this->path . ".hadb", json_encode($data, JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING | JSON_UNESCAPED_SLASHES));
 		$this->sql->close();
 	}
+
+	public function renameAccount($oldName, $newName){
+		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new JsonRenameTask($this, $oldName, $newName));
+	}
+
+	public function unregisterAccount($name){
+		// TODO: Implement unregisterAccount() method.
+	}
 }

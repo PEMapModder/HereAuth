@@ -22,7 +22,7 @@ Features
     * enable this in config
 * Advanced session control system over PocketMine's default one
     * PocketMine by default kicks the old player if a player joins with the same name as an online player.
-    * HereAuth checks if the players have the same client secret (and IP address too, optional in config). If they do, that means it is from the same genuine player, so kick the old player. If they aren't, this most likely means that the new player is trying to get the old player kicked. This event has to be logged (TODO) for future reference. 
+    * HereAuth checks if the players have the same client secret (and IP address too, optional in config). If they do, that means it is from the same genuine player, so kick the old player. If they aren't, this most likely means that the new player is trying to get the old player kicked.
 * MySQL (W.I.P.) or filesystem (JSON) database support
 * Count-limit or rate-limit accounts per IP (account-throttle)
 * Time-based and attempts-based brute-force protection
@@ -37,5 +37,5 @@ Features
     * Maybe we are being nanny, but we should disallow players to have weak passwords!
 * Require custom extra information from players
 * Server-customized messages
-* Login logging (W.I.P.)
+* Extensive audit logging
 * An extensive API (W.I.P.)

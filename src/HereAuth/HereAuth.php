@@ -15,6 +15,7 @@
 
 namespace HereAuth;
 
+use HereAuth\Command\RegisterCommand;
 use HereAuth\Database\Database;
 use HereAuth\Database\Json\JsonDatabase;
 use HereAuth\Database\MySQL\MySQLDatabase;
@@ -68,7 +69,6 @@ class HereAuth extends PluginBase implements Listener{
 			}
 			$this->getLogger()->info("You may want to edit the config file(s) to customize HereAuth for your server.");
 		}
-		$this->router = new EventRouter($this);
 		if(!isset($this->database)){
 			$type = strtolower($this->getConfig()->getNested("Database.Type", "JSON"));
 			if($type === "mysql"){
@@ -82,6 +82,10 @@ class HereAuth extends PluginBase implements Listener{
 			}
 		}
 		$this->auditLogger = new StreamAuditLogger($this);
+		$this->router = new EventRouter($this);
+		$this->getServer()->getCommandMap()->registerAll("ha", [
+			new RegisterCommand($this),
+		]);
 		foreach($this->getServer()->getOnlinePlayers() as $player){
 			$this->startUser($player);
 		}
