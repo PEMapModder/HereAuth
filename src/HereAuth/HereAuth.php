@@ -21,6 +21,7 @@ use HereAuth\Database\Json\JsonDatabase;
 use HereAuth\Database\MySQL\MySQLDatabase;
 use HereAuth\Logger\AuditLogger;
 use HereAuth\Logger\StreamAuditLogger;
+use HereAuth\MultiHash\ImportedHash;
 use HereAuth\User\AccountInfo;
 use HereAuth\User\User;
 use pocketmine\event\Listener;
@@ -40,6 +41,8 @@ class HereAuth extends PluginBase implements Listener{
 	private $database;
 	/** @type AuditLogger */
 	private $auditLogger;
+	/** @type ImportedHash[] */
+	private $importedHashes = [];
 
 	public function onLoad(){
 		self::$NAME = $this->getName();
@@ -177,12 +180,12 @@ class HereAuth extends PluginBase implements Listener{
 
 	/**
 	 * @param string $password
-	 * @param Player $player
+	 * @param string|Player $player
 	 *
 	 * @return string
 	 */
-	public static function hash($password, Player $player){
-		$salt = strtolower($player->getName());
+	public static function hash($password, $player){
+		$salt = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
 		return bin2hex(hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true));
 	}
 
@@ -208,5 +211,17 @@ class HereAuth extends PluginBase implements Listener{
 	 */
 	public function getAuditLogger(){
 		return $this->auditLogger;
+	}
+
+	public function getImportedHashes(){
+		return $this->importedHashes;
+	}
+
+	public function addImportedHash(ImportedHash $hash){
+		$this->importedHashes[$hash->getName()] = $hash;
+	}
+
+	public function getImportedHash($type){
+		return isset($this->importedHashes[$type]) ? $this->importedHashes[$type] : null;
 	}
 }

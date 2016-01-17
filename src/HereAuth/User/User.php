@@ -144,7 +144,7 @@ class User{
 		$message = $event->getMessage();
 		$hash = HereAuth::hash($message, $this->getPlayer());
 		if($this->state === self::STATE_PENDING_LOGIN){
-			if($hash === $this->accountInfo->passwordHash){
+			if($this->accountInfo->testPassword($this->main, $message)){
 				$this->main->getAuditLogger()->logLogin(strtolower($this->player->getName()), $this->player->getAddress(), "password");
 				$this->onAuth();
 			}else{

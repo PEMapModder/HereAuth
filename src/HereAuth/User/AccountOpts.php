@@ -92,8 +92,13 @@ class AccountOpts extends stdClass implements Serializable{
 	}
 
 	public function unserialize($serialized){
-		foreach(json_decode($serialized) as $key => $value){
+		$this->extractObject(json_decode($serialized));
+	}
+
+	public function extractObject(stdClass $data){
+		foreach($data as $key => $value){
 			$this->{$key} = $value;
 		}
+		return $this;
 	}
 }

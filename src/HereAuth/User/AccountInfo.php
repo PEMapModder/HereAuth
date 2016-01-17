@@ -37,6 +37,30 @@ class AccountInfo implements \Serializable{
 	public $lastSkin;
 	/** @type AccountOpts */
 	public $opts;
+	/** @type string[] */
+	public $multiHash;
+
+	public function testPassword(HereAuth $main, $password){
+		$hash = HereAuth::hash($password, $this->name);
+		if($this->passwordHash){
+			return $hash === $this->passwordHash;
+		}
+		foreach($this->multiHash as $type => $value){
+			$array = explode(";", $type);
+			$name = $array[0];
+			$suffix = isset($array[1]) ? $array[1] : "";
+			$iHash = $main->getImportedHash($name);
+			if($iHash === null){
+				continue;
+			}
+			if($iHash->hash($password, strtolower($this->name), $suffix) === $value){
+				$this->multiHash = [];
+				$this->passwordHash = $hash;
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public static function defaultInstance(HereAuth $main, Player $player){
 		$info = new self;
@@ -63,6 +87,7 @@ class AccountInfo implements \Serializable{
 			"lastUuid" => base64_encode($this->lastUuid),
 			"lastSkin" => base64_encode($this->lastSkin),
 			"opts" => $this->opts,
+			"multiHash" => $this->multiHash,
 		]);
 		return $output;
 	}
@@ -77,7 +102,8 @@ class AccountInfo implements \Serializable{
 		$this->lastSecret = base64_decode($data->lastSecret);
 		$this->lastUuid = base64_decode($data->lastUuid);
 		$this->lastSkin = base64_decode($data->lastSkin);
-		$this->opts = $data->opts;
+		$this->opts = (new AccountOpts)->extractObject($data->opts);
+		$this->multiHash = $data->multiHash;
 	}
 
 	/**
@@ -94,14 +120,15 @@ class AccountInfo implements \Serializable{
 		$lastUuid = $this->binEscape($this->lastUuid);
 		$lastSkin = $this->binEscape($this->lastSkin);
 		$opts = $escapeFunc(serialize($this->opts));
-		return ("INSERT INTO `$tableName` (name, hash, register, login, ip, secret, uuid, skin, opts) VALUES " . "(" .
-			"$name, $hash, $this->registerTime, $this->lastLogin, $lastIp, $lastSecret, $lastUuid, $lastSkin, $opts)");
+		$multiHash = $escapeFunc(json_encode($this->multiHash));
+		return ("INSERT INTO `$tableName` (name, hash, register, login, ip, secret, uuid, skin, opts, multihash) VALUES " . "(" .
+			"$name, $hash, $this->registerTime, $this->lastLogin, $lastIp, $lastSecret, $lastUuid, $lastSkin, $opts, $multiHash)");
 	}
 
 	public static function fromDatabaseRow($row){
 		$info = new self;
 		$info->name = $row["name"];
-		$info->passwordHash = (int) $row["hash"];
+		$info->passwordHash = $row["hash"];
 		$info->registerTime = (int) $row["register"];
 		$info->lastLogin = (int) $row["login"];
 		$info->lastIp = $row["ip"];
@@ -109,6 +136,7 @@ class AccountInfo implements \Serializable{
 		$info->lastUuid = $row["uuid"];
 		$info->lastSkin = $row["skin"];
 		$info->opts = unserialize($row["opts"]);
+		$info->multiHash = json_decode($row["multihash"], true);
 	}
 
 	private function binEscape($str){

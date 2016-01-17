@@ -24,18 +24,21 @@ class JsonRenameTask extends AsyncTask{
 	private $newName;
 
 	public function __construct(JsonDatabase $database, $oldName, $newName){
-		$this->oldPath = $database->getPath($oldName);
-		$this->newPath = $database->getPath($newName);
-		$this->oldName = $oldName;
-		$this->newName = $newName;
+		$this->oldPath = $database->getPath($this->oldName = strtolower($oldName));
+		$this->newPath = $database->getPath($this->newName = strtolower($newName));
 	}
 
-	/**
-	 * Actions to execute when run
-	 *
-	 * @return void
-	 */
 	public function onRun(){
-		// TODO: Implement onRun() method.
+		if(!is_file($this->oldPath)){
+			$this->setResult("File didn't exist", false);
+			return;
+		}
+		if(!is_dir($dir = dirname($this->newPath))){
+			mkdir($dir);
+		}
+		$data = json_decode(file_get_contents($this->oldPath));
+		$data->multiHash = ["renamed;$this->oldName" => $data->passwordHash];
+		$data->passwordHash = "{RENAMED}";
+		file_put_contents($this->newPath, json_encode($data));
 	}
 }
