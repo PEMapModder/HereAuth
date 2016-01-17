@@ -15,7 +15,10 @@
 
 namespace HereAuth\User;
 
+use HereAuth\Event\HereAuthAuthenticationEvent;
+use HereAuth\Event\HereAuthLoginEvent;
 use HereAuth\Event\HereAuthRegistrationCreationEvent;
+use HereAuth\Event\HereAuthRegistrationEvent;
 use HereAuth\HereAuth;
 use HereAuth\User\Registration\Registration;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
@@ -60,17 +63,17 @@ class User{
 			$this->startRegistration();
 			return;
 		}
-		if($info->opts->autoSecret and $player->getClientSecret() === $info->lastSecret){
+		if($info->opts->autoSecret and $player->getClientSecret() === $info->lastSecret and $this->callLogin(HereAuthLoginEvent::METHOD_CLIENT_SECRET)){
 			$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "secret");
 			$this->onAuth();
 			return;
 		}
-		if($info->opts->autoIp and $player->getAddress() === $info->lastIp){
+		if($info->opts->autoIp and $player->getAddress() === $info->lastIp and $this->callLogin(HereAuthLoginEvent::METHOD_IP)){
 			$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "ip");
 			$this->onAuth();
 			return;
 		}
-		if($info->opts->autoUuid and $player->getUniqueId()->toBinary() === $info->lastUuid){
+		if($info->opts->autoUuid and $player->getUniqueId()->toBinary() === $info->lastUuid and $this->callLogin(HereAuthLoginEvent::METHOD_UUID)){
 			$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "uuid");
 			$this->onAuth();
 			return;
@@ -91,6 +94,7 @@ class User{
 	 * @internal $DEATH_THREATS Do not use this method from other plugins.
 	 */
 	public function onRegistrationCompleted(){
+		$this->main->getServer()->getPluginManager()->callEvent(new HereAuthRegistrationEvent($this));
 		$this->main->getAuditLogger()->logRegister(strtolower($this->player->getName()), $this->player->getAddress());
 		$this->getPlayer()->sendMessage($this->getMain()->getConfig()->getNested("Messages.Register.Completion", "registered"));
 		$this->accountInfo->registerTime = time();
@@ -129,6 +133,7 @@ class User{
 	}
 
 	public function onAuth(){
+		$this->main->getServer()->getPluginManager()->callEvent(new HereAuthAuthenticationEvent($this));
 		$this->state = self::STATE_PLAYING;
 		$this->accountInfo->lastUuid = $this->getPlayer()->getUniqueId()->toBinary();
 		$this->accountInfo->lastLogin = time();
@@ -144,7 +149,7 @@ class User{
 		$message = $event->getMessage();
 		$hash = HereAuth::hash($message, $this->getPlayer());
 		if($this->state === self::STATE_PENDING_LOGIN){
-			if($this->accountInfo->testPassword($this->main, $message)){
+			if($this->accountInfo->testPassword($this->main, $message)and$this->callLogin(HereAuthLoginEvent::METHOD_PASSWORD)){
 				$this->main->getAuditLogger()->logLogin(strtolower($this->player->getName()), $this->player->getAddress(), "password");
 				$this->onAuth();
 			}else{
@@ -225,5 +230,10 @@ class User{
 	 */
 	public function getLoadTime(){
 		return $this->loadTime;
+	}
+
+	protected function callLogin($method){
+		$this->main->getServer()->getPluginManager()->callEvent($ev = new HereAuthLoginEvent($this, $method));
+		return !$ev->isCancelled();
 	}
 }
