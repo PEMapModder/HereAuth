@@ -18,9 +18,14 @@ namespace HereAuth\Database\Json;
 use pocketmine\scheduler\AsyncTask;
 
 class JsonRenameTask extends AsyncTask{
-	private $oldPath;private $newPath;
-	private $oldName;private $newName;
-	public function __construct(JsonDatabase $database, $oldName, $newName){$this->oldPath=$database->
+	private $oldPath;
+	private $newPath;
+	private $oldName;
+	private $newName;
+
+	public function __construct(JsonDatabase $database, $oldName, $newName){
+		$this->oldPath = $database->getPath($oldName);
+		$this->newPath = $database->getPath($newName);
 		$this->oldName = $oldName;
 		$this->newName = $newName;
 	}

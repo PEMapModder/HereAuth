@@ -94,7 +94,7 @@ class JsonDatabase implements Database{
 		}
 	}
 
-	protected function getPath($name){
+	public function getPath($name){
 		return $this->path . ($this->indexEnabled ? ($name{0} . "/") : "") . strtolower($name) . ".json";
 	}
 
