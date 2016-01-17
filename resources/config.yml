@@ -76,7 +76,8 @@ MultiSesCtrl:
   # Check BOTH IP address and client secret.
   # Theoretically, client secret should never be stolen unless the database of this server is leaked.
   # But we are adding this, just to be safe.
-  CheckIP: true
+  # This may disallow the player to join if he changed his Wi-Fi and his IP changed, so we aren't check this by default.
+  CheckIP: false
 
 # Block the player from directly talking his password into chat
 # This won't block the message if it contains anything other than the pssword, including spaces.
@@ -128,6 +129,49 @@ Database:
     # If your database provider only provides you with one schema, you may want to add a prefix to the table names to
     #   avoid duplicating table names.
     TablePrefix: hereauth_
+
+# Options related to audit logger
+AuditLogger:
+  # Where to log in?
+  # This is only the folder, relative to the plugin's data folder.
+  # If you want to specify an absolute path, start the file with "/".
+  # If you want to specify another drive (Windows), e.g. on E drive (E:), put the file name like this:
+  #   file://E:/path/to/your/directory
+  # This can also be any **writable** URIs supported by http://php.net/wrappers
+  LogFolder: audit/
+
+  # What to log?
+  # These should be file names relative to LogFolder mentioned above, or start with a / for absolute paths
+  # Put /dev/null (${IS_WINDOWS} only) if you don't want to log that entry.
+  Log:
+    # Log registering
+    # Columns: time, name, IP
+    # You usually don't need to do this, since the same data are saved in Database as well
+    Register: /dev/null
+    # Log successful logins. Regisitering and players who didn't register (and don't need to register) are not included.
+    # Columns: time, name, IP, login method (secret, uuid, ip, password)
+    Login: logins.log
+    # Log "push" incidents, where a player is kicked because he rejoined from the same device.
+    # This usually happens when a player crashed, and this (>99.9% of the time) does not reflect two different players
+    #   joining with the same username.
+    # Columns: time, name, old IP, new IP
+    Push: /dev/null
+    # Log "bump" incidents, where a player cannot join because another player (from another device) of the same username
+    #   is already online on the server
+    # This may reflect chances of account occupying, where a player cannot join because someone else is online with his
+    #   username (with or without authenticating).
+    # Columns: time, name, old IP, new IP, old UUID, new UUID, old player's status (loading, register, login, auth, noreg)
+    Bump: bumps.log
+    # Log failure of logins, where wrong password is typed
+    # Columns: time, name, IP
+    Invalid: failure.log
+    # Log incidents where players are kicked because they could not login within the time limited by Login.Timeout
+    # Columns: time, name, IP
+    Timeout: timeout.log
+    # Log incidents where players are kicked because multi-factor authentication failed.
+    # Columns: time, name, wrong data type (e.g. "skin", "ip"), wrong data value (e.g. name + a base64-encoded dump of
+    #   the wrong skin)
+    Factor: factor.log
 
 # Options related to registering
 Registration:

@@ -85,20 +85,27 @@ class EventRouter implements Listener{
 				}
 				if($cond){
 					$oldPlayer->kick("Login from the same device", false);
+					$this->main->getAuditLogger()->logPush($lowName, $oldPlayer->getAddress(), $newPlayer->getAddress());
 				}else{
 					$event->setCancelled();
 					$user = $this->main->getUserByPlayer($oldPlayer);
 					if($user === null){
 						$status = "loading HereAuth account";
+						$oldState = "loading";
 					}elseif($user->isRegistering()){
 						$status = "registering with HereAuth";
+						$oldState = "register";
 					}elseif($user->isLoggingIn()){
 						$status = "pending to login with HereAuth";
+						$oldState = "login";
 					}elseif($user->getAccountInfo()->passwordHash){
 						$status = "logged in with HereAuth";
+						$oldState = "auth";
 					}else{
 						$status = "account not registered with HereAuth";
+						$oldState = "noreg";
 					}
+					$this->main->getAuditLogger()->logBump($lowName, $oldPlayer->getAddress(), $newPlayer->getAddress(), $oldPlayer->getUniqueId()->toString(), $newPlayer->getUniqueId()->toString(), $oldState);
 					$event->setKickMessage("Player of the same name ($lowName) from another device is already online ($status)");
 				}
 			}

@@ -61,14 +61,17 @@ class User{
 			return;
 		}
 		if($info->opts->autoSecret and $player->getClientSecret() === $info->lastSecret){
+			$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "secret");
 			$this->onAuth();
 			return;
 		}
 		if($info->opts->autoIp and $player->getAddress() === $info->lastIp){
+			$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "ip");
 			$this->onAuth();
 			return;
 		}
 		if($info->opts->autoUuid and $player->getUniqueId()->toBinary() === $info->lastUuid){
+			$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "uuid");
 			$this->onAuth();
 			return;
 		}
@@ -88,6 +91,7 @@ class User{
 	 * @internal $DEATH_THREATS Do not use this method from other plugins.
 	 */
 	public function onRegistrationCompleted(){
+		$this->main->getAuditLogger()->logRegister(strtolower($this->player->getName()), $this->player->getAddress());
 		$this->getPlayer()->sendMessage($this->getMain()->getConfig()->getNested("Messages.Register.Completion", "registered"));
 		$this->accountInfo->registerTime = time();
 		$this->onAuth();
@@ -96,12 +100,14 @@ class User{
 	public function checkMultiFactor(){
 		if($this->accountInfo->opts->multiIp){
 			if($this->player->getAddress() !== $this->accountInfo->lastIp){
+				$this->main->getAuditLogger()->logFactor(strtolower($this->player->getName()), "ip", $this->player->getAddress());
 				$this->player->kick("Incorrect IP address!", false);
 				return false;
 			}
 		}
 		if($this->accountInfo->opts->multiSkin){
 			if($this->player->getSkinName() . $this->player->getSkinData() !== $this->accountInfo->lastSkin){
+				$this->main->getAuditLogger()->logFactor(strtolower($this->player->getName()), "skin", $this->player->getSkinName() . ":" . base64_encode($this->player->getSkinData()));
 				$this->player->kick("Incorrect skin!", false);
 				return false;
 			}
@@ -139,8 +145,10 @@ class User{
 		$hash = HereAuth::hash($message, $this->getPlayer());
 		if($this->state === self::STATE_PENDING_LOGIN){
 			if($hash === $this->accountInfo->passwordHash){
+				$this->main->getAuditLogger()->logLogin(strtolower($this->player->getName()), $this->player->getAddress(), "password");
 				$this->onAuth();
 			}else{
+				$this->main->getAuditLogger()->logInvalid(strtolower($this->player->getName()), $this->player->getAddress());
 				$this->loginAttempts++;
 				$chances = $this->main->getConfig()->getNested("Login.MaxAttempts", 5);
 				$left = $chances - $this->loginAttempts;
@@ -177,6 +185,7 @@ class User{
 	public function isRegistering(){
 		return $this->state === self::STATE_REGISTERING;
 	}
+
 	public function isLoggingIn(){
 		return $this->state === self::STATE_PENDING_LOGIN;
 	}

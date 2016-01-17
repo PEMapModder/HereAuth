@@ -18,12 +18,15 @@ namespace HereAuth;
 use HereAuth\Database\Database;
 use HereAuth\Database\Json\JsonDatabase;
 use HereAuth\Database\MySQL\MySQLDatabase;
+use HereAuth\Logger\AuditLogger;
+use HereAuth\Logger\StreamAuditLogger;
 use HereAuth\User\AccountInfo;
 use HereAuth\User\User;
 use pocketmine\event\Listener;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
+use pocketmine\utils\Utils;
 
 class HereAuth extends PluginBase implements Listener{
 	/** @type string */
@@ -34,6 +37,8 @@ class HereAuth extends PluginBase implements Listener{
 	private $router;
 	/** @type Database */
 	private $database;
+	/** @type AuditLogger */
+	private $auditLogger;
 
 	public function onLoad(){
 		self::$NAME = $this->getName();
@@ -43,8 +48,25 @@ class HereAuth extends PluginBase implements Listener{
 	}
 
 	public function onEnable(){
-		if(!is_file($this->getDataFolder() . "config.yml")){
-			$this->saveResource("config.yml");
+		$new = false;
+		$configPaths = [];
+		if(!is_file($configPath = $this->getDataFolder() . "config.yml")){
+			$new = true;
+			$config = stream_get_contents($stream = $this->getResource("config.yml"));
+			fclose($stream);
+			$config = Utils::getOS() === "win" ?
+				str_replace(["/dev/null", '${IS_WINDOWS}'], ["/NUL", "Windows"], $config) :
+				str_replace('${IS_WINDOWS}', "non-Windows", $config);
+			file_put_contents($configPath, $config);
+			$configPaths[] = $configPath;
+		}
+		if(count($configPath) > 0){
+			$action = $new ? "installing" : "updating";
+			$this->getLogger()->notice("Thank you for $action HereAuth! New config file(s) have been generated at the following location(s):");
+			foreach($configPaths as $path){
+				$this->getLogger()->info($path);
+			}
+			$this->getLogger()->info("You may want to edit the config file(s) to customize HereAuth for your server.");
 		}
 		$this->router = new EventRouter($this);
 		if(!isset($this->database)){
@@ -59,6 +81,7 @@ class HereAuth extends PluginBase implements Listener{
 				$this->setDatabase(new JsonDatabase($this));
 			}
 		}
+		$this->auditLogger = new StreamAuditLogger($this);
 		foreach($this->getServer()->getOnlinePlayers() as $player){
 			$this->startUser($player);
 		}
@@ -174,5 +197,12 @@ class HereAuth extends PluginBase implements Listener{
 	 */
 	public function getUsers(){
 		return $this->users;
+	}
+
+	/**
+	 * @return AuditLogger
+	 */
+	public function getAuditLogger(){
+		return $this->auditLogger;
 	}
 }
