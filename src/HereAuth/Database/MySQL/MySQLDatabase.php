@@ -39,7 +39,7 @@ class MySQLDatabase implements Database{
 		// TODO: Implement renameAccount() method.
 	}
 
-	public function unregisterAccount($name){
+	public function unregisterAccount($name, callable $hook){
 		// TODO: Implement unregisterAccount() method.
 	}
 

@@ -18,18 +18,17 @@ namespace HereAuth\Command;
 use HereAuth\HereAuth;
 use HereAuth\User\User;
 
-class RegisterCommand extends HereAuthUserCommand{
+class LockCommand extends HereAuthUserCommand{
 	public function __construct(HereAuth $main){
-		parent::__construct($main, "register", "Register your account", "/register", "reg", "r");
-		$this->setPermission("hereauth.register");
+		parent::__construct($main, "lock", "Lock your account using your password", "/lock", "logout");
+		$this->setPermission("hereauth.lock");
 	}
 
-	public function hasPerm(User $user){
-		return $user->isPlaying() and !$user->getAccountInfo()->passwordHash;
+	protected function hasPerm(User $user){
+		return $user->isPlaying() and $user->getAccountInfo()->passwordHash;
 	}
 
 	protected function onRun(array $args, User $user){
-		$user->startRegistration();
-		return true;
+		return $user->lock();
 	}
 }

@@ -43,6 +43,8 @@ class HereAuth extends PluginBase implements Listener{
 	private $auditLogger;
 	/** @type ImportedHash[] */
 	private $importedHashes = [];
+	/** @type Fridge */
+	private $fridge;
 
 	public function onLoad(){
 		self::$NAME = $this->getName();
@@ -72,6 +74,7 @@ class HereAuth extends PluginBase implements Listener{
 			}
 			$this->getLogger()->info("You may want to edit the config file(s) to customize HereAuth for your server.");
 		}
+		$this->fridge = new Fridge($this);
 		if(!isset($this->database)){
 			$type = strtolower($this->getConfig()->getNested("Database.Type", "JSON"));
 			if($type === "mysql"){
@@ -223,5 +226,12 @@ class HereAuth extends PluginBase implements Listener{
 
 	public function getImportedHash($type){
 		return isset($this->importedHashes[$type]) ? $this->importedHashes[$type] : null;
+	}
+
+	/**
+	 * @return Fridge
+	 */
+	public function getFridge(){
+		return $this->fridge;
 	}
 }

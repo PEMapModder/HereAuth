@@ -15,7 +15,9 @@
 
 namespace HereAuth\Database\Json;
 
+use HereAuth\HereAuth;
 use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
 
 class JsonRenameTask extends AsyncTask{
 	private $oldPath;
@@ -23,12 +25,18 @@ class JsonRenameTask extends AsyncTask{
 	private $oldName;
 	private $newName;
 
+	private $hook;
+	private $success = false;
+
 	public function __construct(JsonDatabase $database, $oldName, $newName){
 		$this->oldPath = $database->getPath($this->oldName = strtolower($oldName));
 		$this->newPath = $database->getPath($this->newName = strtolower($newName));
 	}
 
 	public function onRun(){
+		if(is_file($this->newPath)){
+			return;
+		}
 		if(!is_file($this->oldPath)){
 			$this->setResult("File didn't exist", false);
 			return;
@@ -39,6 +47,17 @@ class JsonRenameTask extends AsyncTask{
 		$data = json_decode(file_get_contents($this->oldPath));
 		$data->multiHash = ["renamed;$this->oldName" => $data->passwordHash];
 		$data->passwordHash = "{RENAMED}";
+		unlink($this->oldPath);
 		file_put_contents($this->newPath, json_encode($data));
+		$this->success = true;
+	}
+
+	public function onCompletion(Server $server){
+		$main = HereAuth::getInstance($server);
+		if($main === null){
+			return;
+		}
+		$hook = $main->getFridge()->get($this->hook);
+		$hook($this->success);
 	}
 }

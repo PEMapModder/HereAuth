@@ -81,6 +81,22 @@ class JsonDatabase implements Database{
 		}
 	}
 
+	public function renameAccount($oldName, $newName){
+		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new JsonRenameTask($this, $oldName, $newName));
+	}
+
+	public function unregisterAccount($name, callable $hook){
+		$id = $this->main->getFridge()->store($hook);
+		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new JsonUnregisterTask($this, $name, $id));
+	}
+
+	public function close(){
+		$data = json_decode(file_get_contents($this->path . ".hadb"));
+		$data->lastClosed = time();
+		file_put_contents($this->path . ".hadb", json_encode($data, JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING | JSON_UNESCAPED_SLASHES));
+		$this->sql->close();
+	}
+
 	public function passesLimit($ip, $limit, $time, $identifier){
 		$stmt = $this->sql->prepare("SELECT COUNT(*) AS cnt FROM reg WHERE ip=:ip AND time >= :time");
 		$stmt->bindValue(":ip", $ip, SQLITE3_TEXT);
@@ -96,20 +112,5 @@ class JsonDatabase implements Database{
 
 	public function getPath($name){
 		return $this->path . ($this->indexEnabled ? ($name{0} . "/") : "") . strtolower($name) . ".json";
-	}
-
-	public function close(){
-		$data = json_decode(file_get_contents($this->path . ".hadb"));
-		$data->lastClosed = time();
-		file_put_contents($this->path . ".hadb", json_encode($data, JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING | JSON_UNESCAPED_SLASHES));
-		$this->sql->close();
-	}
-
-	public function renameAccount($oldName, $newName){
-		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new JsonRenameTask($this, $oldName, $newName));
-	}
-
-	public function unregisterAccount($name){
-		// TODO: Implement unregisterAccount() method.
 	}
 }

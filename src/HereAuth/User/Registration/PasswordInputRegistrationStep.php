@@ -32,36 +32,36 @@ final class PasswordInputRegistrationStep implements PasswordRegistrationStep{
 	}
 
 	public function onSubmit($value){
-		if($this->validatePassword($value)){
+		if($this->validatePassword($this->user, $value)){
 			$this->user->getRegistration()->setTempHash(HereAuth::hash($value, $this->user->getPlayer()));
 			return true;
 		}
 		return false;
 	}
 
-	private function validatePassword($value){
+	public static function validatePassword(User $user, $value){
 		$length = strlen($value);
-		$config = $this->user->getMain()->getConfig();
+		$config = $user->getMain()->getConfig();
 		$minLength = $config->getNested("Registration.MinLength", 4);
 		if($length < $minLength){
-			$this->user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordUnderflow", "too short"));
+			$user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordUnderflow", "too short"));
 			return false;
 		}
 		$maxLength = $config->getNested("Registration.MaxLength", -1);
 		if($maxLength !== -1 and $length > $maxLength){
-			$this->user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordOverflow", "too long"));
+			$user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordOverflow", "too long"));
 			return false;
 		}
 		if($config->getNested("Registration.BanPureLetters", false) and preg_match('/^[a-z]+$/i', $value)){
-			$this->user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordPureLetters", "only letters"));
+			$user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordPureLetters", "only letters"));
 			return false;
 		}
 		if($config->getNested("Registration.BanPureNumbers", false) and preg_match('/^[0-9]+$/', $value)){
-			$this->user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordPureNumbers", "only numbers"));
+			$user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordPureNumbers", "only numbers"));
 			return false;
 		}
 		if($config->getNested("Registration.DisallowSlashes", true) and $value{0} === "/"){
-			$this->user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordSlashes", "do not start with slashes"));
+			$user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordSlashes", "do not start with slashes"));
 			return false;
 		}
 		return true;

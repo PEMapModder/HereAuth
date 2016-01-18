@@ -24,7 +24,7 @@ interface Database{
 
 	public function renameAccount($oldName, $newName);
 
-	public function unregisterAccount($name);
+	public function unregisterAccount($name, callable $hook);
 
 	public function close();
 }

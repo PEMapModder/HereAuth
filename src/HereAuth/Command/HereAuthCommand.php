@@ -54,12 +54,17 @@ abstract class HereAuthCommand extends Command implements PluginIdentifiableComm
 
 	public function execute(CommandSender $sender, $commandLabel, array $args){
 		try{
+			if(!$this->testPermission($sender)){
+				return false;
+			}
 			$result = $this->run($args, $sender);
 			if(is_string($result)){
 				$sender->sendMessage($result);
 			}
+			return true;
 		}catch(\Exception $e){
 			// TODO implement error handling
+			return false;
 		}
 	}
 

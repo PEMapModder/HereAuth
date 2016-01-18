@@ -47,6 +47,9 @@ class User{
 	/** @type Position|null */
 	public $origPos = null;
 
+	/** @type string|null */
+	private $changepwHash = null;
+
 	public function __construct(HereAuth $main, Player $player, AccountInfo $info){
 		$this->main = $main;
 		$this->player = $player;
@@ -135,6 +138,7 @@ class User{
 	public function onAuth(){
 		$this->main->getServer()->getPluginManager()->callEvent(new HereAuthAuthenticationEvent($this));
 		$this->state = self::STATE_PLAYING;
+		$this->loginAttempts = 0;
 		$this->accountInfo->lastUuid = $this->getPlayer()->getUniqueId()->toBinary();
 		$this->accountInfo->lastLogin = time();
 		$this->accountInfo->lastSecret = $this->getPlayer()->getClientSecret();
@@ -149,7 +153,7 @@ class User{
 		$message = $event->getMessage();
 		$hash = HereAuth::hash($message, $this->getPlayer());
 		if($this->state === self::STATE_PENDING_LOGIN){
-			if($this->accountInfo->testPassword($this->main, $message)and$this->callLogin(HereAuthLoginEvent::METHOD_PASSWORD)){
+			if($this->accountInfo->testPassword($this->main, $message) and $this->callLogin(HereAuthLoginEvent::METHOD_PASSWORD)){
 				$this->main->getAuditLogger()->logLogin(strtolower($this->player->getName()), $this->player->getAddress(), "password");
 				$this->onAuth();
 			}else{
@@ -232,8 +236,39 @@ class User{
 		return $this->loadTime;
 	}
 
+	/**
+	 * @return string|null
+	 */
+	public function getChangepwHash(){
+		return $this->changepwHash;
+	}
+
+	/**
+	 * @param string|null $changepwHash
+	 */
+	public function setChangepwHash($changepwHash){
+		$this->changepwHash = $changepwHash;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function hasRegistered(){
+		return (bool) $this->accountInfo->passwordHash;
+	}
+
 	protected function callLogin($method){
 		$this->main->getServer()->getPluginManager()->callEvent($ev = new HereAuthLoginEvent($this, $method));
 		return !$ev->isCancelled();
+	}
+
+	public function lock(){
+		if(!$this->accountInfo->passwordHash){
+			return false;
+		}
+		$this->state = self::STATE_PENDING_LOGIN;
+		$this->loginAttempts = 0;
+		$this->getPlayer()->sendMessage("You have locked out.");
+		return true;
 	}
 }
