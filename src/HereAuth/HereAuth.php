@@ -22,6 +22,9 @@ use HereAuth\Database\MySQL\MySQLDatabase;
 use HereAuth\Logger\AuditLogger;
 use HereAuth\Logger\StreamAuditLogger;
 use HereAuth\MultiHash\ImportedHash;
+use HereAuth\MultiHash\RenamedHash;
+use HereAuth\MultiHash\VanillaMd5ImportedHash;
+use HereAuth\MultiHash\VanillaSha256ImportedHash;
 use HereAuth\User\AccountInfo;
 use HereAuth\User\User;
 use pocketmine\event\Listener;
@@ -75,6 +78,9 @@ class HereAuth extends PluginBase implements Listener{
 			$this->getLogger()->info("You may want to edit the config file(s) to customize HereAuth for your server.");
 		}
 		$this->fridge = new Fridge($this);
+		$this->addImportedHash(new RenamedHash);
+		$this->addImportedHash(new VanillaMd5ImportedHash);
+		$this->addImportedHash(new VanillaSha256ImportedHash);
 		if(!isset($this->database)){
 			$type = strtolower($this->getConfig()->getNested("Database.Type", "JSON"));
 			if($type === "mysql"){
@@ -182,7 +188,7 @@ class HereAuth extends PluginBase implements Listener{
 	}
 
 	/**
-	 * @param string $password
+	 * @param string        $password
 	 * @param string|Player $player
 	 *
 	 * @return string
