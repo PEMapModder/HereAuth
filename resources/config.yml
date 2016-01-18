@@ -215,6 +215,18 @@ Login:
   # Kick the player if he can't login in this period. Unit: seconds
   Timeout: 120
 
+# Make players' appearance change if they have not been authenticated
+Appearance:
+  # Make unauthenticated/logged-out players invisible
+  # This uses the "potion effect invisibility" style of invisibility, where modded players may be able to see the player
+  #   and would be able to click on the player (but the player can be protected with the Blocking.Damage config)
+  #   but without potion effect bubbles
+  Invisible: false
+  # Add text before player nametag
+  PrependNametag: "§7["
+  # Add text after player nametag
+  AppendNametag: "]"
+
 # Messages that are sent to players
 Messages:
   Login:

@@ -21,9 +21,11 @@ use HereAuth\Event\HereAuthRegistrationCreationEvent;
 use HereAuth\Event\HereAuthRegistrationEvent;
 use HereAuth\HereAuth;
 use HereAuth\User\Registration\Registration;
+use pocketmine\entity\Effect;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\level\Position;
 use pocketmine\Player;
+use pocketmine\utils\TextFormat;
 
 class User{
 	const STATE_PLAYING = 0;
@@ -44,6 +46,10 @@ class User{
 	private $loginAttempts = 0;
 	/** @type float */
 	private $loadTime;
+	/** @type Effect|bool|null */
+	private $revInvis = null;
+	/** @type string|null */
+	private $origNametag = null;
 	/** @type Position|null */
 	public $origPos = null;
 
@@ -64,6 +70,8 @@ class User{
 				return;
 			}
 			$this->startRegistration();
+			$this->initAppearance();
+
 			return;
 		}
 		if($info->opts->autoSecret and $player->getClientSecret() === $info->lastSecret and $this->callLogin(HereAuthLoginEvent::METHOD_CLIENT_SECRET)){
@@ -83,6 +91,7 @@ class User{
 		}
 		$this->state = self::STATE_PENDING_LOGIN;
 		$this->player->sendMessage($main->getConfig()->getNested("Messages.Login.Query", "Please login"));
+		$this->initAppearance();
 	}
 
 	public function startRegistration(){
@@ -147,6 +156,11 @@ class User{
 		$this->player->sendMessage("You have been authenticated.");
 		$this->player->getInventory()->sendContents($this->player);
 		$this->player->getInventory()->sendArmorContents($this->player);
+		if($this->origPos instanceof Position){
+			$this->getPlayer()->teleport($this->origPos);
+			$this->origPos = null;
+		}
+		$this->revertAppearance();
 	}
 
 	public function onMessage(PlayerCommandPreprocessEvent $event){
@@ -270,5 +284,47 @@ class User{
 		$this->loginAttempts = 0;
 		$this->getPlayer()->sendMessage("You have locked out.");
 		return true;
+	}
+
+	protected function initAppearance(){
+		if($this->main->getConfig()->getNested("Appearance.Invisible", false)){
+			$this->makeInvisible();
+		}
+		$this->origNametag = $nt = $this->getPlayer()->getNameTag();
+		$nt = $this->main->getConfig()->getNested("Appearance.PrependNametag", TextFormat::GRAY . "[") .
+			$nt . $this->main->getConfig()->getNested("Appearance.AppendNametag", "]");
+		$this->getPlayer()->setNameTag($nt);
+	}
+
+	protected function makeInvisible(){
+		$invis = $this->getPlayer()->getEffect(Effect::INVISIBILITY);
+		if($invis !== null){
+			$this->revInvis = clone $invis;
+			$this->getPlayer()->removeEffect(Effect::INVISIBILITY);
+		}
+		$this->revInvis = true;
+		$this->getPlayer()->addEffect(
+			Effect::getEffect(Effect::INVISIBILITY)
+				->setDuration(0x7FFFFFFF)
+				->setVisible(false)
+		);
+	}
+
+	protected function revertAppearance(){
+		$this->makeVisible();
+		if($this->origNametag !== null){
+			$this->getPlayer()->setNameTag($this->origNametag);
+			$this->origNametag = null;
+		}
+	}
+
+	protected function makeVisible(){
+		if($this->revInvis !== null){
+			$this->getPlayer()->removeEffect(Effect::INVISIBILITY);
+			if($this->revInvis instanceof Effect){
+				$this->getPlayer()->addEffect($this->revInvis);
+			}
+			$this->revInvis = null;
+		}
 	}
 }

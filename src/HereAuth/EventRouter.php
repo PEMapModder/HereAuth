@@ -24,6 +24,7 @@ use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
+use pocketmine\event\player\PlayerKickEvent;
 use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
@@ -118,6 +119,14 @@ class EventRouter implements Listener{
 
 	public function onQuit(PlayerQuitEvent $event){
 		$this->main->closeUser($event->getPlayer());
+	}
+
+	public function onKick(PlayerKickEvent $event){
+		if($event->getReason() === "Flying is not enabled on this server"){
+			if(($user = $this->main->getUserByPlayer($event->getPlayer())) === null or !$user->isPlaying()){
+				$event->setCancelled();
+			}
+		}
 	}
 
 	public function onMessage(PlayerCommandPreprocessEvent $event){
