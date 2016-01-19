@@ -15,7 +15,10 @@
 
 namespace HereAuth;
 
+use HereAuth\Command\ChangePasswordCommand;
+use HereAuth\Command\LockCommand;
 use HereAuth\Command\RegisterCommand;
+use HereAuth\Command\UnregisterCommand;
 use HereAuth\Database\Database;
 use HereAuth\Database\Json\JsonDatabase;
 use HereAuth\Database\MySQL\MySQLDatabase;
@@ -97,6 +100,9 @@ class HereAuth extends PluginBase implements Listener{
 		$this->router = new EventRouter($this);
 		$this->getServer()->getCommandMap()->registerAll("ha", [
 			new RegisterCommand($this),
+			new UnregisterCommand($this),
+			new ChangePasswordCommand($this),
+			new LockCommand($this),
 		]);
 		foreach($this->getServer()->getOnlinePlayers() as $player){
 			$this->startUser($player);
@@ -108,6 +114,7 @@ class HereAuth extends PluginBase implements Listener{
 			$this->closeUser($player);
 		}
 		$this->closeDatabase();
+		$this->getAuditLogger()->close();
 	}
 
 	public function startUser(Player $player){

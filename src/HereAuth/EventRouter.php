@@ -65,6 +65,12 @@ class EventRouter implements Listener{
 				$this->registerHandler($method->getParameters()[0]->getClass()->getName(), $method->getName(), EventPriority::LOW, true);
 			}
 		}
+		if($main->getConfig()->getNested("Blocking.Damage", true) or $main->getConfig()->getNested("Blocking.Attack", true)){
+			$this->registerHandler(EntityDamageEvent::class, "onDamage", EventPriority::LOW, true);
+		}
+		if($main->getConfig()->getNested("Blocking.Move.Locomotion", true) or $main->getConfig()->getNested("Blocking.Move.Rotation", true)){
+			$this->registerHandler(PlayerMoveEvent::class, "onMove", EventPriority::LOW, true);
+		}
 	}
 
 	private function registerHandler($event, $method, $priority, $ignoreCancelled){
@@ -195,7 +201,7 @@ class EventRouter implements Listener{
 	}
 
 	public function onMove(PlayerMoveEvent $event){
-		if($this->main->getConfig()->getNested("Blocking.Move.Locomotion")){
+		if($this->main->getConfig()->getNested("Blocking.Move.Locomotion", true)){
 			if($event->getFrom()->equals($event->getTo())){
 				$user = $this->main->getUserByPlayer($event->getPlayer());
 				if($user === null or !$user->isPlaying()){
@@ -204,7 +210,7 @@ class EventRouter implements Listener{
 				}
 			}
 		}
-		if($this->main->getConfig()->getNested("Blocking.Move.Rotation")){
+		if($this->main->getConfig()->getNested("Blocking.Move.Rotation", true)){
 			$from = $event->getFrom();
 			$to = $event->getTo();
 			if($from->yaw !== $to->yaw or $from->pitch !== $to->pitch){
