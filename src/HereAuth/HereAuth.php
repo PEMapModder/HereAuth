@@ -87,12 +87,18 @@ class HereAuth extends PluginBase implements Listener{
 		if(!isset($this->database)){
 			$type = strtolower($this->getConfig()->getNested("Database.Type", "JSON"));
 			if($type === "mysql"){
-				$this->setDatabase(new MySQLDatabase($this));
-			}else{
-				if($type !== "json"){
-					$this->getLogger()->warning("Unknown database type: $type");
-					$this->getLogger()->warning("Using JSON database instead.");
+				try{
+					$this->setDatabase(new MySQLDatabase($this));
+				}catch(\InvalidKeyException $e){
+					$this->getLogger()->critical("Could not connect to MySQL: {$e->getMessage()}");
+					$this->getLogger()->critical("Using JSON database instead.");
 				}
+			}elseif($type !== "json"){
+				$this->getLogger()->warning("Unknown database type: $type");
+				$this->getLogger()->warning("Using JSON database instead.");
+			}
+
+			if(!isset($this->database)){
 				$this->setDatabase(new JsonDatabase($this));
 			}
 		}
@@ -235,7 +241,7 @@ class HereAuth extends PluginBase implements Listener{
 	 */
 	public static function hash($password, $player){
 		$salt = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
-		return bin2hex(hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true));
+		return hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true);
 	}
 
 	public static function page($lines, $pageNumber, $pageSize = 10){

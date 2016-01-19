@@ -44,11 +44,11 @@ class JsonRenameTask extends AsyncTask{
 		if(!is_dir($dir = dirname($this->newPath))){
 			mkdir($dir);
 		}
-		$data = json_decode(file_get_contents($this->oldPath));
+		$data = json_decode(zlib_decode(file_get_contents($this->oldPath)));
 		$data->multiHash = ["renamed;$this->oldName" => $data->passwordHash];
 		$data->passwordHash = "{RENAMED}";
 		unlink($this->oldPath);
-		file_put_contents($this->newPath, json_encode($data));
+		file_put_contents($this->newPath, zlib_encode(json_encode($data), ZLIB_ENCODING_DEFLATE));
 		$this->success = true;
 	}
 

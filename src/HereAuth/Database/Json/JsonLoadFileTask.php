@@ -34,7 +34,7 @@ class JsonLoadFileTask extends AsyncTask{
 	}
 
 	public function onRun(){
-		$this->output = is_file($this->path) ? file_get_contents($this->path) : null;
+		$this->output = is_file($this->path) ? zlib_decode(file_get_contents($this->path)) : null;
 	}
 
 	public function onCompletion(Server $server){

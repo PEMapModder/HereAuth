@@ -19,7 +19,6 @@ use HereAuth\Database\Database;
 use HereAuth\HereAuth;
 use HereAuth\User\AccountInfo;
 use pocketmine\Player;
-use pocketmine\scheduler\FileWriteTask;
 use SQLite3;
 
 class JsonDatabase implements Database{
@@ -71,7 +70,7 @@ class JsonDatabase implements Database{
 	public function saveData($name, AccountInfo $info){
 		$path = $this->getPath($name);
 		$existed = file_exists($path);
-		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new FileWriteTask($path, $info->serialize()));
+		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new DeflatedFileWriteTask($path, $info->serialize()));
 		if(!$existed){
 			$stmt = $this->sql->prepare("INSERT INTO reg (ip, name, time) VALUES (:ip, :name, :time)");
 			$stmt->bindValue(":ip", $info->lastIp, SQLITE3_TEXT);

@@ -128,6 +128,10 @@ Database:
       # Schema for HereAuth in the MySQL database.
       # If it is not created yet, HereAuth will automatically create it.
       Schema: hereauth
+      # Socket to connect to the MySQL database.
+      # This may be required if you are using localhost on a Unix-like machine.
+      # Otherwise, just ignore this one.
+      Socket: ""
     # Prefix for table names
     # If your database provider only provides you with one schema, you may want to add a prefix to the table names to
     #   avoid duplicating table names.
