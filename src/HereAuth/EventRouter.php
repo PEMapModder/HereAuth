@@ -49,6 +49,8 @@ class EventRouter implements Listener{
 		$this->registerHandler(PlayerLoginEvent::class, "onLogin", EventPriority::MONITOR, true);
 		$this->registerHandler(PlayerQuitEvent::class, "onQuit", EventPriority::MONITOR, true);
 		$this->registerHandler(PlayerCommandPreprocessEvent::class, "onMessage", EventPriority::LOWEST, false);
+		$this->registerHandler(PlayerRespawnEvent::class, "onRespawn", EventPriority::HIGHEST, false);
+		$this->registerHandler(DataPacketSendEvent::class, "onSend", EventPriority::HIGH, true);
 		$events = [
 			"DropItem",
 			"Touch",

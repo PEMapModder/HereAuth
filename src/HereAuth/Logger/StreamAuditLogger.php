@@ -43,7 +43,7 @@ class StreamAuditLogger implements AuditLogger{
 				$value = $dir . $value;
 			}
 			$this->{$entry} = $stream = $this->getStream($value);
-			fwrite($stream, date(self::DATE_FORMAT) . "Start logging $entry\n");
+			fwrite($stream, date(self::DATE_FORMAT) . " Start logging $entry\n");
 		}
 	}
 
@@ -55,37 +55,39 @@ class StreamAuditLogger implements AuditLogger{
 	}
 
 	public function logRegister($name, $ip){
-		fwrite($this->register, date(self::DATE_FORMAT) . "Register:$name/$ip\n");
+		fwrite($this->register, date(self::DATE_FORMAT) . " Register:$name/$ip\n");
 	}
 
 	public function logLogin($name, $ip, $method){
-		fwrite($this->login, date(self::DATE_FORMAT) . "Login:$name,$ip,$method\n");
+		fwrite($this->login, date(self::DATE_FORMAT) . " Login:$name,$ip,$method\n");
 	}
 
 	public function logPush($name, $oldIp, $newIp){
-		fwrite($this->push, date(self::DATE_FORMAT) . "Push:$name,$oldIp,$newIp\n");
+		fwrite($this->push, date(self::DATE_FORMAT) . " Push:$name,$oldIp,$newIp\n");
 	}
 
 	public function logBump($name, $oldIp, $newIp, $oldUuid, $newUuid, $oldState){
-		fwrite($this->bump, date(self::DATE_FORMAT) . "Bump,$name,$oldIp,$newIp,$oldUuid,$newUuid,$oldState\n");
+		fwrite($this->bump, date(self::DATE_FORMAT) . " Bump,$name,$oldIp,$newIp,$oldUuid,$newUuid,$oldState\n");
 	}
 
 	public function logInvalid($name, $ip){
-		fwrite($this->invalid, date(self::DATE_FORMAT) . "Invalid:$name,$ip\n");
+		fwrite($this->invalid, date(self::DATE_FORMAT) . " Invalid:$name,$ip\n");
 	}
 
 	public function logTimeout($name, $ip){
-		fwrite($this->timeout, date(self::DATE_FORMAT) . "Timeout:$name,$ip\n");
+		fwrite($this->timeout, date(self::DATE_FORMAT) . " Timeout:$name,$ip\n");
 	}
 
 	public function logFactor($name, $wrongType, $wrongData){
-		fwrite($this->factor, date(self::DATE_FORMAT) . "Factor:$name,$wrongType,$wrongData\n");
+		fwrite($this->factor, date(self::DATE_FORMAT) . " Factor:$name,$wrongType,$wrongData\n");
 	}
 
 	public function close(){
 		foreach($this as $k => $v){
-			fwrite($v, date(self::DATE_FORMAT) . "End logging $k\n");
-			unset($this->{$k});
+			if($k !== "instances" and is_resource($v)){
+				fwrite($v, date(self::DATE_FORMAT) . " End logging $k\n");
+				unset($this->{$k});
+			}
 		}
 		foreach($this->instances as $instance){
 			fclose($instance);

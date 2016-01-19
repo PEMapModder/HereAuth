@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <permissions>
 	<hereauth description="Root permission node for HereAuth permissions" default="op">
-		<opts description="Allows usage all of the /opt command (for self)" default="true">
+		<auth description="Allows usage all of the /auth command (for self)" default="true">
 			<autoauth description="Allows changing options related to AutoAuth" default="true">
 				<clientsecret description="Allows toggling client secret AutoAuth" default="true"/>
 				<ip description="Allows toggling IP AutoAuth" default="true"/>
@@ -18,7 +18,7 @@
 				<skin description="Allows toggling skin MFA options" default="true"/>
 				<ip description="Allows toggling IP MFA options" default="true"/>
 			</multiauth>
-		</opts>
+		</auth>
 		<rename description="Allows renaming another player's account with /rename" default="op"/>
 		<renameme description="Allows renaming own account with /renameme" default="false"/>
 		<register description="Allows using the /register command if not registered" default="true"/>

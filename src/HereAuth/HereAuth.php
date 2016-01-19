@@ -195,27 +195,6 @@ class HereAuth extends PluginBase implements Listener{
 	}
 
 	/**
-	 * @param string        $password
-	 * @param string|Player $player
-	 *
-	 * @return string
-	 */
-	public static function hash($password, $player){
-		$salt = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
-		return bin2hex(hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true));
-	}
-
-	/**
-	 * @param Server $server
-	 *
-	 * @return HereAuth|null
-	 */
-	public static function getInstance(Server $server){
-		$me = $server->getPluginManager()->getPlugin(self::$NAME);
-		return ($me !== null and $me->isEnabled()) ? $me : null;
-	}
-
-	/**
 	 * @return User[]
 	 */
 	public function getUsers(){
@@ -246,5 +225,36 @@ class HereAuth extends PluginBase implements Listener{
 	 */
 	public function getFridge(){
 		return $this->fridge;
+	}
+
+	/**
+	 * @param string        $password
+	 * @param string|Player $player
+	 *
+	 * @return string
+	 */
+	public static function hash($password, $player){
+		$salt = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
+		return bin2hex(hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true));
+	}
+
+	public static function page($lines, $pageNumber, $pageSize = 10){
+		if(!is_array($lines)){
+			$lines = explode("\n", $lines);
+		}
+		$linesCount = count($lines);
+		$maxPages = ceil($linesCount / $pageSize);
+		$pageNumber = min($maxPages, max(1, $pageNumber));
+		return "Page $pageNumber of $maxPages:\n" . implode("\n", array_slice($lines, ($pageNumber - 1) * $pageNumber, $pageSize));
+	}
+
+	/**
+	 * @param Server $server
+	 *
+	 * @return HereAuth|null
+	 */
+	public static function getInstance(Server $server){
+		$me = $server->getPluginManager()->getPlugin(self::$NAME);
+		return ($me !== null and $me->isEnabled()) ? $me : null;
 	}
 }

@@ -41,6 +41,9 @@ DefaultSettings:
     Skin: false
     # Players may be unable to login without realizing that they have dynamic IP if you enable this.
     IP: false
+  # If the player has not been online for this number of days, turn off multi-factor auth for him.
+  # Put -1 to disable this.
+  MultiAuthTimeout: 14
 
 # Disallow these if the player is registered but not authenticated
 # "Chat" and "Command" are unavailable options, because HereAuth will consider all chat messages as register information
