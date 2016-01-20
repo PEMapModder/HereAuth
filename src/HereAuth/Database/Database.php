@@ -18,11 +18,16 @@ namespace HereAuth\Database;
 use HereAuth\User\AccountInfo;
 
 interface Database{
+	const SUCCESS = 0;
+	const UNKNOWN_ERROR = 1;
+	const RENAME_SOURCE_ABSENT = 2;
+	const RENAME_TARGET_PRESENT = 3;
+
 	public function loadFor($name, $identifier);
 
 	public function saveData($name, AccountInfo $info);
 
-	public function renameAccount($oldName, $newName);
+	public function renameAccount($oldName, $newName, callable $hook);
 
 	public function unregisterAccount($name, callable $hook);
 

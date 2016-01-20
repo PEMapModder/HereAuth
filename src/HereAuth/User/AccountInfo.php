@@ -42,7 +42,7 @@ class AccountInfo implements \Serializable{
 
 	public function testPassword(HereAuth $main, $password){
 		$hash = HereAuth::hash($password, $this->name);
-		if($this->passwordHash){
+		if(strlen($this->passwordHash) === strlen($hash)){
 			return $hash === $this->passwordHash;
 		}
 		foreach($this->multiHash as $type => $value){
@@ -118,7 +118,7 @@ class AccountInfo implements \Serializable{
 		$lastIp = $escapeFunc($this->lastIp);
 		$lastSecret = $this->binEscape($this->lastSecret);
 		$lastUuid = $this->binEscape($this->lastUuid);
-		$lastSkin = $this->binEscape($this->lastSkin);
+		$lastSkin = $this->binEscape(zlib_encode($this->lastSkin, ZLIB_ENCODING_DEFLATE));
 		$opts = $escapeFunc(serialize($this->opts));
 		$multiHash = $escapeFunc(json_encode($this->multiHash));
 		return ("INSERT INTO `$tableName` (name, hash, register, login, ip, secret, uuid, skin, opts, multihash) VALUES " . "(" .
@@ -137,6 +137,7 @@ class AccountInfo implements \Serializable{
 		$info->lastSkin = $row["skin"];
 		$info->opts = unserialize($row["opts"]);
 		$info->multiHash = json_decode($row["multihash"], true);
+		return $info;
 	}
 
 	private function binEscape($str){

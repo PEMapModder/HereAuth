@@ -23,33 +23,42 @@ class MySQLDatabase implements Database{
 	/** @type HereAuth */
 	private $main;
 	/** @type MySQLCredentials */
-	private $connParams;
+	private $crd;
 
 	/** @type string */
 	private $mainTable;
 
 	public function __construct(HereAuth $main){
 		$this->main = $main;
-		$this->connParams = MySQLCredentials::fromConfig($main->getConfig());
-		$this->mainTable = $main->getConfig()->getNested("Database.MySQL.TablePrefix", "hereauth_");
+		$this->crd = MySQLCredentials::fromConfig($main->getConfig());
+		$this->mainTable = $main->getConfig()->getNested("Database.MySQL.TablePrefix", "hereauth_") . "accounts";
 		$main->getLogger()->info("Initializing database...");
-		$db = $this->createMysqliInstance($this->connParams);
+		$db = $this->createMysqliInstance($this->crd);
 		$db->query("CREATE TABLE IF NOT EXISTS `$this->mainTable` (
-			name VARCHAR(63) PRIMARY KEY, hash BINARY(64),
-			register INT, login INT, ip VARCHAR(50), secret BINARY(16), uuid BINARY(16),
-			skin, opts, multihash)");
+			name VARCHAR(63) PRIMARY KEY,
+			hash BINARY(64),
+			register INT,
+			login INT,
+			ip VARCHAR(50),
+			secret BINARY(16),
+			uuid BINARY(16),
+			skin VARBINARY(32767),
+			opts VARCHAR(32767),
+			multihash VARCHAR(32767)
+		)");
 	}
 
 	public function loadFor($name, $identifier){
-		// TODO: Implement loadFor() method.
+		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new MySQLLoadPlayerTask($this, $name, $identifier));
 	}
 
 	public function saveData($name, AccountInfo $info){
-		// TODO: Implement saveData() method.
+		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new MySQLSavePlayerTask($this, $info));
 	}
 
-	public function renameAccount($oldName, $newName){
-		// TODO: Implement renameAccount() method.
+	public function renameAccount($oldName, $newName, callable $hook){
+		$hookId = $this->main->getFridge()->store($hook);
+		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new MySQLRenamePlayerTask($this, $oldName, $newName, $hookId));
 	}
 
 	public function unregisterAccount($name, callable $hook){
@@ -60,22 +69,43 @@ class MySQLDatabase implements Database{
 		// TODO: Implement close() method.
 	}
 
-	public static function createMysqliInstance(MySQLCredentials $cred){
+	/**
+	 * @param MySQLCredentials $crd
+	 *
+	 * @return \mysqli
+	 *
+	 * @throws \InvalidKeyException
+	 */
+	public static function createMysqliInstance(MySQLCredentials $crd){
 		/** @noinspection PhpUsageOfSilenceOperatorInspection */
-		$db = @new \mysqli($cred->host, $cred->username, $cred->password, $cred->schema, $cred->port, $cred->socket);
-		if($db->connect_error === "Unknown database '$cred->schema'"){
-			$db = @new \mysqli($cred->host, $cred->username, $cred->password, "", $cred->port, $cred->socket);
+		$db = @new \mysqli($crd->host, $crd->username, $crd->password, $crd->schema, $crd->port, $crd->socket);
+		if($db->connect_error === "Unknown database '$crd->schema'"){
+			$db = @new \mysqli($crd->host, $crd->username, $crd->password, "", $crd->port, $crd->socket);
 			$createSchema = true;
 		}
 		if($db->connect_error){
 			throw new \InvalidKeyException($db->connect_error);
 		}
 		if(isset($createSchema)){
-			$db->query("CREATE SCHEMA `$cred->schema`");
+			$db->query("CREATE SCHEMA `$crd->schema`");
 			if($db->error){
 				throw new \InvalidKeyException("Schema does not exist and cannot be created");
 			}
 		}
 		return $db;
+	}
+
+	/**
+	 * @return MySQLCredentials
+	 */
+	public function getCredentials(){
+		return $this->crd;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getMainTable(){
+		return $this->mainTable;
 	}
 }

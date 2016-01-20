@@ -80,8 +80,9 @@ class JsonDatabase implements Database{
 		}
 	}
 
-	public function renameAccount($oldName, $newName){
-		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new JsonRenameTask($this, $oldName, $newName));
+	public function renameAccount($oldName, $newName, callable $hook){
+		$hook = $this->main->getFridge()->store($hook);
+		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new JsonRenameTask($this, $oldName, $newName, $hook));
 	}
 
 	public function unregisterAccount($name, callable $hook){

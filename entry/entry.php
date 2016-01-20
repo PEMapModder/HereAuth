@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 
 /*
@@ -12,6 +13,8 @@
  *
  * @author PEMapModder
  */
+
+echo "(Ignore the line above; it is just a harmless annoying Shebang line)", "\n";
 
 //if(version_compare(PHP_VERSION, "7.0.0", "<")){
 //	echo "Fatal: This entry script requires PHP >=7.0.0!\n";
@@ -32,4 +35,11 @@ spl_autoload_register(function ($class){
 	}
 });
 
+if(!defined("STDIN")){
+	$define = "define";
+	$define("STDIN", fopen("php://stdin", "r"));
+}
+
+echo "Press enter to exit\n";
+fgets(STDIN);
 exit(0);
