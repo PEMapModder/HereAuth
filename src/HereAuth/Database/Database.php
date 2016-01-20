@@ -31,5 +31,7 @@ interface Database{
 
 	public function unregisterAccount($name, callable $hook);
 
+	public function passesLimit($ip, $limit, $time, $identifier);
+
 	public function close();
 }

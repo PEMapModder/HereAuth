@@ -182,6 +182,10 @@ AuditLogger:
 
 # Options related to registering
 Registration:
+  # Registration throttle. Limits number of registrations from an IP per time.
+  RateLimit:
+    Accounts: 3
+    Days: 30
   # Minimum password length, in UTF-8 bytes. (i.e. if you put 6 here, you have to at least type two Chinese characters,
   #   since one Chinese character takes 3 bytes in UTF-8)
   MinLength: 4

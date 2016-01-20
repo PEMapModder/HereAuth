@@ -61,6 +61,7 @@ class User{
 		$this->player = $player;
 		$this->accountInfo = $info;
 		if(!$info->passwordHash){
+			$main->getDatabase()->passesLimit($player->getAddress(), $main->getConfig()->getNested("Registration.RateLimit.Accounts", 3), $main->getConfig()->getNested("Registration.RateLimit.Days", 30) * 86400, $player->getId());
 			if(!$main->getConfig()->getNested("ForceRegister.Enabled", true)){ // no registration involved
 				$this->onAuth();
 				$reminder = $main->getConfig()->getNested("ForceRegister.Reminder", "");
