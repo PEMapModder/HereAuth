@@ -61,7 +61,7 @@ class User{
 		$this->player = $player;
 		$this->accountInfo = $info;
 		if(!$info->passwordHash){
-			$main->getDatabase()->passesLimit($player->getAddress(), $main->getConfig()->getNested("Registration.RateLimit.Accounts", 3), $main->getConfig()->getNested("Registration.RateLimit.Days", 30) * 86400, $player->getId());
+			$main->getDataBase()->passesLimit($player->getAddress(), $main->getConfig()->getNested("Registration.RateLimit.Accounts", 3), $main->getConfig()->getNested("Registration.RateLimit.Days", 30) * 86400, $player->getId());
 			if(!$main->getConfig()->getNested("ForceRegister.Enabled", true)){ // no registration involved
 				$this->onAuth();
 				$reminder = $main->getConfig()->getNested("ForceRegister.Reminder", "");
@@ -111,7 +111,9 @@ class User{
 		$this->main->getAuditLogger()->logRegister(strtolower($this->player->getName()), $this->player->getAddress());
 		$this->getPlayer()->sendMessage($this->getMain()->getConfig()->getNested("Messages.Register.Completion", "registered"));
 		$this->accountInfo->registerTime = time();
+		$this->save();
 		$this->onAuth();
+		$this->main->getLogger()->debug("Registered HereAuth account '{$this->getPlayer()->getName()}'");
 	}
 
 	public function checkMultiFactor(){
@@ -142,7 +144,7 @@ class User{
 	}
 
 	public function save(){
-		$this->main->getDatabase()->saveData($this->player->getName(), $this->accountInfo);
+		$this->main->getDataBase()->saveData($this->accountInfo);
 	}
 
 	public function onAuth(){
@@ -154,7 +156,9 @@ class User{
 		$this->accountInfo->lastSecret = $this->getPlayer()->getClientSecret();
 		$this->accountInfo->lastSkin = $this->getPlayer()->getSkinName() . $this->getPlayer()->getSkinData();
 		$this->accountInfo->lastIp = $this->getPlayer()->getAddress();
-		$this->player->sendMessage("You have been authenticated.");
+		if($this->accountInfo->passwordHash){
+			$this->player->sendMessage("You have been authenticated.");
+		}
 		$this->player->getInventory()->sendContents($this->player);
 		$this->player->getInventory()->sendArmorContents($this->player);
 		if($this->origPos instanceof Position){

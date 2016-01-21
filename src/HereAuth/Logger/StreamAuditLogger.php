@@ -37,13 +37,13 @@ class StreamAuditLogger implements AuditLogger{
 		foreach($entries = ["register", "login", "push", "bump", "invalid", "timeout", "factor"] as $entry){
 			$value = $main->getConfig()->getNested("AuditLogger.Log." . ucfirst($entry), ($isWin = Utils::getOS() === "win") ? "/NUL" : "/dev/null");
 			if($value === "/NUL" and !$isWin or $value === "/dev/null" and $isWin){
-				$main->getLogger()->warning("Your OS is " . ($isWin ? "Windows" : "not Windows") . ", where $value does not refer to a non-existent file! HereAuth will attempt to create that file!");
+				$main->getLogger()->warning("Your OS is " . ($isWin ? "Windows" : "not Windows") . ", where $value is not a special file! HereAuth will attempt to create that file!");
 			}
 			if($value{0} !== "/"){
 				$value = $dir . $value;
 			}
 			$this->{$entry} = $stream = $this->getStream($value);
-			fwrite($stream, date(self::DATE_FORMAT) . " Start logging $entry\n");
+//			fwrite($stream, date(self::DATE_FORMAT) . " Start logging $entry\n");
 		}
 	}
 
@@ -85,7 +85,7 @@ class StreamAuditLogger implements AuditLogger{
 	public function close(){
 		foreach($this as $k => $v){
 			if($k !== "instances" and is_resource($v)){
-				fwrite($v, date(self::DATE_FORMAT) . " End logging $k\n");
+//				fwrite($v, date(self::DATE_FORMAT) . " End logging $k\n");
 				unset($this->{$k});
 			}
 		}

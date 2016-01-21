@@ -72,7 +72,7 @@ class HereAuth extends PluginBase implements Listener{
 			file_put_contents($configPath, $config);
 			$configPaths[] = $configPath;
 		}
-		if(count($configPath) > 0){
+		if(count($configPaths) > 0){
 			$action = $new ? "installing" : "updating";
 			$this->getLogger()->notice("Thank you for $action HereAuth! New config file(s) have been generated at the following location(s):");
 			foreach($configPaths as $path){
@@ -184,7 +184,7 @@ class HereAuth extends PluginBase implements Listener{
 		return null;
 	}
 
-	public function getDatabase(){
+	public function getDataBase(){
 		return $this->database;
 	}
 

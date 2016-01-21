@@ -17,8 +17,8 @@ namespace HereAuth\Database\Json;
 
 use HereAuth\Database\Database;
 use HereAuth\HereAuth;
+use HereAuth\Task\KickPlayerTask;
 use HereAuth\User\AccountInfo;
-use pocketmine\Player;
 use SQLite3;
 
 class JsonDatabase implements Database{
@@ -60,24 +60,39 @@ class JsonDatabase implements Database{
 		file_put_contents($hadb, json_encode($data, JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING | JSON_UNESCAPED_SLASHES));
 
 		$this->sql = new SQLite3($this->path . "reg.db");
-		$this->sql->exec("CREATE TABLE IF NOT EXISTS reg (ip TEXT, name TEXT, time INTEGER)");
+		$this->sql->exec("CREATE TABLE IF NOT EXISTS reg (ip TEXT, name TEXT PRIMARY KEY, time INTEGER)");
+		var_dump($this->sql->busyTimeout(1)); // outputs bool(true)
 	}
 
 	public function loadFor($name, $identifier){
 		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new JsonLoadFileTask($this->getPath($name), $identifier));
 	}
 
-	public function saveData($name, AccountInfo $info){
+	public function saveData(AccountInfo $info){
+		$name = $info->name;
 		$path = $this->getPath($name);
-		$existed = file_exists($path);
-		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new DeflatedFileWriteTask($path, $info->serialize()));
-		if(!$existed){
-			$stmt = $this->sql->prepare("INSERT INTO reg (ip, name, time) VALUES (:ip, :name, :time)");
-			$stmt->bindValue(":ip", $info->lastIp, SQLITE3_TEXT);
-			$stmt->bindValue(":name", strtolower($info->name), SQLITE3_TEXT);
-			$stmt->bindValue(":time", $info->registerTime, SQLITE3_INTEGER);
-			$stmt->execute();
-		}
+		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new JsonSaveDataTask($path, $info->serialize(), $info->lastIp, $info->name, $info->registerTime));
+//		$stmt = $this->sql->prepare("SELECT time FROM reg WHERE name=:name");
+//		$stmt->bindValue(":name", strtolower($info->name), SQLITE3_TEXT);
+//		$result = $stmt->execute();
+//		$row = $result->fetchArray(SQLITE3_ASSOC);
+//		$result->finalize();
+//		$registered = (is_array($row) and $row["time"] !== -1);
+//		if(!$registered){
+//		$stmt = $this->sql->prepare(/** @lang SQLite */
+//			"UPDATE reg SET time = CASE time WHEN -1 THEN :time ELSE time END WHERE name=:name");
+//		$stmt->bindValue(":ip", $info->lastIp, SQLITE3_TEXT);
+//		$stmt->bindValue(":name", strtolower($info->name), SQLITE3_TEXT);
+//		$stmt->bindValue(":time", $info->registerTime, SQLITE3_INTEGER);
+//		$stmt->execute();
+//		if($this->sql->changes() === 0){
+//			$stmt = $this->sql->prepare("INSERT INTO reg (ip, name, time) VALUES (:ip, :name, :time)");
+//			$stmt->bindValue(":ip", $info->lastIp, SQLITE3_TEXT);
+//			$stmt->bindValue(":name", strtolower($info->name), SQLITE3_TEXT);
+//			$stmt->bindValue(":time", $info->registerTime, SQLITE3_INTEGER);
+//			$stmt->execute();
+//		}
+//		}
 	}
 
 	public function renameAccount($oldName, $newName, callable $hook){
@@ -100,17 +115,21 @@ class JsonDatabase implements Database{
 	public function passesLimit($ip, $limit, $time, $identifier){
 		$stmt = $this->sql->prepare("SELECT COUNT(*) AS cnt FROM reg WHERE ip=:ip AND time >= :time");
 		$stmt->bindValue(":ip", $ip, SQLITE3_TEXT);
-		$stmt->bindValue(":time", $time, SQLITE3_INTEGER);
+		$stmt->bindValue(":time", time() - $time, SQLITE3_INTEGER);
 		$cnt = $stmt->execute()->fetchArray(SQLITE3_ASSOC)["cnt"];
 		if($cnt >= $limit){
-			$player = $this->main->getPlayerById($identifier);
-			if($player instanceof Player){
-				$player->kick("You created too many accounts!", false);
-			}
+			$this->main->getServer()->getScheduler()->scheduleDelayedTask(new KickPlayerTask($this->main, $identifier, "You created too many accounts!"), 1);
 		}
 	}
 
 	public function getPath($name){
 		return $this->path . ($this->indexEnabled ? ($name{0} . "/") : "") . strtolower($name) . ".json";
+	}
+
+	/**
+	 * @return SQLite3
+	 */
+	public function getSQLite3(){
+		return $this->sql;
 	}
 }

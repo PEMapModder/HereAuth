@@ -183,6 +183,7 @@ AuditLogger:
 # Options related to registering
 Registration:
   # Registration throttle. Limits number of registrations from an IP per time.
+  # If ForceRegister is set to false, players who didn't register will not be counted as a registration.
   RateLimit:
     Accounts: 3
     Days: 30

@@ -103,6 +103,7 @@ class Registration{
 				return;
 			}
 		}
+		$this->user->getPlayer()->sendMessage($this->current()->getMessage());
 	}
 
 	private function current(){
@@ -115,10 +116,8 @@ class Registration{
 			/** @noinspection PhpInternalEntityUsedInspection */
 			$this->user->onRegistrationCompleted();
 			return true;
-		}else{
-			$this->user->getPlayer()->sendMessage($this->current()->getMessage());
-			return false;
 		}
+		return false;
 	}
 
 	/**

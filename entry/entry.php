@@ -40,6 +40,34 @@ if(!defined("STDIN")){
 	$define("STDIN", fopen("php://stdin", "r"));
 }
 
+echo "Please type a command to continue.\n";
+query_cmd:
+echo "Supported commands: init\n";
+
+$line = strtolower(trim(fgets(STDIN)));
+if($line === "init"){
+	if(!is_dir("HereAuth")){
+		mkdir("HereAuth");
+	}
+	$file = "config.yml";
+	$i = 0;
+	while(is_file($file)){
+		$file = "config.yml." . ($i++);
+	}
+	$contents = file_get_contents(Phar::running() . "/resources/config.yml");
+	$uname = php_uname("s");
+	if(stripos($uname, "Win") !== false or $uname === "Msys"){
+		$contents = str_replace(["/dev/null", '${IS_WINDOWS}'], ["/NUL", "Windows"], $contents);
+	}else{
+		$contents = str_replace('${IS_WINDOWS}', "non-Windows", $contents);
+	}
+	file_put_contents("HereAuth/$file", $contents);
+	echo "Created config file at " . realpath("HereAuth/$file") . "\n";
+}else{
+	echo "Unknown command!\n";
+	goto query_cmd;
+}
+
 echo "Press enter to exit\n";
 fgets(STDIN);
 exit(0);
