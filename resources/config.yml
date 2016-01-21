@@ -86,6 +86,19 @@ MultiSesCtrl:
 # This won't block the message if it contains anything other than the pssword, including spaces.
 BlockPasswordChat: true
 
+# Send chat/tip/popup to remind player to register/login
+RemindLogin:
+  # Messages to send to players
+  Message:
+    Register: Please register by typing password into chat
+    Login: Please login by typing password into chat
+  # Type of message.
+  # Options: chat, popup, tip
+  Type: popup
+  # Frequency interval, in seconds, of how often to send the message
+  # Value is rounded down to 0.05 second
+  Interval: 0.5
+
 # Force players to register before playing
 ForceRegister:
   # If this is set to false, players have to execute /register to register.

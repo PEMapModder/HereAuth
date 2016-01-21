@@ -49,3 +49,7 @@ Features
 - [x] Server-customized messages
 - [x] Extensive audit logging
 - [ ] An extensive API (W.I.P.)
+
+Entry script
+===
+Open this phar directly with PHP binaries to automatically extract the config files.
