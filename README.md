@@ -5,7 +5,7 @@ HereAuth
 ### Phar download
 * [Latest development build](compile/HereAuth_Dev.phar)
 * [Latest beta build](compile/HereAuth_Beta.phar)
-* [Latest release](compile/HereAuth_RC.phar)
+* [Latest release candidate build](compile/HereAuth_RC.phar)
 
 #### Latest Dev build number
 `135`
@@ -26,8 +26,8 @@ the Free Software Foundation, either version 3 of the License, or
 ```
 
 ### Project history:
-First byte written: Jan 14 2016
-First beta released: Jan 21 2016
+* First byte written: Jan 14 2016
+* First beta released: Jan 21 2016
 
 ### Features
 - [x] Authentication by typing password into chat
