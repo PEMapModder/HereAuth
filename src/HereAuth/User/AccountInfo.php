@@ -16,6 +16,7 @@
 namespace HereAuth\User;
 
 use HereAuth\HereAuth;
+use HereAuth\Utils\Invokable;
 use pocketmine\Player;
 
 class AccountInfo implements \Serializable{
@@ -34,7 +35,7 @@ class AccountInfo implements \Serializable{
 	/** @type string */
 	public $lastUuid;
 	/** @type string */
-	public $lastSkin;
+	public $lastSkinHash;
 	/** @type AccountOpts */
 	public $opts;
 	/** @type string[] */
@@ -71,8 +72,9 @@ class AccountInfo implements \Serializable{
 		$info->lastIp = null;
 		$info->lastSecret = null;
 		$info->lastUuid = null;
-		$info->lastSkin = null;
+		$info->lastSkinHash = null;
 		$info->opts = AccountOpts::defaultInstance($main);
+		$info->multiHash = [];
 		return $info;
 	}
 
@@ -85,7 +87,7 @@ class AccountInfo implements \Serializable{
 			"lastIp" => $this->lastIp,
 			"lastSecret" => base64_encode($this->lastSecret),
 			"lastUuid" => base64_encode($this->lastUuid),
-			"lastSkin" => base64_encode($this->lastSkin),
+			"lastSkinHash" => base64_encode($this->lastSkinHash),
 			"opts" => $this->opts,
 			"multiHash" => $this->multiHash,
 		]);
@@ -101,28 +103,30 @@ class AccountInfo implements \Serializable{
 		$this->lastIp = $data->lastIp;
 		$this->lastSecret = base64_decode($data->lastSecret);
 		$this->lastUuid = base64_decode($data->lastUuid);
-		$this->lastSkin = base64_decode($data->lastSkin);
+		$this->lastSkinHash = base64_decode($data->lastSkinHash);
 		$this->opts = (new AccountOpts)->extractObject($data->opts);
 		$this->multiHash = $data->multiHash;
 	}
 
 	/**
-	 * @param string   $tableName
-	 * @param callable $escapeFunc a callable that escapes the string and <b>adds quotes around it</b>
+	 * @param string    $tableName
+	 * @param Invokable $escapeFunc a callable that escapes the string and <b>adds quotes around it</b>
 	 *
 	 * @return string
 	 */
-	public function getDatabaseQuery($tableName, callable $escapeFunc){
+	public function getDatabaseQuery($tableName, Invokable $escapeFunc){
 		$name = $escapeFunc($this->name);
 		$hash = $this->binEscape($this->passwordHash);
 		$lastIp = $escapeFunc($this->lastIp);
 		$lastSecret = $this->binEscape($this->lastSecret);
 		$lastUuid = $this->binEscape($this->lastUuid);
-		$lastSkin = $this->binEscape(zlib_encode($this->lastSkin, ZLIB_ENCODING_DEFLATE));
+		$lastSkin = $this->binEscape($this->lastSkinHash);
 		$opts = $escapeFunc(serialize($this->opts));
 		$multiHash = $escapeFunc(json_encode($this->multiHash));
-		return ("INSERT INTO `$tableName` (name, hash, register, login, ip, secret, uuid, skin, opts, multihash) VALUES " . "(" .
-			"$name, $hash, $this->registerTime, $this->lastLogin, $lastIp, $lastSecret, $lastUuid, $lastSkin, $opts, $multiHash)");
+		return ("INSERT INTO `$tableName` (name, hash, register, login, ip, secret, uuid, skin, opts, multihash) VALUES (" .
+			"$name, $hash, $this->registerTime, $this->lastLogin, $lastIp, $lastSecret, $lastUuid, $lastSkin, $opts, $multiHash) " .
+			"ON DUPLICATE KEY UPDATE register=CASE WHEN register=-1 THEN VALUES(register) ELSE register END,hash=VALUES(hash), login=$this->lastLogin, " .
+			"ip=VALUES(ip), secret=VALUES(secret),uuid=VALUES(uuid),skin=VALUES(skin),opts=VALUES(opts),multihash=VALUES(multihash)");
 	}
 
 	public static function fromDatabaseRow($row){
@@ -134,7 +138,7 @@ class AccountInfo implements \Serializable{
 		$info->lastIp = $row["ip"];
 		$info->lastSecret = $row["secret"];
 		$info->lastUuid = $row["uuid"];
-		$info->lastSkin = $row["skin"];
+		$info->lastSkinHash = $row["skin"];
 		$info->opts = unserialize($row["opts"]);
 		$info->multiHash = json_decode($row["multihash"], true);
 		return $info;

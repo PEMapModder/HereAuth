@@ -28,6 +28,8 @@ use HereAuth\MultiHash\ImportedHash;
 use HereAuth\MultiHash\RenamedHash;
 use HereAuth\MultiHash\VanillaMd5ImportedHash;
 use HereAuth\MultiHash\VanillaSha256ImportedHash;
+use HereAuth\Task\CheckUserTimeoutTask;
+use HereAuth\Task\RemindLoginTask;
 use HereAuth\User\AccountInfo;
 use HereAuth\User\User;
 use pocketmine\event\Listener;
@@ -110,6 +112,9 @@ class HereAuth extends PluginBase implements Listener{
 			new ChangePasswordCommand($this),
 			new LockCommand($this),
 		]);
+		new CheckUserTimeoutTask($this);
+		new RemindLoginTask($this);
+
 		foreach($this->getServer()->getOnlinePlayers() as $player){
 			$this->startUser($player);
 		}

@@ -31,28 +31,32 @@ class MySQLDatabase implements Database{
 	public function __construct(HereAuth $main){
 		$this->main = $main;
 		$this->crd = MySQLCredentials::fromConfig($main->getConfig());
-		$this->mainTable = $main->getConfig()->getNested("Database.MySQL.TablePrefix", "hereauth_") . "accounts";
+		$this->mainTable = $main->getConfig()->getNested("Database.MySQL.TablePrefix", "hereauth_") . "accs";
 		$main->getLogger()->info("Initializing database...");
-		$db = $this->createMysqliInstance($this->crd);
+		$db = self::createMysqliInstance($this->crd);
 		$db->query("CREATE TABLE IF NOT EXISTS `$this->mainTable` (
 			name VARCHAR(63) PRIMARY KEY,
 			hash BINARY(64),
-			register INT,
-			login INT,
+			register INT UNSIGNED,
+			login INT UNSIGNED,
 			ip VARCHAR(50),
 			secret BINARY(16),
 			uuid BINARY(16),
-			skin VARBINARY(32767),
-			opts VARCHAR(32767),
-			multihash VARCHAR(32767)
+			skin BINARY(64),
+			opts VARCHAR(1024),
+			multihash VARCHAR(1024)
 		)");
+		if(isset($db->error) and $db->error){
+			throw new \RuntimeException($db->error);
+		}
+		$db->close();
 	}
 
 	public function loadFor($name, $identifier){
 		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new MySQLLoadPlayerTask($this, $name, $identifier));
 	}
 
-	public function saveData($name, AccountInfo $info){
+	public function saveData(AccountInfo $info){
 		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new MySQLSavePlayerTask($this, $info));
 	}
 
@@ -62,24 +66,27 @@ class MySQLDatabase implements Database{
 	}
 
 	public function unregisterAccount($name, callable $hook){
-		// TODO: Implement unregisterAccount() method.
+		$hookId = $this->main->getFridge()->store($hook);
+		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new MySQLUnregisterPlayerTask($this, $name, $hookId));
+	}
+
+	public function passesLimit($ip, $limit, $time, $identifier){
 	}
 
 	public function close(){
-		// TODO: Implement close() method.
 	}
 
 	/**
 	 * @param MySQLCredentials $crd
+	 * @param HereAuth         $main
 	 *
 	 * @return \mysqli
-	 *
-	 * @throws \InvalidKeyException
 	 */
-	public static function createMysqliInstance(MySQLCredentials $crd){
+	public static function createMysqliInstance(MySQLCredentials $crd, HereAuth $main = null){
 		/** @noinspection PhpUsageOfSilenceOperatorInspection */
 		$db = @new \mysqli($crd->host, $crd->username, $crd->password, $crd->schema, $crd->port, $crd->socket);
 		if($db->connect_error === "Unknown database '$crd->schema'"){
+			/** @noinspection PhpUsageOfSilenceOperatorInspection */
 			$db = @new \mysqli($crd->host, $crd->username, $crd->password, "", $crd->port, $crd->socket);
 			$createSchema = true;
 		}
@@ -87,8 +94,11 @@ class MySQLDatabase implements Database{
 			throw new \InvalidKeyException($db->connect_error);
 		}
 		if(isset($createSchema)){
+			if($main !== null){
+				$main->getLogger()->notice("Creating nonexistent `$crd->schema`...");
+			}
 			$db->query("CREATE SCHEMA `$crd->schema`");
-			if($db->error){
+			if(isset($db->error)){
 				throw new \InvalidKeyException("Schema does not exist and cannot be created");
 			}
 		}
@@ -107,5 +117,12 @@ class MySQLDatabase implements Database{
 	 */
 	public function getMainTable(){
 		return $this->mainTable;
+	}
+
+	/**
+	 * @return HereAuth
+	 */
+	public function getMain(){
+		return $this->main;
 	}
 }

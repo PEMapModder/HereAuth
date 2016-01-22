@@ -31,9 +31,10 @@ class MySQLSavePlayerTask extends AsyncQueryTask{
 
 	public function onRun(){
 		$db = $this->getMysqli();
-		$query = $this->info->getDatabaseQuery($this->tableName, function ($string) use ($db){
-			return "'" . $db->escape_string($string) . "'";
-		});
-		$db->query($query);
+		$query = $this->info->getDatabaseQuery($this->tableName, new MySQLEscapeInvokable($db));
+		$result = $db->query($query);
+		if($result === false){
+			echo "Error: $db->error\n";
+		}
 	}
 }

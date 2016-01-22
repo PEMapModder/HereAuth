@@ -81,6 +81,8 @@ $info = json_decode(file_get_contents("compile/info.json"));
 $NAME = $info->name;
 
 $CLASS = "Dev";
+$BUILD_NUMBER = $info->nextBuild++;
+
 $opts = getopt("", ["rc", "beta"]);
 if(isset($opts["beta"])){
 	$CLASS = "Beta";
@@ -88,7 +90,7 @@ if(isset($opts["beta"])){
 	$CLASS = "RC";
 }
 
-$VERSION = $info->version->major . "." . $info->version->minor . "-" . $CLASS . "#" . ($buildNumber = $info->nextBuild++);
+$VERSION = $info->version->major . "." . $info->version->minor . "-" . $CLASS . "#" . $BUILD_NUMBER;
 file_put_contents("compile/info.json", json_encode($info, JSON_BIGINT_AS_STRING | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
 $permissions = [];
@@ -127,7 +129,7 @@ addDir($phar, "src", "src");
 addDir($phar, "entry", "entry");
 addDir($phar, "resources", "resources");
 $phar->stopBuffering();
-echo "Created $NAME $CLASS #$buildNumber", PHP_EOL;
+echo "Created $NAME $CLASS #$BUILD_NUMBER", PHP_EOL;
 
 exec("git add " . escapeshellarg($file));
 if(is_file("priv/postCompile.php")){

@@ -93,7 +93,7 @@ RemindLogin:
     Register: Please register by typing password into chat
     Login: Please login by typing password into chat
   # Type of message.
-  # Options: chat, popup, tip
+  # Options: chat, popup, tip, none
   Type: popup
   # Frequency interval, in seconds, of how often to send the message
   # Value is rounded down to 0.05 second
@@ -248,7 +248,7 @@ Appearance:
   #   but without potion effect bubbles
   Invisible: false
   # Add text before player nametag
-  PrependNametag: "§7["
+  PrependNametag: "§c["
   # Add text after player nametag
   AppendNametag: "]"
 

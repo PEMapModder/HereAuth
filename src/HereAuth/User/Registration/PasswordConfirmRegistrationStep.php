@@ -40,6 +40,7 @@ final class PasswordConfirmRegistrationStep implements PasswordRegistrationStep{
 		$tempHash = $this->user->getRegistration()->getTempHash();
 		$this->user->getRegistration()->setTempHash("");
 		if($hash !== $tempHash){
+			$this->user->getPlayer()->sendMessage($this->user->getMain()->getConfig()->getNested("Messages.Register.PasswordMismatch", "Incorrect password"));
 			$this->user->getRegistration()->rewind();
 			return false;
 		}

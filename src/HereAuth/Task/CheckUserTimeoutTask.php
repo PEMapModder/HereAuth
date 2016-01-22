@@ -29,7 +29,7 @@ class CheckUserTimeoutTask extends PluginTask{
 
 	public function onRun($currentTick){
 		foreach($this->main->getUsers() as $user){
-			if(microtime(true) - $user->getLoadTime() >= ($timeout = $this->main->getConfig()->getNested("Login.Timeout", 120))){
+			if(!$user->isPlaying() and microtime(true) - $user->getLoadTime() >= ($timeout = $this->main->getConfig()->getNested("Login.Timeout", 120))){
 				$this->main->getAuditLogger()->logTimeout(strtolower($user->getPlayer()->getName()), $user->getPlayer()->getAddress());
 				$user->getPlayer()->kick("Failed to login in $timeout seconds", false);
 			}

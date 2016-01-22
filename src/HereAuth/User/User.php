@@ -57,6 +57,7 @@ class User{
 	private $changepwHash = null;
 
 	public function __construct(HereAuth $main, Player $player, AccountInfo $info){
+		$this->loadTime = microtime(true);
 		$this->main = $main;
 		$this->player = $player;
 		$this->accountInfo = $info;
@@ -111,7 +112,6 @@ class User{
 		$this->main->getAuditLogger()->logRegister(strtolower($this->player->getName()), $this->player->getAddress());
 		$this->getPlayer()->sendMessage($this->getMain()->getConfig()->getNested("Messages.Register.Completion", "registered"));
 		$this->accountInfo->registerTime = time();
-		$this->save();
 		$this->onAuth();
 		$this->main->getLogger()->debug("Registered HereAuth account '{$this->getPlayer()->getName()}'");
 	}
@@ -125,7 +125,7 @@ class User{
 			}
 		}
 		if($this->accountInfo->opts->multiSkin){
-			if($this->player->getSkinName() . $this->player->getSkinData() !== $this->accountInfo->lastSkin){
+			if(HereAuth::hash($this->player->getSkinData(), $this->player->getSkinName()) !== $this->accountInfo->lastSkinHash){
 				$this->main->getAuditLogger()->logFactor(strtolower($this->player->getName()), "skin", $this->player->getSkinName() . ":" . base64_encode($this->player->getSkinData()));
 				$this->player->kick("Incorrect skin!", false);
 				return false;
@@ -154,7 +154,7 @@ class User{
 		$this->accountInfo->lastUuid = $this->getPlayer()->getUniqueId()->toBinary();
 		$this->accountInfo->lastLogin = time();
 		$this->accountInfo->lastSecret = $this->getPlayer()->getClientSecret();
-		$this->accountInfo->lastSkin = $this->getPlayer()->getSkinName() . $this->getPlayer()->getSkinData();
+		$this->accountInfo->lastSkinHash = HereAuth::hash($this->getPlayer()->getSkinData(), $this->getPlayer()->getSkinName());
 		$this->accountInfo->lastIp = $this->getPlayer()->getAddress();
 		if($this->accountInfo->passwordHash){
 			$this->player->sendMessage("You have been authenticated.");
@@ -165,6 +165,7 @@ class User{
 			$this->getPlayer()->teleport($this->origPos);
 			$this->origPos = null;
 		}
+		$this->save();
 		$this->revertAppearance();
 	}
 

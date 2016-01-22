@@ -14,8 +14,6 @@
  * @author PEMapModder
  */
 
-echo "(Ignore the line above; it is just a harmless annoying Shebang line)", "\n";
-
 //if(version_compare(PHP_VERSION, "7.0.0", "<")){
 //	echo "Fatal: This entry script requires PHP >=7.0.0!\n";
 //	exit;

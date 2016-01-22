@@ -27,20 +27,25 @@ use pocketmine\scheduler\PluginTask;
 class RemindLoginTask extends PluginTask{
 	/** @type HereAuth $main */
 	private $main;
+	/** @type string */
+	private $type;
 
 	public function __construct(HereAuth $main){
 		parent::__construct($this->main = $main);
 		$period = (int) ($main->getConfig()->getNested("RemindLogin.Interval", 0.5) * 20);
+		$this->type = strtolower($main->getConfig()->getNested("RemindLogin.Type", "popup"));
+		if($this->type === "none"){
+			return;
+		}
 		$main->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this, $period, $period);
 	}
 
 	public function onRun($currentTick){
 		$reg = $this->main->getConfig()->getNested("RemindLogin.Message.Register", "Register please");
 		$log = $this->main->getConfig()->getNested("RemindLogin.Message.Login", "Login please");
-		$method = $this->main->getConfig()->getNested("RemindLogin.Type", "popup");
-		if($method === "chat"){
+		if($this->type === "chat"){
 			$fx = "sendMessage";
-		}elseif($method === "tip"){
+		}elseif($this->type === "tip"){
 			$fx = "sendTip";
 		}else{
 			$fx = "sendPopup";

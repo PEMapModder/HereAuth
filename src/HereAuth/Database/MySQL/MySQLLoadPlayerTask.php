@@ -41,6 +41,7 @@ class MySQLLoadPlayerTask extends AsyncQueryTask{
 		$result->close();
 		if(!is_array($row)){
 			$this->setResult(false, false);
+			return;
 		}
 		$row["hash"] = rtrim($row["hash"]);
 		$row["skin"] = zlib_decode($row["skin"]);
