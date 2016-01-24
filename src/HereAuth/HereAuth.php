@@ -145,7 +145,7 @@ class HereAuth extends PluginBase implements Listener{
 			return;
 		}
 		if(!isset($info->name)){
-			$info = AccountInfo::defaultInstance($this, $player);
+			$info = AccountInfo::defaultInstance($player, $this);
 		}
 		$this->users[$player->getId()] = new User($this, $player, $info);
 	}

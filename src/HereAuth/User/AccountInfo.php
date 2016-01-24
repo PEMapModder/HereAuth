@@ -63,9 +63,12 @@ class AccountInfo implements \Serializable{
 		return false;
 	}
 
-	public static function defaultInstance(HereAuth $main, Player $player){
+	public static function defaultInstance($player, $optsOrMain){
+		if($player instanceof Player){
+			$player = $player->getName();
+		}
 		$info = new self;
-		$info->name = strtolower($player->getName());
+		$info->name = strtolower($player);
 		$info->passwordHash = "";
 		$info->registerTime = -1;
 		$info->lastLogin = -1;
@@ -73,7 +76,11 @@ class AccountInfo implements \Serializable{
 		$info->lastSecret = null;
 		$info->lastUuid = null;
 		$info->lastSkinHash = null;
-		$info->opts = AccountOpts::defaultInstance($main);
+		if($optsOrMain instanceof AccountOpts){
+			$info->opts = $optsOrMain;
+		}elseif($optsOrMain instanceof HereAuth){
+			$info->opts = AccountOpts::defaultInstance($optsOrMain);
+		}
 		$info->multiHash = [];
 		return $info;
 	}
