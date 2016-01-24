@@ -2,14 +2,18 @@ language: php
 php: ["7.0"]
 sudo: false
 install:
-- php compile.php
+- echo | pecl install yaml
 - cd ..
 - mkdir pm
 - cd pm
 - wget -O - get.pocketmine.net | bash -s - -v development
 - mkdir plugins
-- cp $TRAVIS_BUILD_DIR/compile/HereAuth_Dev.phar plugins
+
+before_script:
+- cd $TRAVIS_BUILD_DIR
+- php compile.php
+- cp compile/HereAuth_Dev.phar ../pm/plugins
 
 script:
-- cd $TRAVIS_BUILD_DIR/../pm
+- cd ../pm
 - ./start.sh
