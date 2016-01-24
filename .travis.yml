@@ -3,6 +3,7 @@ php: ["7.0"]
 sudo: false
 install:
 - echo | pecl install yaml
+- echo "extension=yaml.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 - cd ..
 - mkdir pm
 - cd pm
