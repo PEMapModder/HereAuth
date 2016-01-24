@@ -269,7 +269,7 @@ Messages:
     # This is to notify that the password is too short. Remember to change the "4" if you changed the config above too.
     PasswordUnderflow: Your password is too short. Please type a longer password (at least 4 characters).
     # This is to notify that the password is too long. Remember to edit this if you enabled it.
-    PasswordOverflow: Your password is too long. Please type a longer password (at most 16 characters).
+    PasswordOverflow: Your password is too long. Please type a shorter password (at most 16 characters).
     # This is to notify that the password must contain something more than letters.
     PasswordPureLetters: Your password only contains English letters. It is insecure. Maybe add some numbers into it?
     # This is to notify that the password must contain something more than numbers.
