@@ -83,7 +83,7 @@ MultiSesCtrl:
   CheckIP: false
 
 # Block the player from directly talking his password into chat
-# This won't block the message if it contains anything other than the pssword, including spaces.
+# This won't block the message if it contains anything other than the password, including spaces.
 BlockPasswordChat: true
 
 # Send chat/tip/popup to remind player to register/login
