@@ -18,5 +18,16 @@ namespace HereAuth\Importer\Reader;
 use HereAuth\Importer\Writer\AccountWriter;
 
 abstract class AccountReader{
+	/** @type double */
+	private $progress;
+
 	public abstract function read($args, AccountWriter $writer);
+
+	public function getProgress(){
+		return $this->progress;
+	}
+
+	public function setProgress($progress){
+		$this->progress = $progress;
+	}
 }

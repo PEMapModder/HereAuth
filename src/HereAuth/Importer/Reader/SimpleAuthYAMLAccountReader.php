@@ -41,5 +41,6 @@ class SimpleAuthYAMLAccountReader extends AccountReader{
 			$info->lastLogin = $data["logindate"];
 			$writer->write($info);
 		}
+		$this->setProgress(1.0);
 	}
 }
