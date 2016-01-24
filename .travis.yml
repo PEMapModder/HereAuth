@@ -1,6 +1,8 @@
+language: php
+
 sudo: false
 install:
-- ./compile.php
+- php compile.php
 - cd ..
 - mkdir pm
 - cd pm
