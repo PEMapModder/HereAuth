@@ -23,12 +23,12 @@ use pocketmine\utils\TextFormat;
 
 class OptCommand extends HereAuthUserCommand{
 	public function __construct(HereAuth $main){
-		parent::__construct($main, "auth", "Change/View HereAuth options for yourself", "/auth <type> <value>, or /auth [page]", "opt");
+		parent::__construct($main, "auth", "Change/View HereAuth options for yourself", "/opt <type> <value>, or /opt [page]", "opt");
 	}
 
 	protected function onRun(array $args, User $user){
 		if(!isset($args[1])){
-			$pageNo = isset($args[0]) ? ((int) $args[0]) + 1 : 1;
+			$pageNo = isset($args[0]) ? ((int) $args[0]) : 1;
 			$page = $this->getMain()->page($this->getHelpMessage($user), $pageNo, $maxPages);
 			$out = TextFormat::GREEN . "Showing /opt page $pageNo of $maxPages:\n" . $page;
 			if($pageNo < $maxPages){
@@ -71,6 +71,28 @@ class OptCommand extends HereAuthUserCommand{
 				}
 				$opts->maskLoc = $boolVal;
 				return "$action location masking";
+			case "mlt":
+			case "mltarg":
+				$player = $user->getPlayer();
+				if(!$player->hasPermission("hereauth.auth.masking.location.target")){
+					return "You don't have permission to do this!";
+				}
+				if($value === "here"){
+					$value = "$player->x,$player->y,$player->z@" . $player->getLevel()->getName();
+				}elseif($value === "spawn"){
+					$value = "?spawn?@?current?";
+				}
+				$oldValue = $user->getAccountInfo()->opts->maskLocPos;
+				$user->getAccountInfo()->opts->maskLocPos = $value;
+				$loc = $user->getAccountInfo()->opts->getMaskLocation($player, true, $errors);
+				if(count($errors) > 0){
+					foreach($errors as $error){
+						$player->sendMessage("Error resolving your position: " . $error);
+					}
+					$user->getAccountInfo()->opts->maskLocPos = $oldValue;
+					return "Aborted";
+				}
+				return "Changed location masking target to " . "$loc->x:$loc->y:$loc->z in " . $loc->getLevel()->getName();
 			case "maskinv":
 			case "mi":
 				if(!$user->getPlayer()->hasPermission("hereauth.auth.masking.inventory")){
@@ -78,20 +100,38 @@ class OptCommand extends HereAuthUserCommand{
 				}
 				$opts->maskInv = $boolVal;
 				return "$action inventory masking";
-			case "mafskin":
-			case "mafs":
+			case "mfaskin":
+			case "mfas":
 				if(!$user->getPlayer()->hasPermission("hereauth.auth.multiauth.skin")){
 					return "You don't have permission to do this!";
 				}
 				$opts->multiSkin = $boolVal;
-				return "$action skin MAF";
-			case "mafip":
-			case "mafi":
+				return "$action skin MFA";
+			case "mfaip":
+			case "mfai":
 				if(!$user->getPlayer()->hasPermission("hereauth.auth.multiauth.ip")){
 					return "You don't have permission to do this!";
 				}
 				$opts->multiIp = $boolVal;
-				return "$action IP MAF";
+				return "$action IP MFA";
+			case "mfat":
+			case "mfatime":
+				if($value === "forever" or $value === "infinity"){
+					$value = -1;
+				}else{
+					$value = ((int) $value) * 86400;
+				}
+				$tier = "medium";
+				if($value === -1 or $value >= $this->getMain()->getConfig()->getNested("Commands.MultiAuth.BigBound", 30)){
+					$tier = "big";
+				}elseif($value <= $this->getMain()->getConfig()->getNested("Commands.MultiAuth.SmallBound", 1)){
+					$tier = "small";
+				}
+				$user->getAccountInfo()->opts->multiTimeout = $value;
+				if(!$user->getPlayer()->hasPermission("hereauth.auth.multiauth.timeout.$tier")){
+					return "You don't have permission to change your MFA timeout to a $tier number!";
+				}
+				return "Changed MFA timeout to " . ($value === -1 ? "forever" : (round($value / 86400, 1) . " day(s)"));
 		}
 		return "Unknown option \"$type\"";
 	}
@@ -130,6 +170,7 @@ class OptCommand extends HereAuthUserCommand{
 			"Inventory masking" => $opts->maskInv,
 			"Multi-factor auth (MFA) through skin" => $opts->multiSkin,
 			"MFA through IP address" => $opts->multiIp,
+			"MFA timeout" => ($opts->multiTimeout === -1) ? "forever" : ($opts->multiTimeout . " day(s)"),
 		];
 		foreach($optMap as $key => $value){
 			$output .= TextFormat::GOLD . $key . ": ";
@@ -137,23 +178,26 @@ class OptCommand extends HereAuthUserCommand{
 		}
 		$output .= TextFormat::AQUA . "====================\n";
 		$output .= TextFormat::LIGHT_PURPLE . "To change these values:\n";
-		$output .= "/auth as on|off ";
+		$output .= "/opt as on|off ";
 		$output .= TextFormat::GREEN . "Toggle AutoAuth through " . TextFormat::YELLOW . "client secret\n";
-		$output .= "/auth au on|off ";
+		$output .= "/opt au on|off ";
 		$output .= TextFormat::GREEN . "Toggle AutoAuth through " . TextFormat::YELLOW . "UUID\n";
-		$output .= "/auth ai on|off ";
+		$output .= "/opt ai on|off ";
 		$output .= TextFormat::GREEN . "Toggle AutoAuth through " . TextFormat::YELLOW . "IP\n";
-		$output .= "/auth ml on|off ";
+		$output .= "/opt ml on|off ";
 		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "location " . TextFormat::GREEN . "masking\n";
-		$output .= "/auth mlt here|<x,y,z@world> ";
+		$output .= "/opt mlt here|<x,y,z@world> ";
 		$output .= TextFormat::GREEN . "Set " . TextFormat::YELLOW . "location " . TextFormat::GREEN . "masking";
 		$output .= "\n";
-		$output .= "/auth mi on|off ";
+		$output .= "/opt mi on|off ";
 		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "inventory " . TextFormat::GREEN . "masking\n";
-		$output .= "/auth mafs on|off ";
-		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "skin MAF (multi-factor authentication)\n";
-		$output .= "/auth mafi on|off ";
-		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "IP MAF (multi-factor authentication)\n";
+		$output .= "/opt mfas on|off ";
+		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "skin MFA (multi-factor authentication)\n";
+		$output .= "/opt mfai on|off ";
+		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "IP MFA\n";
+		$output .= "/opt mfat <timeout|forever> ";
+		$output .= TextFormat::GREEN . "Set " . TextFormat::YELLOW . "MFA timeout in days " . TextFormat::GREEN . "(or \"forever\")\n";
+		$output .= "If /opt doesn't work, try /auth instead"; // <-- how would people even be able to execute this command if it doesn't work?
 		return $output;
 	}
 
@@ -172,13 +216,17 @@ class OptCommand extends HereAuthUserCommand{
 	}
 
 	private function parseBool($string){
-		return ($string === "t" or
+		return (
+			$string === "t" or
 			$string === "true" or
-			$string === "correct" or
+			$string === "right" or
+			$string === "correct" or // OCD
 			$string === "enable" or
 			$string === "on" or
 			$string === "i" or
+			$string === "1" or
 			$string === "y" or
-			$string === "yes");
+			$string === "yes"
+		);
 	}
 }

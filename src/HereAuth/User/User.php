@@ -117,6 +117,11 @@ class User{
 	}
 
 	public function checkMultiFactor(){
+		if($this->accountInfo->opts->multiTimeout !== -1){
+			if(time() - $this->accountInfo->lastLogin > $this->accountInfo->opts->multiTimeout * 86400){
+				return true;
+			}
+		}
 		if($this->accountInfo->opts->multiIp){
 			if($this->player->getAddress() !== $this->accountInfo->lastIp){
 				$this->main->getAuditLogger()->logFactor(strtolower($this->player->getName()), "ip", $this->player->getAddress());

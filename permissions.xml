@@ -17,6 +17,14 @@
 			<multiauth description="Allows toggling all multi-factor auth options" default="true">
 				<skin description="Allows toggling skin MFA options" default="true"/>
 				<ip description="Allows toggling IP MFA options" default="true"/>
+				<timeout description="Allows changing MFA timeout to anything" default="true">
+					<small description="Allows changing MFA timeout to a small number (defined in config.yml)"
+					       default="true"/>
+					<medium description="Allows changing MFA timeout to a medium number (defined in config.yml)"
+					        default="true"/>
+					<big description="Allows changing MFA timeout to infinity or a big number (defined in config.yml)"
+					     default="true"/>
+				</timeout>
 			</multiauth>
 		</auth>
 		<rename description="Allows renaming another player's account with /rename" default="op"/>

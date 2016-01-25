@@ -40,6 +40,8 @@ class AccountOpts extends stdClass implements Serializable{
 	public $multiSkin;
 	/** @type bool */
 	public $multiIp;
+	/** @type int */
+	public $multiTimeout;
 
 	public static function defaultInstance(HereAuth $main){
 		$opts = new self;
@@ -54,17 +56,23 @@ class AccountOpts extends stdClass implements Serializable{
 			$main->getLogger()->alert("Incorrect syntax for location-masking position (DefaultSettings.Masking.Location.Value)! Assuming as \"?spawn?@?current?\".");
 			$opts->maskLocPos = "?spawn?@?current?";
 		}
+		$opts->maskInv = $main->getConfig()->getNested("DefaultSettings.Masking.Inventory", true);
+		$opts->multiSkin = $main->getConfig()->getNested("DefaultSettings.MultiAuth.Skin", false);
+		$opts->multiIp = $main->getConfig()->getNested("DefaultSettings.MultiAuth.IP", false);
+		$opts->multiTimeout = $main->getConfig()->getNested("DefaultSettings.MultiAuthTimeout", 14);
 		return $opts;
 	}
 
-	public function getMaskLocation(Player $player){
+	public function getMaskLocation(Player $player, $ignoreMasking = false, &$warnings = []){
 		// always return player current location if there is an error
-		if(!$this->maskLoc){
+		if(!$ignoreMasking and !$this->maskLoc){
+			$warnings[] = "Location masking disabled";
 			return $player->getLocation();
 		}
 		if(!preg_match(/** @lang RegExp */
 			'#^((\?spawn\?)|((\-)?[0-9]+,(\-)?[0-9]+,(\-)?[0-9]+))@([^/\\\\]+)$#', $this->maskLocPos, $match)
 		){
+			$warnings[] = "Invalid location format";
 			return $player->getLocation();
 		}
 		$pos = $match[1];

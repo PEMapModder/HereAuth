@@ -42,7 +42,7 @@ DefaultSettings:
     # Players may be unable to login without realizing that they have dynamic IP if you enable this.
     IP: false
   # If the player has not been online for this number of days, turn off multi-factor auth for him.
-  # Put -1 to disable this.
+  # Put -1 for "forever".
   MultiAuthTimeout: 14
 
 # Disallow these if the player is registered but not authenticated
@@ -154,6 +154,12 @@ Commands:
   # The number of lines of content in each /help-alike command response, e.g. /opt
   # This does not include the header and footer lines (e.g. Showing /opt page of ? of ?)
   HelpPageSize: 8
+  # Options related to MultiAuth
+  MultiAuth:
+    # If an MFA timeout (in days) is small, it is between 0 and...
+    SmallBound: 1
+    # If an MFA timeout (in days) is big, it is greater than...
+    BigBound: 30
 
 # Options related to audit logger
 AuditLogger:
