@@ -28,8 +28,14 @@ class OptCommand extends HereAuthUserCommand{
 
 	protected function onRun(array $args, User $user){
 		if(!isset($args[1])){
-			$page = isset($args[0]) ? ((int) $args[0]) + 1 : 1;
-			return HereAuth::page($this->getHelpMessage($user), $page);
+			$pageNo = isset($args[0]) ? ((int) $args[0]) + 1 : 1;
+			$page = $this->getMain()->page($this->getHelpMessage($user), $pageNo, $maxPages);
+			$out = TextFormat::GREEN . "Showing /opt page $pageNo of $maxPages:\n" . $page;
+			if($pageNo < $maxPages){
+				/** @noinspection PhpWrongStringConcatenationInspection */
+				$out .= "\n" . TextFormat::GREEN . "Execute " . TextFormat::WHITE . "/opt " . ($pageNo + 1) . TextFormat::GREEN . " for more";
+			}
+			return $out;
 		}
 		$opts = $user->getAccountInfo()->opts;
 		$type = array_shift($args);
@@ -115,7 +121,7 @@ class OptCommand extends HereAuthUserCommand{
 				$maskLocString .= " world \"$world\"";
 			}
 		}
-		$opts = [
+		$optMap = [
 			"AutoAuth through client secret" => $opts->autoSecret,
 			"AutoAuth through UUID" => $opts->autoUuid,
 			"AutoAuth through IP address" => $opts->autoIp,
@@ -125,7 +131,7 @@ class OptCommand extends HereAuthUserCommand{
 			"Multi-factor auth (MFA) through skin" => $opts->multiSkin,
 			"MFA through IP address" => $opts->multiIp,
 		];
-		foreach($opts as $key => $value){
+		foreach($optMap as $key => $value){
 			$output .= TextFormat::GOLD . $key . ": ";
 			$output .= TextFormat::RED . $this->stringify($value) . "\n";
 		}
@@ -138,14 +144,15 @@ class OptCommand extends HereAuthUserCommand{
 		$output .= "/auth ai on|off ";
 		$output .= TextFormat::GREEN . "Toggle AutoAuth through " . TextFormat::YELLOW . "IP\n";
 		$output .= "/auth ml on|off ";
-		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "location masking\n";
+		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "location " . TextFormat::GREEN . "masking\n";
 		$output .= "/auth mlt here|<x,y,z@world> ";
-		$output .= TextFormat::GREEN . "Set " . TextFormat::YELLOW . "location masking\n";
+		$output .= TextFormat::GREEN . "Set " . TextFormat::YELLOW . "location " . TextFormat::GREEN . "masking";
+		$output .= "\n";
 		$output .= "/auth mi on|off ";
-		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "inventory masking\n";
-		$output .= "/auth mafs on|off";
+		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "inventory " . TextFormat::GREEN . "masking\n";
+		$output .= "/auth mafs on|off ";
 		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "skin MAF (multi-factor authentication)\n";
-		$output .= "/auth mafi on|off";
+		$output .= "/auth mafi on|off ";
 		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "IP MAF (multi-factor authentication)\n";
 		return $output;
 	}

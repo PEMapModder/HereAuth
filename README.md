@@ -8,7 +8,7 @@ HereAuth
 * [Latest release candidate build](compile/HereAuth_RC.phar)
 
 #### Latest Dev build number
-`139`
+`147`
 
 #### Latest Beta build number
 `136`
@@ -46,7 +46,7 @@ the Free Software Foundation, either version 3 of the License, or
 - [x] Count-limit or rate-limit accounts per IP (account-throttle)
 - [x] Time-based and attempts-based brute-force protection
 - [ ] Customized automatic authentication methods
-    - [ ] By "customized", I mean to customize _per player_! This basically refers to `/opt`
+    - [x] By "customized", I mean to customize _per player_! This basically refers to `/opt`
 - [ ] Customized multi-factor authentication methods
 - [ ] Customized data masking when player is not authenticated
     - [ ] Don't let impostors see what is in your inventory!
@@ -81,6 +81,6 @@ Open this phar directly with PHP binaries to automatically extract the config fi
 
 ## Code Statistics
 * 55 PHP source files
-* 3896 lines of PHP code
+* 3908 lines of PHP code
   * minus 825 lines of license header
-  * Total: 3071
+  * Total: 3083

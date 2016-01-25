@@ -17,6 +17,7 @@ namespace HereAuth;
 
 use HereAuth\Command\ChangePasswordCommand;
 use HereAuth\Command\LockCommand;
+use HereAuth\Command\OptCommand;
 use HereAuth\Command\RegisterCommand;
 use HereAuth\Command\UnregisterCommand;
 use HereAuth\Database\Database;
@@ -111,6 +112,7 @@ class HereAuth extends PluginBase implements Listener{
 			new UnregisterCommand($this),
 			new ChangePasswordCommand($this),
 			new LockCommand($this),
+			new OptCommand($this),
 		]);
 		new CheckUserTimeoutTask($this);
 		new RemindLoginTask($this);
@@ -249,14 +251,16 @@ class HereAuth extends PluginBase implements Listener{
 		return hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true);
 	}
 
-	public static function page($lines, $pageNumber, $pageSize = 10){
+	public function page($lines, &$pageNumber, &$maxPages){
 		if(!is_array($lines)){
 			$lines = explode("\n", $lines);
 		}
+		$pageSize = $this->getConfig()->getNested("Commands.HelpPageSize", 8);
 		$linesCount = count($lines);
 		$maxPages = ceil($linesCount / $pageSize);
 		$pageNumber = min($maxPages, max(1, $pageNumber));
-		return "Page $pageNumber of $maxPages:\n" . implode("\n", array_slice($lines, ($pageNumber - 1) * $pageNumber, $pageSize));
+		$output = implode("\n", array_slice($lines, ($pageNumber - 1) * $pageSize, $pageSize));
+		return $output;
 	}
 
 	/**

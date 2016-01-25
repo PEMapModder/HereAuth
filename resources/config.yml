@@ -150,6 +150,11 @@ Database:
     #   avoid duplicating table names.
     TablePrefix: hereauth_
 
+Commands:
+  # The number of lines of content in each /help-alike command response, e.g. /opt
+  # This does not include the header and footer lines (e.g. Showing /opt page of ? of ?)
+  HelpPageSize: 8
+
 # Options related to audit logger
 AuditLogger:
   # Where to log in?
