@@ -197,7 +197,7 @@ class OptCommand extends HereAuthUserCommand{
 		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "IP MFA\n";
 		$output .= "/opt mfat <timeout|forever> ";
 		$output .= TextFormat::GREEN . "Set " . TextFormat::YELLOW . "MFA timeout in days " . TextFormat::GREEN . "(or \"forever\")\n";
-		$output .= "If /opt doesn't work, try /auth instead"; // <-- how would people even be able to execute this command if it doesn't work?
+//		$output .= "If /opt doesn't work, try /auth instead"; // <-- how would people even be able to execute this command if it doesn't work?
 		return $output;
 	}
 

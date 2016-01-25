@@ -76,6 +76,9 @@ class User{
 
 			return;
 		}
+		if(!$this->checkMultiFactor()){
+			throw new \Exception("MFA failure");
+		}
 		if($info->opts->autoSecret and $player->getClientSecret() === $info->lastSecret and $this->callLogin(HereAuthLoginEvent::METHOD_CLIENT_SECRET)){
 			$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "secret");
 			$this->onAuth();

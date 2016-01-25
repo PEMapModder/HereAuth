@@ -204,12 +204,14 @@ class EventRouter implements Listener{
 
 	public function onMove(PlayerMoveEvent $event){
 		if($this->main->getConfig()->getNested("Blocking.Move.Locomotion", true)){
-			if($event->getFrom()->equals($event->getTo())){
+			if(!$event->getFrom()->equals($to = $event->getTo())){
 				$user = $this->main->getUserByPlayer($event->getPlayer());
+//				if(!($user !== null and $user->origPos !== null and $user->origPos->equals($to))){
 				if($user === null or !$user->isPlaying()){
 					$event->setCancelled();
 					return;
 				}
+//				}
 			}
 		}
 		if($this->main->getConfig()->getNested("Blocking.Move.Rotation", true)){

@@ -8,10 +8,10 @@ HereAuth
 * [Latest release candidate build](compile/HereAuth_RC.phar)
 
 #### Latest Dev build number
-`152`
+`162`
 
 #### Latest Beta build number
-`136`
+`163`
 
 #### Latest RC build number
 `nil`
@@ -47,15 +47,15 @@ the Free Software Foundation, either version 3 of the License, or
 - [x] Time-based and attempts-based brute-force protection
 - [ ] Customized automatic authentication methods
     - [x] By "customized", I mean to customize _per player_! This basically refers to `/opt`
-- [ ] Customized multi-factor authentication methods
+- [x] Customized multi-factor authentication methods
 - [ ] Customized data masking when player is not authenticated
-    - [ ] Don't let impostors see what is in your inventory!
-    - [ ] Don't let impostors see where you are!
-    - [ ] Don't let impostors see what messages other plugins want to send to you!
+    - [x] Don't let impostors see what is in your inventory!
+    - [x] Don't let impostors see where you are!
+    - [ ] Don't let impostors see what chat messages are sent to you!
 - [ ] Account management commands
     - [ ] `/chpw`: change password
     - [ ] `/unreg`: unregister account
-    - [ ] `/opt`: change account options (things in `config.yml`:`DefaultSettings`)
+    - [x] `/opt`: change account options (things in `config.yml`:`DefaultSettings`)
     - [x] `/lock`: temporarily logout (deauthenticate) without entirely leaving the server
     - [ ] `/rename`: rename account
 - [x] Server-customized events to block when not authenticated
@@ -81,6 +81,6 @@ Open this phar directly with PHP binaries to automatically extract the config fi
 
 ## Code Statistics
 * 55 PHP source files
-* 3969 lines of PHP code
+* 3978 lines of PHP code
   * minus 825 lines of license header
-  * Total: 3144
+  * Total: 3153

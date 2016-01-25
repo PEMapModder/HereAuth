@@ -61,7 +61,6 @@ class JsonDatabase implements Database{
 
 		$this->sql = new SQLite3($this->path . "reg.db");
 		$this->sql->exec("CREATE TABLE IF NOT EXISTS reg (ip TEXT, name TEXT PRIMARY KEY, time INTEGER)");
-		var_dump($this->sql->busyTimeout(1)); // outputs bool(true)
 	}
 
 	public function loadFor($name, $identifier){

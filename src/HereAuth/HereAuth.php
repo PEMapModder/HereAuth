@@ -149,7 +149,12 @@ class HereAuth extends PluginBase implements Listener{
 		if(!isset($info->name)){
 			$info = AccountInfo::defaultInstance($player, $this);
 		}
-		$this->users[$player->getId()] = new User($this, $player, $info);
+		try{
+			$user = new User($this, $player, $info);
+		}catch(\Exception $e){
+			return;
+		}
+		$this->users[$player->getId()] = $user;
 	}
 
 	public function closeUser(Player $player){
