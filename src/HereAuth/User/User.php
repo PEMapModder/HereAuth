@@ -17,6 +17,7 @@ namespace HereAuth\User;
 
 use HereAuth\Event\HereAuthAuthenticationEvent;
 use HereAuth\Event\HereAuthLoginEvent;
+use HereAuth\Event\HereAuthMultiFactorAuthEvent;
 use HereAuth\Event\HereAuthRegistrationCreationEvent;
 use HereAuth\Event\HereAuthRegistrationEvent;
 use HereAuth\HereAuth;
@@ -120,24 +121,32 @@ class User{
 	}
 
 	public function checkMultiFactor(){
+		$ev = new HereAuthMultiFactorAuthEvent($this);
 		if($this->accountInfo->opts->multiTimeout !== -1){
 			if(time() - $this->accountInfo->lastLogin > $this->accountInfo->opts->multiTimeout * 86400){
-				return true;
+				$ev->setCancelled();
 			}
 		}
 		if($this->accountInfo->opts->multiIp){
 			if($this->player->getAddress() !== $this->accountInfo->lastIp){
-				$this->main->getAuditLogger()->logFactor(strtolower($this->player->getName()), "ip", $this->player->getAddress());
-				$this->player->kick("Incorrect IP address!", false);
-				return false;
+				$ev->addFailureEntry("Incorrect IP address", "ip", $this->player->getAddress() . " instead of " . $this->accountInfo->lastIp);
 			}
 		}
 		if($this->accountInfo->opts->multiSkin){
-			if(HereAuth::hash($this->player->getSkinData(), $this->player->getSkinName()) !== $this->accountInfo->lastSkinHash){
-				$this->main->getAuditLogger()->logFactor(strtolower($this->player->getName()), "skin", $this->player->getSkinName() . ":" . base64_encode($this->player->getSkinData()));
-				$this->player->kick("Incorrect skin!", false);
-				return false;
+			$nowHash = HereAuth::hash($this->player->getSkinData(), $this->player->getSkinName());
+			if($nowHash !== $this->accountInfo->lastSkinHash){
+				$ev->addFailureEntry("Incorrect skin", "skin", "$nowHash instead of {$this->accountInfo->lastSkinHash}");
 			}
+		}
+		$this->main->getServer()->getPluginManager()->callEvent($ev);
+		if(!$ev->isCancelled() and count($ev->getFailures()) > 0){
+			$message = "Multi-factor authentication failed: ";
+			foreach($ev->getFailures() as $failure){
+				$this->main->getAuditLogger()->logFactor($this->player->getName(), $failure->type, $failure->data);
+				$message .= $failure->message . ", ";
+			}
+			$this->getPlayer()->kick(substr($message, 0, -2), false);
+			return false;
 		}
 		return true;
 	}
