@@ -15,15 +15,15 @@
 
 namespace HereAuth\MultiHash;
 
-/**
- * SHA-256 hash without salt
- */
-class VanillaSha256ImportedHash implements ImportedHash{
+class SaltlessArgumentedImportedHash implements ImportedHash{
 	public function getName(){
-		return "sha256-vanilla";
+		return "saltless";
 	}
 
 	public function hash($password, $salt, $suffix){
-		return hash("sha256", $password);
+		if(!in_array($suffix, hash_algos())){
+			throw new \InvalidArgumentException("Unknown hash algorithm $suffix");
+		}
+		return hash($suffix, $password);
 	}
 }

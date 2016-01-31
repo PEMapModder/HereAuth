@@ -17,14 +17,16 @@ namespace HereAuth\Importer\Reader;
 
 use HereAuth\Importer\Writer\AccountWriter;
 use HereAuth\User\AccountInfo;
-use HereAuth\User\AccountOpts;
+use HereAuth\Utils\FormattedArgumentMap;
 
 class SimpleAuthSQLite3AccountReader extends AccountReader{
-	/** @type AccountOpts */
-	private $defaultOpts;
-
-	public function read($args, AccountWriter $writer){
-		$path = "plugins/SimpleAuth/players.db"; // TODO customize
+	public function read($params, AccountWriter $writer){
+		$args = new FormattedArgumentMap($params);
+		$folder = $args->opt("i", "plugins/SimpleAuth");
+		if(!is_dir($folder)){
+			throw new \InvalidArgumentException("Input database $folder not found or is not a directory");
+		}
+		$path = rtrim($folder, DIRECTORY_SEPARATOR) . "/players.db";
 		if(!is_file($path)){
 			return;
 		}
@@ -40,7 +42,7 @@ class SimpleAuthSQLite3AccountReader extends AccountReader{
 			$info->lastIp = $row["lastip"];
 			$info->registerTime = $row["registerdate"];
 			$info->lastLogin = $row["logindate"];
-			$info->passwordHash = $row["hash"];
+			$info->passwordHash = hex2bin($row["hash"]);
 			$writer->write($info);
 			$this->setProgress($i / $total);
 		}

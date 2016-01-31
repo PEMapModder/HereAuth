@@ -80,20 +80,22 @@ class User{
 		if(!$this->checkMultiFactor()){
 			throw new \Exception("MFA failure");
 		}
-		if($info->opts->autoSecret and $player->getClientSecret() === $info->lastSecret and $this->callLogin(HereAuthLoginEvent::METHOD_CLIENT_SECRET)){
-			$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "secret");
-			$this->onAuth();
-			return;
-		}
-		if($info->opts->autoIp and $player->getAddress() === $info->lastIp and $this->callLogin(HereAuthLoginEvent::METHOD_IP)){
-			$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "ip");
-			$this->onAuth();
-			return;
-		}
-		if($info->opts->autoUuid and $player->getUniqueId()->toBinary() === $info->lastUuid and $this->callLogin(HereAuthLoginEvent::METHOD_UUID)){
-			$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "uuid");
-			$this->onAuth();
-			return;
+		if($info->passwordHash{0} !== "{"){
+			if($info->opts->autoSecret and $player->getClientSecret() === $info->lastSecret and $this->callLogin(HereAuthLoginEvent::METHOD_CLIENT_SECRET)){
+				$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "secret");
+				$this->onAuth();
+				return;
+			}
+			if($info->opts->autoIp and $player->getAddress() === $info->lastIp and $this->callLogin(HereAuthLoginEvent::METHOD_IP)){
+				$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "ip");
+				$this->onAuth();
+				return;
+			}
+			if($info->opts->autoUuid and $player->getUniqueId()->toBinary() === $info->lastUuid and $this->callLogin(HereAuthLoginEvent::METHOD_UUID)){
+				$this->main->getAuditLogger()->logLogin(strtolower($player->getName()), $player->getAddress(), "uuid");
+				$this->onAuth();
+				return;
+			}
 		}
 		$this->state = self::STATE_PENDING_LOGIN;
 		$this->player->sendMessage($main->getConfig()->getNested("Messages.Login.Query", "Please login"));
@@ -127,12 +129,12 @@ class User{
 				$ev->setCancelled();
 			}
 		}
-		if($this->accountInfo->opts->multiIp){
+		if($this->accountInfo->opts->multiIp and $this->accountInfo->lastIp !== null){
 			if($this->player->getAddress() !== $this->accountInfo->lastIp){
 				$ev->addFailureEntry("Incorrect IP address", "ip", $this->player->getAddress() . " instead of " . $this->accountInfo->lastIp);
 			}
 		}
-		if($this->accountInfo->opts->multiSkin){
+		if($this->accountInfo->opts->multiSkin and $this->accountInfo->lastSkinHash !== null){
 			$nowHash = HereAuth::hash($this->player->getSkinData(), $this->player->getSkinName());
 			if($nowHash !== $this->accountInfo->lastSkinHash){
 				$ev->addFailureEntry("Incorrect skin", "skin", "$nowHash instead of {$this->accountInfo->lastSkinHash}");
@@ -164,7 +166,7 @@ class User{
 		$this->main->getDataBase()->saveData($this->accountInfo);
 	}
 
-	public function onAuth(){
+	public function onAuth(){ // TODO $method
 		$this->main->getServer()->getPluginManager()->callEvent(new HereAuthAuthenticationEvent($this));
 		$this->state = self::STATE_PLAYING;
 		$this->loginAttempts = 0;

@@ -15,15 +15,14 @@
 
 namespace HereAuth\MultiHash;
 
-/**
- * MD5 message digest hash without salt
- */
-class VanillaMd5ImportedHash implements ImportedHash{
+use HereAuth\HereAuth;
+
+class SimpleAuthImportedHash implements ImportedHash{
 	public function getName(){
-		return "md5-vanilla";
+		return "simpleauth";
 	}
 
 	public function hash($password, $salt, $suffix){
-		return md5($password);
+		return bin2hex(HereAuth::hash($password, $salt));
 	}
 }

@@ -17,29 +17,43 @@ namespace HereAuth\Importer\Reader;
 
 use HereAuth\Importer\Writer\AccountWriter;
 use HereAuth\User\AccountInfo;
-use HereAuth\User\AccountOpts;
+use HereAuth\Utils\FormattedArgumentMap;
 
 class SimpleAuthYAMLAccountReader extends AccountReader{
-	/** @type AccountOpts */
-	private $defaultOpts;
-
-	public function read($args, AccountWriter $writer){
-		$dir = "plugins/SimpleAuth/players/"; // TODO customize
-		foreach(new \RegexIterator(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir)), '@/[A-za-z0-9_]{3,16}\\.yml$@') as $file){
-			if(!is_File($file)){
-				continue;
+	public function read($params, AccountWriter $writer){
+		$args = new FormattedArgumentMap($params);
+		$folder = $args->opt("i", "plugins/SimpleAuth");
+		if(!is_dir($folder)){
+			throw new \InvalidArgumentException("Input database $folder not found or is not a directory");
+		}
+		$folder = rtrim($folder, DIRECTORY_SEPARATOR) . "/";
+		$dir = $folder . "players/";
+		$alphas = array_filter(scandir($dir), function ($alpha) use ($dir){
+			return $alpha !== "." and strlen(rtrim($alpha, DIRECTORY_SEPARATOR)) === 1 and is_dir($dir . $alpha);
+		});
+		$alphaCnt = count($alphas);
+		foreach($alphas as $i => $alpha){
+			$base = $i / $alphaCnt;
+			$subdir = $dir . rtrim($alpha, DIRECTORY_SEPARATOR) . "/";
+			$names = scandir($subdir);
+			$namesCnt = count($names);
+			foreach($names as $cnt => $name){
+				$this->setProgress($base + $cnt / $namesCnt / $alphaCnt);
+				if(!preg_match('@^[A-za-z0-9_]{3,16}\\.yml$@', $name)){
+					continue;
+				}
+				$data = yaml_parse_file($subdir . $name);
+				$name = substr($name, 0, -4);
+				if(!is_array($data)){
+					continue;
+				}
+				$info = AccountInfo::defaultInstance($name, $this->defaultOpts);
+				$info->passwordHash = hex2bin($data["hash"]);
+				$info->lastIp = $data["lastip"];
+				$info->registerTime = $data["registerdate"];
+				$info->lastLogin = $data["logindate"];
+				$writer->write($info);
 			}
-			$name = basename($file, ".yml");
-			$data = yaml_parse_file($file);
-			if(!is_array($data)){
-				continue;
-			}
-			$info = AccountInfo::defaultInstance($name, $this->defaultOpts);
-			$info->passwordHash = $data["hash"];
-			$info->lastIp = $data["lastip"];
-			$info->registerTime = $data["registerdate"];
-			$info->lastLogin = $data["logindate"];
-			$writer->write($info);
 		}
 		$this->setProgress(1.0);
 	}

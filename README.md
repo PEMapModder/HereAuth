@@ -8,7 +8,7 @@ HereAuth
 * [Latest release candidate build](compile/HereAuth_RC.phar)
 
 #### Latest Dev build number
-`165`
+`166`
 
 #### Latest Beta build number
 `163`
@@ -80,7 +80,7 @@ the Free Software Foundation, either version 3 of the License, or
 Open this phar directly with PHP binaries to automatically extract the config files.
 
 ## Code Statistics
-* 57 PHP source files
-* 4095 lines of PHP code
-  * minus 855 lines of license header
-  * Total: 3240
+* 60 PHP source files
+* 4395 lines of PHP code
+  * minus 900 lines of license header
+  * Total: 3495

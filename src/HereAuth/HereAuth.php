@@ -27,8 +27,7 @@ use HereAuth\Logger\AuditLogger;
 use HereAuth\Logger\StreamAuditLogger;
 use HereAuth\MultiHash\ImportedHash;
 use HereAuth\MultiHash\RenamedHash;
-use HereAuth\MultiHash\VanillaMd5ImportedHash;
-use HereAuth\MultiHash\VanillaSha256ImportedHash;
+use HereAuth\MultiHash\SaltlessArgumentedImportedHash;
 use HereAuth\Task\CheckUserTimeoutTask;
 use HereAuth\Task\RemindLoginTask;
 use HereAuth\User\AccountInfo;
@@ -85,8 +84,7 @@ class HereAuth extends PluginBase implements Listener{
 		}
 		$this->fridge = new Fridge($this);
 		$this->addImportedHash(new RenamedHash);
-		$this->addImportedHash(new VanillaMd5ImportedHash);
-		$this->addImportedHash(new VanillaSha256ImportedHash);
+		$this->addImportedHash(new SaltlessArgumentedImportedHash);
 		if(!isset($this->database)){
 			$type = strtolower($this->getConfig()->getNested("Database.Type", "JSON"));
 			if($type === "mysql"){

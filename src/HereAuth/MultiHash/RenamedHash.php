@@ -18,7 +18,6 @@ namespace HereAuth\MultiHash;
 use HereAuth\HereAuth;
 
 class RenamedHash implements ImportedHash{
-
 	public function getName(){
 		return "renamed";
 	}

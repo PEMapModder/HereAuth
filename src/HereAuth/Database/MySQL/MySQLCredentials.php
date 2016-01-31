@@ -41,4 +41,19 @@ class MySQLCredentials{
 		$cred->socket = $config->getNested("Database.MySQL.Connection.Socket", "");
 		return $cred;
 	}
+
+	public function __toString(){
+		return "MySQL database at $this->username@$this->host:$this->port/$this->schema" . ($this->socket !== "" ? " (through socket $this->socket)" : "");
+	}
+
+	public function __debugInfo(){
+		return [
+			"host" => $this->host,
+			"port" => $this->port,
+			"username" => $this->username,
+			"password" => "{hashed in debug} *" . sha1(sha1($this->password, true)), // ref: http://www.pythian.com/blog/hashing-algorithm-in-mysql-password-2/
+			"schema" => $this->schema,
+			"socket" => $this->socket,
+		];
+	}
 }
