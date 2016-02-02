@@ -301,14 +301,23 @@ class User{
 		return !$ev->isCancelled();
 	}
 
-	public function lock(){
+	public function logout($message = "You have logged out"){
 		if(!$this->accountInfo->passwordHash){
 			return false;
 		}
 		$this->state = self::STATE_PENDING_LOGIN;
 		$this->loginAttempts = 0;
-		$this->getPlayer()->sendMessage("You have locked out.");
+		$this->getPlayer()->sendMessage($message);
 		return true;
+	}
+
+	public function resetAccount(){
+		$this->accountInfo = AccountInfo::defaultInstance($this->getPlayer(), $this->getMain());
+		$this->logout("Your account has been reset.");
+		$name = $this->getPlayer()->getName();
+		$this->getMain()->getDataBase()->unregisterAccount($name, function ($success) use ($name){
+			$this->getPlayer()->sendMessage($success ? "Account $name has been unregistered." : "Account $name does not exist.");
+		});
 	}
 
 	protected function initAppearance(){

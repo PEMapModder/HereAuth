@@ -1,0 +1,26 @@
+<?php
+
+/*
+ * HereAuth
+ *
+ * Copyright (C) 2016 PEMapModder
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * @author PEMapModder
+ */
+
+namespace HereAuth\Utils;
+
+final class StringUtils{
+	public static function endsWith($string, $suffix){
+		return substr($string, -strlen($suffix)) === $suffix;
+	}
+
+	public static function startsWith($string, $prefix){
+		return substr($string, 0, strlen($prefix)) === $prefix;
+	}
+}

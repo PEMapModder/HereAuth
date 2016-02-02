@@ -103,16 +103,19 @@ class AccountInfo implements \Serializable{
 
 	public function unserialize($string){
 		$data = json_decode($string);
-		$this->name = $data->name;
-		$this->passwordHash = base64_decode($data->passwordHash);
-		$this->registerTime = $data->registerTime;
-		$this->lastLogin = $data->lastLogin;
-		$this->lastIp = $data->lastIp;
-		$this->lastSecret = base64_decode($data->lastSecret);
-		$this->lastUuid = base64_decode($data->lastUuid);
-		$this->lastSkinHash = base64_decode($data->lastSkinHash);
-		$this->opts = (new AccountOpts)->extractObject($data->opts);
-		$this->multiHash = $data->multiHash;
+		try{
+			$this->name = $data->name;
+			$this->passwordHash = base64_decode($data->passwordHash);
+			$this->registerTime = $data->registerTime;
+			$this->lastLogin = $data->lastLogin;
+			$this->lastIp = $data->lastIp;
+			$this->lastSecret = base64_decode($data->lastSecret);
+			$this->lastUuid = base64_decode($data->lastUuid);
+			$this->lastSkinHash = base64_decode($data->lastSkinHash);
+			$this->opts = (new AccountOpts)->extractObject($data->opts);
+			$this->multiHash = $data->multiHash;
+		}catch(\ArrayOutOfBoundsException $e){
+		}
 	}
 
 	/**

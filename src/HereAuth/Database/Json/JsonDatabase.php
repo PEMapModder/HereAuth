@@ -100,6 +100,7 @@ class JsonDatabase implements Database{
 	}
 
 	public function unregisterAccount($name, callable $hook){
+		$name = strtolower($name);
 		$id = $this->main->getFridge()->store($hook);
 		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new JsonUnregisterTask($this, $name, $id));
 	}

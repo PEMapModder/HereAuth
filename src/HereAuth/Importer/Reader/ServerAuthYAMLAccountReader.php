@@ -28,14 +28,16 @@ class ServerAuthYAMLAccountReader extends AccountReader{
 		}
 		$folder = rtrim($folder, "/\\") . DIRECTORY_SEPARATOR;
 		$configFile = $folder . "config.yml";
-		if(is_file($configFile)){
-			try{
-				$hashMethod = yaml_parse($configFile)["passwordHash"];
-			}catch(\Exception $e){
+		if(($hashMethod = $args->opt("hash", null)) === null){
+			if(is_file($configFile)){
+				try{
+					$hashMethod = yaml_parse($configFile)["passwordHash"];
+				}catch(\Exception $e){
+					$hashMethod = "md5";
+				}
+			}else{
 				$hashMethod = "md5";
 			}
-		}else{
-			$hashMethod = "md5";
 		}
 		$users = $folder . "users/";
 		$this->setStatus("Collecting files");
@@ -55,7 +57,7 @@ class ServerAuthYAMLAccountReader extends AccountReader{
 			$ai->lastIp = $data["ip"];
 			$ai->registerTime = $data["firstlogin"];
 			$ai->lastLogin = $data["lastlogin"];
-			$ai->multiHash = [$hashMethod => $data["password"]];
+			$ai->multiHash = ["saltless;" . $hashMethod => $data["password"]];
 			$writer->write($ai);
 		}
 	}

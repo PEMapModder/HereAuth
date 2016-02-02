@@ -66,6 +66,7 @@ class MySQLDatabase implements Database{
 	}
 
 	public function unregisterAccount($name, callable $hook){
+		$name = strtolower($name);
 		$hookId = $this->main->getFridge()->store($hook);
 		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new MySQLUnregisterPlayerTask($this, $name, $hookId));
 	}

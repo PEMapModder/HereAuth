@@ -41,19 +41,25 @@ class SimpleAuthMySQLAccountReader extends AccountReader{
 		$this->cred->port = (int) $args->opt("port", $this->cred->port);
 		$this->cred->socket = $args->opt("socket", $this->cred->socket);
 		$this->cred->socket = $args->opt("sk", $this->cred->socket);
+		$this->setStatus("Connecting");
 		$conn = MySQLDatabase::createMysqliInstance($this->cred);
 		if(isset($conn->connect_error)){
 			throw new \InvalidArgumentException("Could not connect to $this->cred");
 		}
+		$this->setStatus("Preparing data");
 		$result = $conn->query("SELECT name, registerdate, logindate, lastip, hash FROM simpleauth_players");
+		$this->setStatus("Transferring data");
 		if($result instanceof \mysqli_result){
+			$this->setProgress(0.0);
+			$rows = 0;
 			while(is_array($row = $result->fetch_assoc())){
 				$info = AccountInfo::defaultInstance($result["name"], $this->defaultOpts);
 				$info->registerTime = (int) $result["registerdate"];
 				$info->lastLogin = (int) $result["logindate"];
 				$info->lastIp = $result["lastip"];
-				$info->passwordHash = hex2bin($result["lastip"]);
+				$info->passwordHash = hex2bin($result["hash"]);
 				$writer->write($info);
+				$this->setProgress((++$rows) / $result->num_rows);
 			}
 			$result->close();
 		}else{

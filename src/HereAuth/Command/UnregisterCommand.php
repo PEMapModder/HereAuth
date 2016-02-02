@@ -28,9 +28,14 @@ class UnregisterCommand extends HereAuthCommand{
 		if(!isset($args[0])){
 			return "Usage: " . $this->getUsage();
 		}
-		$this->getMain()->getDataBase()->unregisterAccount($name = $args[0], function ($success) use ($sender, $name){
-			$sender->sendMessage($success ? "Account $name has been unregistered." : "Account $name does not exist.");
-		});
+		$user = $this->getMain()->getUserByExactName($name = $args[0]);
+		if($user !== null){
+			$user->resetAccount();
+		}else{
+			$this->getMain()->getDataBase()->unregisterAccount($name, function ($success) use ($sender, $name){
+				$sender->sendMessage($success ? "Account $name has been unregistered." : "Account $name does not exist.");
+			});
+		}
 		return "Processing...";
 	}
 }

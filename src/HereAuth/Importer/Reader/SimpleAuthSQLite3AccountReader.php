@@ -30,10 +30,12 @@ class SimpleAuthSQLite3AccountReader extends AccountReader{
 		if(!is_file($path)){
 			return;
 		}
+		$this->setStatus("Opening database");
 		$db = new \SQLite3($path);
 		$result = $db->query("SELECT COUNT(*) AS cnt FROM players");
 		$total = $result->fetchArray(SQLITE3_ASSOC)["cnt"];
 		$result->finalize();
+		$this->setStatus("Preparing data");
 		$result = $db->query("SELECT name,registerdate,logindate,lastip,hash FROM players");
 		$i = 0;
 		while(is_array($row = $result->fetchArray(SQLITE3_ASSOC))){

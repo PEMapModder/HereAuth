@@ -29,6 +29,6 @@ class LockCommand extends HereAuthUserCommand{
 	}
 
 	protected function onRun(array $args, User $user){
-		return $user->lock();
+		return $user->logout();
 	}
 }

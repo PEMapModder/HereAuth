@@ -8,7 +8,7 @@ HereAuth
 * [Latest release candidate build](compile/HereAuth_RC.phar)
 
 #### Latest Dev build number
-`166`
+`168`
 
 #### Latest Beta build number
 `163`
@@ -53,8 +53,8 @@ the Free Software Foundation, either version 3 of the License, or
     - [x] Don't let impostors see where you are!
     - [ ] Don't let impostors see what chat messages are sent to you!
 - [ ] Account management commands
-    - [ ] `/chpw`: change password
-    - [ ] `/unreg`: unregister account
+    - [x] `/chpw`: change password
+    - [x] `/unreg`: unregister account
     - [x] `/opt`: change account options (things in `config.yml`:`DefaultSettings`)
     - [x] `/lock`: temporarily logout (deauthenticate) without entirely leaving the server
     - [ ] `/rename`: rename account
@@ -66,21 +66,21 @@ the Free Software Foundation, either version 3 of the License, or
 - [x] Server-customized messages
 - [x] Extensive audit logging
 - [ ] Database importing
-    - [ ] SimpleAuth
+    - [x] SimpleAuth
         - [x] YAML
         - [x] SQLite3
-        - [ ] MySQL
-    - [ ] ServerAuth
-        - [ ] ServerAuth hash algorithm detection
-        - [ ] YAML
-        - [ ] MySQL
+        - [x] MySQL
+    - [x] ServerAuth
+        - [x] ServerAuth hash algorithm detection
+        - [x] YAML
+        - [x] MySQL
 - [ ] An extensive API (W.I.P.)
 
 ## Entry script
 Open this phar directly with PHP binaries to automatically extract the config files.
 
 ## Code Statistics
-* 60 PHP source files
-* 4395 lines of PHP code
-  * minus 900 lines of license header
-  * Total: 3495
+* 62 PHP source files
+* 4576 lines of PHP code
+  * minus 930 lines of license header
+  * Total: 3646
