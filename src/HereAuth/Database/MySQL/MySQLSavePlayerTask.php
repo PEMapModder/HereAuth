@@ -22,19 +22,19 @@ class MySQLSavePlayerTask extends AsyncQueryTask{
 	private $info;
 	/** @type string */
 	private $tableName;
+	/** @type bool */
+	private $overwrite;
 
-	public function __construct(MySQLDatabase $db, AccountInfo $info){
+	public function __construct(MySQLDatabase $db, AccountInfo $info, $overwrite = true){
 		parent::__construct($db->getCredentials());
 		$this->info = $info;
 		$this->tableName = $db->getMainTable();
+		$this->overwrite = $overwrite;
 	}
 
 	public function onRun(){
 		$db = $this->getMysqli();
-		$query = $this->info->getDatabaseQuery($this->tableName, new MySQLEscapeInvokable($db));
-		$result = $db->query($query);
-		if($result === false){
-			echo "Error: $db->error\n";
-		}
+		$query = $this->info->getDatabaseQuery($this->tableName, new MySQLEscapeInvokable($db), $this->overwrite);
+		$db->query($query);
 	}
 }

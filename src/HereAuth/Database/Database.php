@@ -25,7 +25,7 @@ interface Database{
 
 	public function loadFor($name, $identifier);
 
-	public function saveData(AccountInfo $info);
+	public function saveData(AccountInfo $info, $overwrite = true);
 
 	public function renameAccount($oldName, $newName, callable $hook);
 

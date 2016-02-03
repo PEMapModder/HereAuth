@@ -48,9 +48,13 @@ class MySQLRenamePlayerTask extends AsyncQueryTask{
 		}
 		$oldHash = $row["hash"];
 		$changes = ["name='" . $db->escape_string($this->newName) . "'"];
-		if($oldHash !== "{RENAMED}"){ // if the account is already renamed, we don't need to multi-hash it again because it is already multi-hashed
-			$changes[] = "hash='" . $db->escape_string("{RENAMED}") . "'";
+		if($oldHash{0} !== "{"){ // if the account is multi-hashed, we don't need to do that again
+			$changes[] = "hash='{RENAMED}'";
 			$changes[] = "multihash='" . $db->escape_string(json_encode(["renamed;$this->oldName" => $oldHash])) . "'";
+		}elseif(!isset($row["multihash"])){
+			$multiHash = $row["multihash"];
+			$multiHash["nonhash:salt"] = $row["name"];
+			$changes[] = "multihash='" . $db->escape_string(json_encode($multiHash)) . "'";
 		}
 		$result = $db->query("UPDATE `$this->tableName` SET " . implode(",", $changes) . " WHERE name='{$db->escape_string($this->oldName)}'");
 		if($result === false){

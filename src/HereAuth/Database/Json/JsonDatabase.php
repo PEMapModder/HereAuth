@@ -67,9 +67,12 @@ class JsonDatabase implements Database{
 		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new JsonLoadFileTask($this->getPath($name), $identifier));
 	}
 
-	public function saveData(AccountInfo $info){
+	public function saveData(AccountInfo $info, $overwrite = true){
 		$name = $info->name;
 		$path = $this->getPath($name);
+		if(is_file($path) and !$overwrite){
+			return;
+		}
 		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new JsonSaveDataTask($path, $info->serialize(), $info->lastIp, $info->name, $info->registerTime));
 //		$stmt = $this->sql->prepare("SELECT time FROM reg WHERE name=:name");
 //		$stmt->bindValue(":name", strtolower($info->name), SQLITE3_TEXT);

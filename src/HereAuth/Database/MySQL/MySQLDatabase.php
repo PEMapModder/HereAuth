@@ -56,8 +56,8 @@ class MySQLDatabase implements Database{
 		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new MySQLLoadPlayerTask($this, $name, $identifier));
 	}
 
-	public function saveData(AccountInfo $info){
-		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new MySQLSavePlayerTask($this, $info));
+	public function saveData(AccountInfo $info, $overwrite = true){
+		$this->main->getServer()->getScheduler()->scheduleAsyncTask(new MySQLSavePlayerTask($this, $info, $overwrite));
 	}
 
 	public function renameAccount($oldName, $newName, callable $hook){

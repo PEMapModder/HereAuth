@@ -311,13 +311,15 @@ class User{
 		return true;
 	}
 
-	public function resetAccount(){
+	public function resetAccount($callback = null){
+		if(!is_callable($callback)){
+			$callback = function (){
+			};
+		}
 		$this->accountInfo = AccountInfo::defaultInstance($this->getPlayer(), $this->getMain());
-		$this->logout("Your account has been reset.");
+		$this->logout("This account has been reset.");
 		$name = $this->getPlayer()->getName();
-		$this->getMain()->getDataBase()->unregisterAccount($name, function ($success) use ($name){
-			$this->getPlayer()->sendMessage($success ? "Account $name has been unregistered." : "Account $name does not exist.");
-		});
+		$this->getMain()->getDataBase()->unregisterAccount($name, $callback);
 	}
 
 	protected function initAppearance(){

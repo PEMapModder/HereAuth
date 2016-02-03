@@ -8,10 +8,10 @@ HereAuth
 * [Latest release candidate build](compile/HereAuth_RC.phar)
 
 #### Latest Dev build number
-`168`
+`169`
 
 #### Latest Beta build number
-`163`
+`170`
 
 #### Latest RC build number
 `nil`
@@ -63,7 +63,7 @@ the Free Software Foundation, either version 3 of the License, or
 - [x] Enforced password control
     - [x] Maybe we are being nanny, but we should disallow players to have weak passwords!
 - [x] Require custom extra information from players
-- [x] Server-customized messages
+- [ ] Server-customized messages
 - [x] Extensive audit logging
 - [ ] Database importing
     - [x] SimpleAuth
@@ -80,7 +80,7 @@ the Free Software Foundation, either version 3 of the License, or
 Open this phar directly with PHP binaries to automatically extract the config files.
 
 ## Code Statistics
-* 62 PHP source files
-* 4576 lines of PHP code
-  * minus 930 lines of license header
-  * Total: 3646
+* 63 PHP source files
+* 4665 lines of PHP code
+  * minus 945 lines of license header
+  * Total: 3720

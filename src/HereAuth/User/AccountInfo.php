@@ -46,7 +46,14 @@ class AccountInfo implements \Serializable{
 		if(strlen($this->passwordHash) === strlen($hash)){
 			return $hash === $this->passwordHash;
 		}
+		$salt = strtolower($this->name);
+		if(isset($this->multiHash["nonhash:salt"])){
+			$salt = $this->multiHash["nonhash:salt"];
+		}
 		foreach($this->multiHash as $type => $value){
+			if($type === "nonhash:salt"){
+				continue;
+			}
 			$array = explode(";", $type);
 			$name = $array[0];
 			$suffix = isset($array[1]) ? $array[1] : "";
@@ -54,7 +61,7 @@ class AccountInfo implements \Serializable{
 			if($iHash === null){
 				continue;
 			}
-			if($iHash->hash($password, strtolower($this->name), $suffix) === $value){
+			if($iHash->hash($password, $salt, $suffix) === $value){
 				$this->multiHash = [];
 				$this->passwordHash = $hash;
 				return true;
@@ -122,9 +129,11 @@ class AccountInfo implements \Serializable{
 	 * @param string    $tableName
 	 * @param Invokable $escapeFunc a callable that escapes the string and <b>adds quotes around it</b>
 	 *
+	 * @param bool      $overwrite
+	 *
 	 * @return string
 	 */
-	public function getDatabaseQuery($tableName, Invokable $escapeFunc){
+	public function getDatabaseQuery($tableName, Invokable $escapeFunc, $overwrite = true){
 		$name = $escapeFunc($this->name);
 		$hash = $this->binEscape($this->passwordHash);
 		$lastIp = $escapeFunc($this->lastIp);
@@ -133,10 +142,14 @@ class AccountInfo implements \Serializable{
 		$lastSkin = $this->binEscape($this->lastSkinHash);
 		$opts = $escapeFunc(serialize($this->opts));
 		$multiHash = $escapeFunc(json_encode($this->multiHash));
-		return ("INSERT INTO `$tableName` (name, hash, register, login, ip, secret, uuid, skin, opts, multihash) VALUES (" .
-			"$name, $hash, $this->registerTime, $this->lastLogin, $lastIp, $lastSecret, $lastUuid, $lastSkin, $opts, $multiHash) " .
-			"ON DUPLICATE KEY UPDATE register=CASE WHEN register=-1 THEN VALUES(register) ELSE register END,hash=VALUES(hash), login=$this->lastLogin, " .
-			"ip=VALUES(ip), secret=VALUES(secret),uuid=VALUES(uuid),skin=VALUES(skin),opts=VALUES(opts),multihash=VALUES(multihash)");
+		$output = "INSERT INTO `$tableName` (name, hash, register, login, ip, secret, uuid, skin, opts, multihash) VALUES";
+		$output .= "($name, $hash, $this->registerTime, $this->lastLogin, $lastIp, $lastSecret, $lastUuid, $lastSkin, $opts, $multiHash)";
+		if($overwrite){
+			$output .= "ON DUPLICATE KEY UPDATE register=CASE WHEN register=-1 THEN VALUES(register) ELSE register END,";
+			$output .= "hash=VALUES(hash), login=$this->lastLogin, ip=VALUES(ip), secret=VALUES(secret), uuid=VALUES(uuid),";
+			$output .= "skin=VALUES(skin), opts=VALUES(opts), multihash=VALUES(multihash)";
+		}
+		return $output;
 	}
 
 	public static function fromDatabaseRow($row){

@@ -110,7 +110,7 @@ class ServerAuthMySQLAccountReader extends AccountReader{
 				$info->lastLogin = (int) $result["lastlogin"];
 				$info->lastIp = $result["ip"];
 				$info->passwordHash = "{IMPORTED}";
-				$info->multiHash = ["saltless;" . $hashMethod => $result["password"]];
+				$info->multiHash = ["saltless;" . $hashMethod => $result["password"], "nonhash:salt" => strtolower($result["user"])];
 				$writer->write($info);
 				$this->setProgress((++$rows) / $result->num_rows);
 			}

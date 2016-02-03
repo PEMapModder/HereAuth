@@ -57,7 +57,7 @@ class ServerAuthYAMLAccountReader extends AccountReader{
 			$ai->lastIp = $data["ip"];
 			$ai->registerTime = $data["firstlogin"];
 			$ai->lastLogin = $data["lastlogin"];
-			$ai->multiHash = ["saltless;" . $hashMethod => $data["password"]];
+			$ai->multiHash = ["saltless;" . $hashMethod => $data["password"], "nonhash:salt" => strtolower($name)];
 			$writer->write($ai);
 		}
 	}
