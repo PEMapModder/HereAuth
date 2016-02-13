@@ -1,5 +1,7 @@
 HereAuth
 ===
+
+[![Join the chat at https://gitter.im/PEMapModder/HereAuth](https://badges.gitter.im/PEMapModder/HereAuth.svg)](https://gitter.im/PEMapModder/HereAuth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 > Your auth plugin is here, for you. The PocketMine auth plugin with the most customization ever.
 
 ### Phar download
