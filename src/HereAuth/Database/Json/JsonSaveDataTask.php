@@ -43,11 +43,13 @@ class JsonSaveDataTask extends AsyncTask{
 	}
 
 	public function onRun(){
-		$old = json_decode(zlib_decode(file_get_contents($this->path)));
-		if(is_object($old)){
-			$time = $old->registerTime;
-			if($time !== -1){
-				$this->isReg = false;
+		if(is_file($this->path)){
+			$old = json_decode(zlib_decode(file_get_contents($this->path)));
+			if(is_object($old)){
+				$time = $old->registerTime;
+				if($time !== -1){
+					$this->isReg = false;
+				}
 			}
 		}
 		file_put_contents($this->path, zlib_encode($this->contents, ZLIB_ENCODING_DEFLATE));
