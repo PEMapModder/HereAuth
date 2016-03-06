@@ -35,7 +35,8 @@ class AccountOpts extends stdClass implements Serializable{
 	public $maskLocPos;
 	/** @type bool */
 	public $maskInv;
-	// TODO: mask chat messages through packets
+	/** @type bool */
+	public $maskChat = true;
 	/** @type bool */
 	public $multiSkin;
 	/** @type bool */
@@ -57,6 +58,7 @@ class AccountOpts extends stdClass implements Serializable{
 			$opts->maskLocPos = "?spawn?@?current?";
 		}
 		$opts->maskInv = $main->getConfig()->getNested("DefaultSettings.Masking.Inventory", true);
+		$opts->maskChat = $main->getConfig()->getNested("DefaultSettings.Masking.Chat", true);
 		$opts->multiSkin = $main->getConfig()->getNested("DefaultSettings.MultiAuth.Skin", false);
 		$opts->multiIp = $main->getConfig()->getNested("DefaultSettings.MultiAuth.IP", false);
 		$opts->multiTimeout = $main->getConfig()->getNested("DefaultSettings.MultiAuthTimeout", 14);

@@ -168,6 +168,7 @@ class OptCommand extends HereAuthUserCommand{
 			"Location masking" => $opts->maskLoc,
 			"Location masking position" => $maskLocString,
 			"Inventory masking" => $opts->maskInv,
+			"Chat masking" => $opts->maskChat,
 			"Multi-factor auth (MFA) through skin" => $opts->multiSkin,
 			"MFA through IP address" => $opts->multiIp,
 			"MFA timeout" => ($opts->multiTimeout === -1) ? "forever" : ($opts->multiTimeout . " day(s)"),
@@ -191,6 +192,8 @@ class OptCommand extends HereAuthUserCommand{
 		$output .= "\n";
 		$output .= "/opt mi on|off ";
 		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "inventory " . TextFormat::GREEN . "masking\n";
+		$output .= "/opt mc on|off ";
+		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "chat " . TextFormat::GREEN . "masking\n";
 		$output .= "/opt mfas on|off ";
 		$output .= TextFormat::GREEN . "Toggle " . TextFormat::YELLOW . "skin MFA (multi-factor authentication)\n";
 		$output .= "/opt mfai on|off ";

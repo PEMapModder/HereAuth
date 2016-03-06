@@ -34,6 +34,8 @@ DefaultSettings:
       Value: "?spawn?@?current?"
     # Do not send the inventory to the player unless he is auto-authenticated.
     Inventory: true
+    #
+    Chat: true
   # Multi-factor authentication
   # Apart from checking the password (or through AutoAuth), also check these:
   MultiAuth:
