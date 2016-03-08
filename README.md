@@ -10,7 +10,7 @@ HereAuth
 * [Latest release candidate build](compile/HereAuth_RC.phar)
 
 #### Latest Dev build number
-`178`
+`179`
 
 #### Latest Beta build number
 `174`
