@@ -28,19 +28,20 @@
 			</multiauth>
 		</auth>
 		<rename description="Allows renaming another player's account with /rename" default="op"/>
-		<renameme description="Allows renaming own account with /renameme" default="false"/>
+		<!--<renameme description="Allows renaming own account with /renameme" default="false"/>-->
 		<register description="Allows using the /register command if not registered" default="true"/>
 		<unregister description="Allows using the /unregister command to unregister another player's account"
 		            default="op"/>
-		<unregisterme description="Allows using the /unregisterme command to unregister own account" default="false"/>
+		<!--<unregisterme description="Allows using the /unregisterme command to unregister own account" default="false"/>-->
 		<lock description="Allows using the /lock command" default="true"/>
 		<changepw description="Allows using the /chpw command to change password" default="true"/>
 		<import description="Allows using the /import command to import (and override) data from any external incompatible database"
 		        default="op">
-			<provider description="Allows importing data from any external database" default="op">
-				<simpleauth description="Allows importing data from SimpleAuth" default="op"/>
-				<serverauth description="Allows importing data from ServerAuth" default="op"/>
-			</provider>
+			<command description="Allows using the /import command"/>
+			<!--<provider description="Allows importing data from any external database" default="op">-->
+			<!--<simpleauth description="Allows importing data from SimpleAuth" default="op"/>-->
+			<!--<serverauth description="Allows importing data from ServerAuth" default="op"/>-->
+			<!--</provider>-->
 			<merge description="Allows importing data without overriding current data" default="op"/>
 			<overwrite description="Allows importing data with current ata being overriden" default="op"/>
 		</import>

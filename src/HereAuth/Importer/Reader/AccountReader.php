@@ -16,10 +16,14 @@
 namespace HereAuth\Importer\Reader;
 
 use HereAuth\HereAuth;
+use HereAuth\Importer\ImporterThread;
 use HereAuth\Importer\Writer\AccountWriter;
 use HereAuth\User\AccountOpts;
 
 abstract class AccountReader{
+	/** @type ImporterThread */
+	private $thread;
+
 	/** @type AccountOpts */
 	protected $defaultOpts;
 
@@ -28,8 +32,9 @@ abstract class AccountReader{
 	/** @type double */
 	private $progress;
 
-	public function __construct(HereAuth $main){
+	public function __construct(HereAuth $main, ImporterThread $thread){
 		$this->defaultOpts = AccountOpts::defaultInstance($main);
+		$this->thread = $thread;
 	}
 
 	public abstract function read($params, AccountWriter $writer);
@@ -40,6 +45,7 @@ abstract class AccountReader{
 
 	protected function setProgress($progress){
 		$this->progress = $progress;
+		$this->thread->progress = $progress;
 	}
 
 	/**
@@ -54,5 +60,6 @@ abstract class AccountReader{
 	 */
 	public function setStatus($status){
 		$this->status = $status;
+		$this->thread->status = $status;
 	}
 }

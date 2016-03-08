@@ -16,6 +16,7 @@
 namespace HereAuth;
 
 use HereAuth\Command\ChangePasswordCommand;
+use HereAuth\Command\ImportCommand;
 use HereAuth\Command\LockCommand;
 use HereAuth\Command\OptCommand;
 use HereAuth\Command\RegisterCommand;
@@ -23,15 +24,24 @@ use HereAuth\Command\UnregisterCommand;
 use HereAuth\Database\Database;
 use HereAuth\Database\Json\JsonDatabase;
 use HereAuth\Database\MySQL\MySQLDatabase;
+use HereAuth\Importer\AttachedImporterThread;
+use HereAuth\Importer\ImporterThread;
+use HereAuth\Importer\Reader\ServerAuthMySQLAccountReader;
+use HereAuth\Importer\Reader\ServerAuthYAMLAccountReader;
+use HereAuth\Importer\Reader\SimpleAuthMySQLAccountReader;
+use HereAuth\Importer\Reader\SimpleAuthSQLite3AccountReader;
+use HereAuth\Importer\Reader\SimpleAuthYAMLAccountReader;
 use HereAuth\Logger\AuditLogger;
 use HereAuth\Logger\StreamAuditLogger;
 use HereAuth\MultiHash\ImportedHash;
 use HereAuth\MultiHash\RenamedHash;
 use HereAuth\MultiHash\SaltlessArgumentedImportedHash;
+use HereAuth\Task\CheckImportThreadTask;
 use HereAuth\Task\CheckUserTimeoutTask;
 use HereAuth\Task\RemindLoginTask;
 use HereAuth\User\AccountInfo;
 use HereAuth\User\User;
+use pocketmine\command\CommandSender;
 use pocketmine\event\Listener;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
@@ -41,7 +51,7 @@ use pocketmine\utils\Utils;
 class HereAuth extends PluginBase implements Listener{
 	/** @type string */
 	private static $NAME = "HereAuth";
-	/** @var User[] */
+	/** @type User[] */
 	private $users = [];
 	/** @type EventRouter */
 	private $router;
@@ -51,8 +61,12 @@ class HereAuth extends PluginBase implements Listener{
 	private $auditLogger;
 	/** @type ImportedHash[] */
 	private $importedHashes = [];
+	/** @type string[][] */
+	private $accountReaders = [];
 	/** @type Fridge */
 	private $fridge;
+	/** @type AttachedImporterThread|null */
+	private $importThread = null;
 
 	public function onLoad(){
 		self::$NAME = $this->getName();
@@ -111,9 +125,58 @@ class HereAuth extends PluginBase implements Listener{
 			new ChangePasswordCommand($this),
 			new LockCommand($this),
 			new OptCommand($this),
+			new ImportCommand($this),
 		]);
 		new CheckUserTimeoutTask($this);
 		new RemindLoginTask($this);
+		$this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new CheckImportThreadTask($this), 20, 20);
+
+		$this->registerAccountReader("serverauth-mysql", ServerAuthMySQLAccountReader::class, <<<EOU
+Usage: /import [,overwrite] serverauth-mysql [parameters...]
+You can specify these parameters: (default to config.yml MySQL settings)
+,h <MySQL host address>
+,u <MySQL username>
+,p <MySQL password>
+,s <MySQL schema/database name>
+,port <MySQL port>
+,sk <path to MySQL socket file>
+E.g: /import serverauth-mysql ,h example.com ,u "my name" ,p ""
+EOU
+		);
+		$this->registerAccountReader("serverauth-yaml", ServerAuthYAMLAccountReader::class, <<<EOU
+Usage: /import [,overwrite] serverauth-yaml [parameters...]
+You can specify these parameters:
+,i <path to ServerAuth data folder>
+,hash <special hash algorithm used by ServerAuth>
+E.g: /import serverauth-yaml ,i /root/plugins/ServerAuth
+EOU
+		);
+		$this->registerAccountReader("simpleauth-mysql", SimpleAuthMySQLAccountReader::class, <<<EOU
+Usage: /import [,overwrite] simpleauth-mysql [parameters...]
+You can specify these parameters. Default to config.yml MySQL settings.
+,h <MySQL host address>
+,u <MySQL username>
+,p <MySQL password>
+,s <MySQL schema/database name>
+,port <MySQL port>
+,sk <path to MySQL socket file>
+E.g: /import simpleauth-mysql ,h example.com ,u "my name" ,p ""
+EOU
+		);
+		$this->registerAccountReader("simpleauth-sqlite", SimpleAuthSQLite3AccountReader::class, <<<EOU
+Usage: /import [,overwrite] simpleauth-sqlite [parameters...]
+You can specify these parameters:
+,i <path to SimpleAuth data folder>
+E.g: /import simpleauth-sqlite ,i /root/plugins/SimpleAuth
+EOU
+		);
+		$this->registerAccountReader("simpleauth-yaml", SimpleAuthYAMLAccountReader::class, <<<EOU
+Usage: /import [,overwrite] simpleauth-yaml [parameters...]
+You can specify these parameters:
+,i <path to SimpleAuth data folder>
+E.g: /import simpleauth-yaml ,i /root/plugins/SimpleAuth
+EOU
+		);
 
 		foreach($this->getServer()->getOnlinePlayers() as $player){
 			$this->startUser($player);
@@ -164,12 +227,12 @@ class HereAuth extends PluginBase implements Listener{
 	}
 
 	public function getUserById($id){
-		return isset($this->users[$id]) ? $this->users[$id] : null;
+		return $this->users[$id] ?? null;
 	}
 
 	public function getUserByPlayer(Player $player){
 		$id = $player->getId();
-		return isset($this->users[$id]) ? $this->users[$id] : null;
+		return $this->users[$id] ?? null;
 	}
 
 	public function getUserByName($name){
@@ -210,6 +273,14 @@ class HereAuth extends PluginBase implements Listener{
 		unset($this->database);
 	}
 
+	public function getNewImporterThread(bool $overwrite, string $readerClass, array $readerArgs) : ImporterThread{
+		if(!isset($this->database)){
+			throw new \InvalidStateException("Database not initialized");
+		}
+		return new ImporterThread($this, $overwrite, $readerClass, $readerArgs,
+			$this->getDataBase()->getAccountWriter($writerArgs), $writerArgs);
+	}
+
 	/**
 	 * @return User[]
 	 */
@@ -233,7 +304,53 @@ class HereAuth extends PluginBase implements Listener{
 	}
 
 	public function getImportedHash($type){
-		return isset($this->importedHashes[$type]) ? $this->importedHashes[$type] : null;
+		return $this->importedHashes[$type] ?? null;
+	}
+
+	public function registerAccountReader(string $name, string $class, string $usage){
+		$this->accountReaders[$name] = [$class, $usage];
+	}
+
+	/**
+	 * @param string $name
+	 *
+	 * @return string[]|null
+	 */
+	public function getAccountReader(string $name){
+		return $this->accountReaders[$name] ?? null;
+	}
+
+	/**
+	 * @return string[][]
+	 */
+	public function getAccountReaders() : array{
+		return $this->accountReaders;
+	}
+
+	/**
+	 * @return AttachedImporterThread|null
+	 */
+	public function getImportThread(){
+		return $this->importThread;
+	}
+
+	public function setImportThread(CommandSender $commandSender, ImporterThread $thread){
+		$this->importThread = new AttachedImporterThread($commandSender, $thread);
+	}
+
+	public function checkThread(){
+		if($this->importThread !== null){
+			if($this->importThread->thread->hasCompleted()){
+				$this->importThread->sender->sendMessage("Import completed!");
+				$this->importThread = null;
+			}else{
+				$sender = $this->importThread->sender;
+				if($sender instanceof Player){
+					$thread = $this->importThread->thread;
+					$sender->sendPopup(round($thread->progress * 100) . "% done: " . $thread->status . "...");
+				}
+			}
+		}
 	}
 
 	/**

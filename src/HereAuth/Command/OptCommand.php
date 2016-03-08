@@ -28,7 +28,7 @@ class OptCommand extends HereAuthUserCommand{
 
 	protected function onRun(array $args, User $user){
 		if(!isset($args[1])){
-			$pageNo = isset($args[0]) ? ((int) $args[0]) : 1;
+			$pageNo = (int) ($args[0] ?? 1);
 			$page = $this->getMain()->page($this->getHelpMessage($user), $pageNo, $maxPages);
 			$out = TextFormat::GREEN . "Showing /opt page $pageNo of $maxPages:\n" . $page;
 			if($pageNo < $maxPages){

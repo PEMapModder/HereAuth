@@ -14,10 +14,10 @@
  * @author PEMapModder
  */
 
-//if(version_compare(PHP_VERSION, "7.0.0", "<")){
-//	echo "Fatal: This entry script requires PHP >=7.0.0!\n";
-//	exit;
-//}
+if(version_compare(PHP_VERSION, "7.0.0", "<")){
+	echo "Fatal: This entry script requires PHP >=7.0.0!\n";
+	exit;
+}
 
 if(!defined("STDIN")){
 	define("STDIN", fopen("php://stdin", "r"));
@@ -36,6 +36,15 @@ spl_autoload_register(function ($class){
 if(!defined("STDIN")){
 	$define = "define";
 	$define("STDIN", fopen("php://stdin", "r"));
+}
+
+$action = getopt("", ["action:"])["action"] ?? "?";
+
+switch(strtolower($action)){
+	case "import":
+		$opts = getopt("", ["input-type:", "input:", "output-type:", "output:"]);
+		if(!isset($opts["input-type"], $opts["input"], $opts["output-type"], $opts["output"])){
+		}
 }
 
 echo "Please type a command to continue.\n";

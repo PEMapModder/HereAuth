@@ -16,12 +16,12 @@
 namespace HereAuth;
 
 class Fridge{
-	/** @var HereAuth */
+	/** @type HereAuth */
 	private $main;
 	private $warningSize = 10;
-	/** @var object[]|callable[] */
+	/** @type object[]|callable[] */
 	private $objects = [];
-	/** @var int */
+	/** @type int */
 	private $nextObjectId = 0;
 
 	public function __construct(HereAuth $main){

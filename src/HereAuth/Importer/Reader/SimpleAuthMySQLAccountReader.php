@@ -18,6 +18,7 @@ namespace HereAuth\Importer\Reader;
 use HereAuth\Database\MySQL\MySQLCredentials;
 use HereAuth\Database\MySQL\MySQLDatabase;
 use HereAuth\HereAuth;
+use HereAuth\Importer\ImporterThread;
 use HereAuth\Importer\Writer\AccountWriter;
 use HereAuth\User\AccountInfo;
 use HereAuth\Utils\FormattedArgumentMap;
@@ -26,8 +27,8 @@ class SimpleAuthMySQLAccountReader extends AccountReader{
 	/** @type MySQLCredentials */
 	private $cred;
 
-	public function __construct(HereAuth $main){
-		parent::__construct($main);
+	public function __construct(HereAuth $main, ImporterThread $thread){
+		parent::__construct($main, $thread);
 		$this->cred = MySQLCredentials::fromConfig($main->getConfig());
 	}
 

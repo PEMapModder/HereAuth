@@ -17,6 +17,7 @@ namespace HereAuth\Database\MySQL;
 
 use HereAuth\Database\Database;
 use HereAuth\HereAuth;
+use HereAuth\Importer\Writer\MySQLAccountWriter;
 use HereAuth\User\AccountInfo;
 
 class MySQLDatabase implements Database{
@@ -96,7 +97,7 @@ class MySQLDatabase implements Database{
 		}
 		if(isset($createSchema)){
 			if($main !== null){
-				$main->getLogger()->notice("Creating nonexistent `$crd->schema`...");
+				$main->getLogger()->notice("Creating nonexistent MySQL schema `$crd->schema`...");
 			}
 			$db->query("CREATE SCHEMA `$crd->schema`");
 			if(isset($db->error)){
@@ -125,5 +126,10 @@ class MySQLDatabase implements Database{
 	 */
 	public function getMain(){
 		return $this->main;
+	}
+
+	public function getAccountWriter(&$writerArgs) : string{
+		$writerArgs = [$this->crd, $this->mainTable];
+		return MySQLAccountWriter::class;
 	}
 }

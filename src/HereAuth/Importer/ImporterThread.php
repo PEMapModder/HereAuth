@@ -32,22 +32,41 @@ class ImporterThread extends Thread{
 	private $writerArgs;
 	/** @type AccountOpts */
 	private $defaultOpts;
+	/** @type bool */
+	private $overwrite;
 
-	public function __construct(HereAuth $main, $readerClass, $readerArgs, $writerClass, $writerArgs){
+	/** @type AccountReader */
+	private $reader;
+
+	/** @type string */
+	public $status;
+	/** @type double */
+	public $progress;
+	/** @type bool */
+	public $completed = false;
+
+	public function __construct(HereAuth $main, bool $overwrite, string $readerClass, array $readerArgs, string $writerClass, array $writerArgs){
 		$this->readerClass = $readerClass;
-		$this->readerArgs = $readerArgs;
+		$this->readerArgs = serialize($readerArgs);
 		$this->writerClass = $writerClass;
-		$this->writerArgs = $writerArgs;
-		$this->defaultOpts = AccountOpts::defaultInstance($main);
+		$this->writerArgs = serialize($writerArgs);
+		$this->defaultOpts = serialize(AccountOpts::defaultInstance($main));
+		$this->overwrite = $overwrite;
+		$rc = $this->readerClass;
+		/** @type AccountReader $reader */
+		$this->reader = new $rc;
 	}
 
 	public function run(){
-		$rc = $this->readerClass;
+		$reader = $this->reader;
 		$wc = $this->writerClass;
-		/** @type AccountReader $reader */
-		$reader = new $rc;
 		/** @type AccountWriter $writer */
-		$writer = new $wc(...$this->writerArgs);
-		$reader->read($this->readerArgs, $writer);
+		$writer = new $wc($this->overwrite, ...unserialize($this->writerArgs));
+		$reader->read(unserialize($this->readerArgs), $writer);
+		$this->completed = true;
+	}
+
+	public function hasCompleted() : bool{
+		return $this->completed;
 	}
 }

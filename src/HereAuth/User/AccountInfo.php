@@ -56,7 +56,7 @@ class AccountInfo implements \Serializable{
 			}
 			$array = explode(";", $type);
 			$name = $array[0];
-			$suffix = isset($array[1]) ? $array[1] : "";
+			$suffix = $array[1] ?? "";
 			$iHash = $main->getImportedHash($name);
 			if($iHash === null){
 				continue;

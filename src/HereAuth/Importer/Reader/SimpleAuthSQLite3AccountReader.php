@@ -26,7 +26,7 @@ class SimpleAuthSQLite3AccountReader extends AccountReader{
 		if(!is_dir($folder)){
 			throw new \InvalidArgumentException("Input database $folder not found or is not a directory");
 		}
-		$path = rtrim($folder, DIRECTORY_SEPARATOR) . "/players.db";
+		$path = rtrim($folder, "/\\") . "/players.db";
 		if(!is_file($path)){
 			return;
 		}

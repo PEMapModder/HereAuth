@@ -17,6 +17,7 @@ namespace HereAuth\Database\Json;
 
 use HereAuth\Database\Database;
 use HereAuth\HereAuth;
+use HereAuth\Importer\Writer\JSONAccountWriter;
 use HereAuth\Task\KickPlayerTask;
 use HereAuth\User\AccountInfo;
 use SQLite3;
@@ -125,14 +126,16 @@ class JsonDatabase implements Database{
 		}
 	}
 
+	public function getAccountWriter(&$writerArgs) : string{
+		$writerArgs = [$this->path, $this->indexEnabled, $this->main->getDescription()->getVersion()];
+		return JSONAccountWriter::class;
+	}
+
 	public function getPath($name){
 		return $this->path . ($this->indexEnabled ? ($name{0} . "/") : "") . strtolower($name) . ".json";
 	}
 
-	/**
-	 * @return SQLite3
-	 */
-	public function getSQLite3(){
+	public function getSQLite3() : SQLite3{
 		return $this->sql;
 	}
 }

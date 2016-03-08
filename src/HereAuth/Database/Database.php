@@ -33,5 +33,7 @@ interface Database{
 
 	public function passesLimit($ip, $limit, $time, $identifier);
 
+	public function getAccountWriter(&$writerArgs) : string;
+
 	public function close();
 }

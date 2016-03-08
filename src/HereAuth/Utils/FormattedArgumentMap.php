@@ -98,11 +98,11 @@ class FormattedArgumentMap{
 	}
 
 	public function opt($name, $default = null){
-		return isset($this->opts[$name]) ? $this->opts[$name] : $default;
+		return $this->opts[$name] ?? $default;
 	}
 
 	public function plain($offset, $default = null){
-		return isset($this->plain[$offset]) ? $this->plain[$offset] : $default;
+		return $this->plain[$offset] ?? $default;
 	}
 
 	/**

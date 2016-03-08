@@ -243,7 +243,7 @@ class EventRouter implements Listener{
 		$user = $this->main->getUserByPlayer($player);
 		$pk = $event->getPacket();
 		if($pk::NETWORK_ID === Info::CONTAINER_SET_CONTENT_PACKET){
-			/** @var ContainerSetContentPacket $pk */
+			/** @type ContainerSetContentPacket $pk */
 			if($user !== null and $user->isPlaying()){
 				return;
 			}

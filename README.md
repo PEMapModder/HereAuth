@@ -10,7 +10,7 @@ HereAuth
 * [Latest release candidate build](compile/HereAuth_RC.phar)
 
 #### Latest Dev build number
-`172`
+`178`
 
 #### Latest Beta build number
 `174`
@@ -68,13 +68,17 @@ the Free Software Foundation, either version 3 of the License, or
 - [ ] Server-customized messages
 - [x] Extensive audit logging
 - [ ] Database importing
-    - [x] SimpleAuth
-        - [x] YAML
-        - [x] SQLite3
-        - [x] MySQL
-    - [x] ServerAuth
-        - [x] ServerAuth hash algorithm detection
-        - [x] YAML
+    - [x] AccountReader
+        - [x] SimpleAuth
+            - [x] YAML
+            - [x] SQLite3
+            - [x] MySQL
+        - [x] ServerAuth
+            - [x] ServerAuth hash algorithm detection
+            - [x] YAML
+            - [x] MySQL
+    - [x] AccountWriter
+        - [x] JSON
         - [x] MySQL
 - [ ] An extensive API (W.I.P.)
 
@@ -82,7 +86,7 @@ the Free Software Foundation, either version 3 of the License, or
 Open this phar directly with PHP binaries to automatically extract the config files.
 
 ## Code Statistics
-* 63 PHP source files
-* 4668 lines of PHP code
-  * minus 945 lines of license header
-  * Total: 3723
+* 68 PHP source files
+* 5082 lines of PHP code
+  * minus 1020 lines of license header
+  * Total: 4062
