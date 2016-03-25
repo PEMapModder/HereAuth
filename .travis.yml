@@ -20,5 +20,5 @@ script:
 - cd $TRAVIS_BUILD_DIR && chmod +x lint.sh && ./lint.sh
 - cd ../pm && ((echo stop; echo) | php PocketMine-MP.phar --no-wizard --debug.level=2 --disable-readline)
 
-after_success:
+deploy:
 - curl -T plugins/HereAuth_Dev.phar https://transfer.sh/HereAuth-Travis.phar
