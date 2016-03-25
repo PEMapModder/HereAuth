@@ -1,0 +1,25 @@
+# This file can be used to setup the HereAuth HTTP Interface web server (HHI)
+
+# General HHI options
+General:
+  # Whether to turn on HHI. If set to false, the whole file will be ignored and nothing about HHI will be done.
+  Enabled: false
+  # The TCP port to bind to
+  Port: 8081
+
+# Options related to the RESTful API on HHI
+RestfulApi:
+  # Whether to enable RESTful API
+  Enabled: true
+  # If the value is "/api", clients will use the API like `http://yourserver.com:8081/api?
+  Path: "/api"
+  # Formats of output supported: json, yaml
+  # Clients can specify this in the Acept header
+  Format: [json]
+  # Types of actions supported
+  # Action classes options: login
+  # Response options: user.lastip, user.lastskin,
+  Actions:
+    - Name: login
+      Class: login
+      Response: [user.lastip, ]

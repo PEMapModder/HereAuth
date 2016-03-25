@@ -2,12 +2,13 @@ language: php
 php: ["7.0"]
 sudo: false
 install:
-- echo | pecl install yaml
-- echo "extension=yaml.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+- pecl install channel://pecl.php.net/pthreads-3.1.6
+- pecl install channel://pecl.php.net/weakref-0.3.2
+- echo | pecl install channel://pecl.php.net/yaml-2.0.0RC7
 - cd ..
 - mkdir pm
 - cd pm
-- wget -O - get.pocketmine.net | bash -s - -v development
+- wget -q -O PocketMine-MP.phar http://pmt.mcpe.me/pmb/dl.php?branch=master
 - mkdir plugins
 
 before_script:
@@ -16,5 +17,8 @@ before_script:
 - cp compile/HereAuth_Dev.phar ../pm/plugins
 
 script:
-- cd ../pm
-- ./start.sh
+- cd $TRAVIS_BUILD_DIR && chmod +x lint.sh && ./lint.sh
+- cd ../pm && ((echo stop; echo) | php PocketMine-MP.phar --no-wizard --debug.level=2 --disable-readline)
+
+after_success:
+- curl -T plugins/HereAuth_Dev.phar https://transfer.sh/HereAuth-Travis.phar

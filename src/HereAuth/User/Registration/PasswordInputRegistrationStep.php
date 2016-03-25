@@ -28,7 +28,7 @@ final class PasswordInputRegistrationStep implements PasswordRegistrationStep{
 	}
 
 	public function getMessage(){
-		return $this->user->getMain()->getConfig()->getNested("Messages.Register.PasswordInput", "Please type password");
+		return $this->user->getMain()->getMessages()->getNested("Register.PasswordInput", "Please type password");
 	}
 
 	public function onSubmit($value){

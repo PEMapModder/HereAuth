@@ -1,0 +1,35 @@
+# This file contains all messages sent to players in the plugin.
+
+# Messages related to login
+Login:
+  # This message is shown when a player has to type password to login.
+  Query: "Please type your password directly into chat. If you didn't register this account, please choose another username."
+  # This message is shown when a player has typed the password wrongly.
+  # $CHANCES will be replaced by the number of chances left.
+  WrongPass: "Wrong password! Please try again. You have $CHANCES more chance(s)."
+# Messages related to registration
+Register:
+  # This message is shown if the player is required to register without doing /register first
+  ImplicitRegister: This server uses HereAuth to protect your account from being impersonated.
+  # This is to ask the player for the first password input.
+  PasswordInput: "Please type your password directly into chat. Other players can't see it."
+  # This is to notify that the password is too short. Remember to change the "4" if you changed the config above too.
+  PasswordUnderflow: Your password is too short. Please type a longer password (at least 4 characters).
+  # This is to notify that the password is too long. Remember to edit this if you enabled it.
+  PasswordOverflow: Your password is too long. Please type a shorter password (at most 16 characters).
+  # This is to notify that the password must contain something more than letters.
+  PasswordPureLetters: Your password only contains English letters. It is insecure. Maybe add some numbers into it?
+  # This is to notify that the password must contain something more than numbers.
+  PasswordPureNumbers: Your password only contains numbers. It is insecure. Maybe add some letters into it?
+  # This is to notify that the password must not start with slashes
+  PasswordSlashes: Your password must not start with slashes! Remember, type your password into chat DIRECTLY.
+  # This is to ask the player to confirm the second password input.
+  PasswordConfirm: Please type your password again to confirm.
+  # This is the message when the player typed the password wrongly the second time.
+  PasswordMismatch: The two passwords you typed are not the same! Please type again. You can type a different password this time.
+  Completion: "Congratulations! Your account has been registered."
+
+# Messages related to chatting
+Chat:
+  # This is to warn that the player is typing his password unnecessarily
+  DirectPass: "Don't tell other players your password!"

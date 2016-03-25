@@ -32,7 +32,7 @@ final class PasswordConfirmRegistrationStep implements PasswordRegistrationStep{
 	 * @return string|TextContainer
 	 */
 	public function getMessage(){
-		return $this->user->getMain()->getConfig()->getNested("Messages.Register.PasswordConfirm", "Please repeat");
+		return $this->user->getMain()->getMessages()->getNested("Register.PasswordConfirm", "Please repeat");
 	}
 
 	public function onSubmit($value){
@@ -40,7 +40,7 @@ final class PasswordConfirmRegistrationStep implements PasswordRegistrationStep{
 		$tempHash = $this->user->getRegistration()->getTempHash();
 		$this->user->getRegistration()->setTempHash("");
 		if($hash !== $tempHash){
-			$this->user->getPlayer()->sendMessage($this->user->getMain()->getConfig()->getNested("Messages.Register.PasswordMismatch", "Incorrect password"));
+			$this->user->getPlayer()->sendMessage($this->user->getMain()->getMessages()->getNested("Register.PasswordMismatch", "Incorrect password"));
 			$this->user->getRegistration()->rewind();
 			return false;
 		}

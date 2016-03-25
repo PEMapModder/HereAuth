@@ -46,11 +46,16 @@ use pocketmine\event\Listener;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
+use pocketmine\utils\Config;
 use pocketmine\utils\Utils;
 
 class HereAuth extends PluginBase implements Listener{
 	/** @type string */
 	private static $NAME = "HereAuth";
+	/** @type Config */
+	private $messages;
+//	/** @type Config */
+//	private $http;
 	/** @type User[] */
 	private $users = [];
 	/** @type EventRouter */
@@ -70,6 +75,7 @@ class HereAuth extends PluginBase implements Listener{
 
 	public function onLoad(){
 		self::$NAME = $this->getName();
+		assert(in_array($this->getServer()->getName(), ["PocketMine-MP", "PocketMine-Soft"]), "Haters Gonna Hate");
 		if(!is_dir($this->getDataFolder())){
 			mkdir($this->getDataFolder(), 0777, true);
 		}
@@ -88,6 +94,14 @@ class HereAuth extends PluginBase implements Listener{
 			file_put_contents($configPath, $config);
 			$configPaths[] = $configPath;
 		}
+		if(!is_file($messagesPath = $this->getDataFolder() . "messages.yml")){
+			$this->saveResource("messages.yml");
+			$configPaths[] = $messagesPath;
+		}
+//		if(!is_file($messagesPath = $this->getDataFolder() . "http.yml")){
+//			$this->saveResource("http.yml");
+//			$configPaths[] = $messagesPath;
+//		}
 		if(count($configPaths) > 0){
 			$action = $new ? "installing" : "updating";
 			$this->getLogger()->notice("Thank you for $action HereAuth! New config file(s) have been generated at the following location(s):");
@@ -96,6 +110,8 @@ class HereAuth extends PluginBase implements Listener{
 			}
 			$this->getLogger()->info("You may want to edit the config file(s) to customize HereAuth for your server.");
 		}
+		$this->messages = new Config($this->getDataFolder() . "messages.yml");
+//		$this->http = new Config($this->getDataFolder() . "http.yml");
 		$this->fridge = new Fridge($this);
 		$this->addImportedHash(new RenamedHash);
 		$this->addImportedHash(new SaltlessArgumentedImportedHash);
@@ -358,6 +374,10 @@ EOU
 	 */
 	public function getFridge(){
 		return $this->fridge;
+	}
+
+	public function getMessages() : Config{
+		return $this->messages;
 	}
 
 	/**

@@ -98,7 +98,7 @@ class User{
 			}
 		}
 		$this->state = self::STATE_PENDING_LOGIN;
-		$this->player->sendMessage($main->getConfig()->getNested("Messages.Login.Query", "Please login"));
+		$this->player->sendMessage($main->getMessages()->getNested("Login.Query", "Please login"));
 		$this->initAppearance();
 	}
 
@@ -106,7 +106,7 @@ class User{
 		$this->state = self::STATE_REGISTERING;
 		$this->main->getServer()->getPluginManager()->callEvent($ev = new HereAuthRegistrationCreationEvent($this));
 		$this->registration = $ev->getRegistration();
-		$this->getPlayer()->sendMessage($this->getMain()->getConfig()->getNested("Messages.Register.ImplicitRegister", "This server uses HereAuth to protect your account."));
+		$this->getPlayer()->sendMessage($this->getMain()->getMessages()->getNested("Register.ImplicitRegister", "This server uses HereAuth to protect your account."));
 		$this->registration->init();
 	}
 
@@ -116,7 +116,7 @@ class User{
 	public function onRegistrationCompleted(){
 		$this->main->getServer()->getPluginManager()->callEvent(new HereAuthRegistrationEvent($this));
 		$this->main->getAuditLogger()->logRegister(strtolower($this->player->getName()), $this->player->getAddress());
-		$this->getPlayer()->sendMessage($this->getMain()->getConfig()->getNested("Messages.Register.Completion", "registered"));
+		$this->getPlayer()->sendMessage($this->getMain()->getMessages()->getNested("Register.Completion", "registered"));
 		$this->accountInfo->registerTime = time();
 		$this->onAuth();
 		$this->main->getLogger()->debug("Registered HereAuth account '{$this->getPlayer()->getName()}'");
@@ -203,7 +203,7 @@ class User{
 				if($left <= 0){
 					$this->getPlayer()->kick("Failed to login in $chances attempts", false);
 				}
-				$msg = $this->getMain()->getConfig()->getNested("Messages.Login.WrongPass", "wrong pass");
+				$msg = $this->getMain()->getMessages()->getNested("Login.WrongPass", "wrong pass");
 				$msg = str_replace('$CHANCES', $left, $msg);
 				$this->getPlayer()->sendMessage($msg);
 			}
@@ -213,7 +213,7 @@ class User{
 			if($hash === $this->accountInfo->passwordHash and $this->getMain()->getConfig()->getNested("BlockPasswordChat", true)){
 				$event->setCancelled();
 				$event->setMessage("");
-				$this->getPlayer()->sendMessage($this->getMain()->getConfig()->getNested("Messages.Chat.DirectPass", "Don't tell your password"));
+				$this->getPlayer()->sendMessage($this->getMain()->getMessages()->getNested("Chat.DirectPass", "Don't tell your password"));
 			}
 		}elseif($this->state === self::STATE_REGISTERING){
 			$this->registration->handle($message);
