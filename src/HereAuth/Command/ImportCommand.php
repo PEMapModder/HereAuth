@@ -46,7 +46,7 @@ class ImportCommand extends HereAuthCommand{
 					return true;
 				}
 
-				if($this->getMain()->getImportThread() === null){
+				if($this->getMain()->getImportThread() !== null){
 					$sender->sendMessage(TextFormat::RED . "An import task is already in progress!");
 					return false;
 				}
