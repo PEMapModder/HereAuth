@@ -15,10 +15,14 @@
 
 namespace HereAuth\Importer;
 
+use HereAuth\Database\MySQL\MySQLDatabase;
 use HereAuth\HereAuth;
 use HereAuth\Importer\Reader\AccountReader;
 use HereAuth\Importer\Writer\AccountWriter;
+use HereAuth\User\AccountInfo;
 use HereAuth\User\AccountOpts;
+use HereAuth\Utils\FormattedArgumentMap;
+use HereAuth\Utils\StringUtils;
 use pocketmine\Thread;
 
 class ImporterThread extends Thread{
@@ -44,8 +48,18 @@ class ImporterThread extends Thread{
 	public $progress;
 	/** @type bool */
 	public $completed = false;
+	/** @type \Exception */
+	public $ex;
 
 	public function __construct(HereAuth $main, bool $overwrite, string $readerClass, array $readerArgs, string $writerClass, array $writerArgs){
+		if(!(class_exists($readerClass, true) and class_exists($writerClass, true))){
+			throw new \RuntimeException("Unknown reader/writer class");
+		}
+		class_exists(AccountInfo::class, true); // TODO hack
+		class_exists(FormattedArgumentMap::class, true); // TODO hack
+		class_exists(MySQLDatabase::class, true); // TODO hack
+		class_exists(\InvalidKeyException::class, true); // TODO hack
+		class_exists(StringUtils::class, true); // TODO hack
 		$this->readerClass = $readerClass;
 		$this->readerArgs = serialize($readerArgs);
 		$this->writerClass = $writerClass;
@@ -60,10 +74,15 @@ class ImporterThread extends Thread{
 	public function run(){
 		$reader = $this->reader;
 		$wc = $this->writerClass;
-		/** @type AccountWriter $writer */
-		$writer = new $wc($this->overwrite, ...unserialize($this->writerArgs));
-		$reader->read(unserialize($this->readerArgs), $writer);
-		$this->completed = true;
+		try{
+			/** @type AccountWriter $writer */
+			$writer = new $wc($this->overwrite, ...unserialize($this->writerArgs));
+			$reader->read(unserialize($this->readerArgs), $writer);
+		}catch(\Exception $e){
+			$this->ex = $e;
+		}finally{
+			$this->completed = true;
+		}
 	}
 
 	public function hasCompleted() : bool{

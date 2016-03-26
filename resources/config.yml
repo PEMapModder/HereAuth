@@ -148,7 +148,7 @@ Database:
     # Prefix for table names
     # If your database provider only provides you with one schema, you may want to add a prefix to the table names to
     #   avoid duplicating table names.
-    TablePrefix: hereauth_
+    TablePrefix: ha
 
 Commands:
   # The number of lines of content in each /help-alike command response, e.g. /opt

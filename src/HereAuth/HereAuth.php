@@ -203,8 +203,12 @@ EOU
 		foreach($this->getServer()->getOnlinePlayers() as $player){
 			$this->closeUser($player);
 		}
-		$this->closeDatabase();
-		$this->getAuditLogger()->close();
+		if($this->database !== null){
+			$this->closeDatabase();
+		}
+		if($this->getAuditLogger() !== null){
+			$this->getAuditLogger()->close();
+		}
 	}
 
 	public function startUser(Player $player){
@@ -239,7 +243,6 @@ EOU
 			$this->users[$player->getId()]->finalize();
 			unset($this->users[$player->getId()]);
 		}
-		return;
 	}
 
 	public function getUserById($id){
@@ -357,14 +360,21 @@ EOU
 	public function checkThread(){
 		if($this->importThread !== null){
 			if($this->importThread->thread->hasCompleted()){
-				$this->importThread->sender->sendMessage("Import completed!");
+				if(isset($this->importThread->thread->ex)){
+					$this->importThread->sender->sendMessage("Exception caught during import: " . $this->importThread->thread->ex->getMessage());
+					$this->getLogger()->logException($this->importThread->thread->ex);
+				}else{
+					$this->importThread->sender->sendMessage("Import completed!");
+				}
 				$this->importThread = null;
 			}else{
-				$sender = $this->importThread->sender;
-				if($sender instanceof Player){
-					$thread = $this->importThread->thread;
-					$sender->sendPopup(round($thread->progress * 100) . "% done: " . $thread->status . "...");
+				if($this->importThread->sender instanceof Player){
+					$method = "sendPopup";
+				}else{
+					$method = "sendMessage";
 				}
+				$this->importThread->sender->$method("[HereAuth import] " . round($this->importThread->thread->progress * 100) .
+					"% done: " . $this->importThread->thread->status . "...");
 			}
 		}
 	}

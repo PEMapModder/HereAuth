@@ -54,9 +54,9 @@ class SimpleAuthMySQLAccountReader extends AccountReader{
 			$this->setProgress(0.0);
 			$rows = 0;
 			while(is_array($row = $result->fetch_assoc())){
-				$info = AccountInfo::defaultInstance($result["name"], $this->defaultOpts);
-				$info->registerTime = (int) $result["registerdate"];
-				$info->lastLogin = (int) $result["logindate"];
+				$info = AccountInfo::defaultInstance($row["name"], $this->defaultOpts);
+				$info->registerTime = (int) $row["registerdate"];
+				$info->lastLogin = (int) $row["logindate"];
 				$info->lastIp = $result["lastip"];
 				$info->passwordHash = hex2bin($result["hash"]);
 				$writer->write($info);

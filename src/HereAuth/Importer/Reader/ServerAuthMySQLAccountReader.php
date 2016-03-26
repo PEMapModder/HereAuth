@@ -30,7 +30,7 @@ class ServerAuthMySQLAccountReader extends AccountReader{
 
 	public function __construct(HereAuth $main, ImporterThread $thread){
 		parent::__construct($main, $thread);
-		$this->cred = MySQLCredentials::fromConfig($main->getConfig());
+		$this->cred = clone MySQLCredentials::fromConfig($main->getConfig());
 	}
 
 	public function read($params, AccountWriter $writer){
@@ -44,9 +44,10 @@ class ServerAuthMySQLAccountReader extends AccountReader{
 		$this->cred->socket = $args->opt("socket", $this->cred->socket);
 		$this->cred->socket = $args->opt("sk", $this->cred->socket);
 		$this->setStatus("Connecting");
-		$conn = MySQLDatabase::createMysqliInstance($this->cred);
-		if(isset($conn->connect_error)){
-			throw new \InvalidArgumentException("Could not connect to $this->cred");
+		try{
+			$conn = MySQLDatabase::createMysqliInstance($this->cred);
+		}catch(\Exception $e){
+			throw new \InvalidArgumentException("Could not connect to $this->cred: $e");
 		}
 		$prefix = $args->opt("prefix", null);
 		$prefix = $args->opt("pfx", $prefix);
@@ -63,14 +64,14 @@ class ServerAuthMySQLAccountReader extends AccountReader{
 					if(isset($prefixes[$prefix])){
 						$prefixes[$prefix]++;
 					}else{
-						$prefix[$prefix] = 1;
+						$prefixes[$prefix] = 1;
 					}
 				}elseif(StringUtils::endsWith($row[0], "serverauthdata")){
 					$prefix = substr($row[0], 0, -14);
 					if(isset($prefixes[$prefix])){
 						$prefixes[$prefix]++;
 					}else{
-						$prefix[$prefix] = 1;
+						$prefixes[$prefix] = 1;
 					}
 				}
 			}
@@ -106,12 +107,13 @@ class ServerAuthMySQLAccountReader extends AccountReader{
 		if($result instanceof \mysqli_result){
 			$rows = 0;
 			while(is_array($row = $result->fetch_assoc())){
-				$info = AccountInfo::defaultInstance($result["user"], $this->defaultOpts);
-				$info->registerTime = (int) $result["firstlogin"];
-				$info->lastLogin = (int) $result["lastlogin"];
-				$info->lastIp = $result["ip"];
+				$info = AccountInfo::defaultInstance($row["user"], $this->defaultOpts);
+				echo $row["user"] . "\n";
+				$info->registerTime = (int) $row["firstlogin"];
+				$info->lastLogin = (int) $row["lastlogin"];
+				$info->lastIp = $row["ip"];
 				$info->passwordHash = "{IMPORTED}";
-				$info->multiHash = ["saltless;" . $hashMethod => $result["password"], "nonhash:salt" => strtolower($result["user"])];
+				$info->multiHash = ["saltless;" . $hashMethod => $row["password"], "nonhash:salt" => strtolower($row["user"])];
 				$writer->write($info);
 				$this->setProgress((++$rows) / $result->num_rows);
 			}
