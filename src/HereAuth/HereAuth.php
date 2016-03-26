@@ -106,7 +106,7 @@ class HereAuth extends PluginBase implements Listener{
 			$action = $new ? "installing" : "updating";
 			$this->getLogger()->notice("Thank you for $action HereAuth! New config file(s) have been generated at the following location(s):");
 			foreach($configPaths as $path){
-				$this->getLogger()->info($path);
+				$this->getLogger()->info(realpath($path));
 			}
 			$this->getLogger()->info("You may want to edit the config file(s) to customize HereAuth for your server.");
 		}

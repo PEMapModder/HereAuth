@@ -54,7 +54,7 @@ class ImporterThread extends Thread{
 		$this->overwrite = $overwrite;
 		$rc = $this->readerClass;
 		/** @type AccountReader $reader */
-		$this->reader = new $rc;
+		$this->reader = new $rc($main, $this);
 	}
 
 	public function run(){

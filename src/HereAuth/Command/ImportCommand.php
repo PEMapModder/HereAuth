@@ -29,7 +29,7 @@ class ImportCommand extends HereAuthCommand{
 		if(isset($args[0])){
 			$name = array_shift($args);
 			$overwrite = false;
-			if($name === "help" and isset($args[1])){
+			if($name === "help" and isset($args[0])){
 				$name = array_shift($args);
 				$help = true;
 			}elseif($name === ",overwrite" and isset($args[1])){
