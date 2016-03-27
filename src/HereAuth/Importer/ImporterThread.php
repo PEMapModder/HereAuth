@@ -16,6 +16,7 @@
 namespace HereAuth\Importer;
 
 use HereAuth\Database\MySQL\MySQLDatabase;
+use HereAuth\Database\MySQL\MySQLEscapeInvokable;
 use HereAuth\HereAuth;
 use HereAuth\Importer\Reader\AccountReader;
 use HereAuth\Importer\Writer\AccountWriter;
@@ -60,6 +61,7 @@ class ImporterThread extends Thread{
 		class_exists(MySQLDatabase::class, true); // TODO hack
 		class_exists(\InvalidKeyException::class, true); // TODO hack
 		class_exists(StringUtils::class, true); // TODO hack
+		class_exists(MySQLEscapeInvokable::class, true); // TODO hack
 		$this->readerClass = $readerClass;
 		$this->readerArgs = serialize($readerArgs);
 		$this->writerClass = $writerClass;
