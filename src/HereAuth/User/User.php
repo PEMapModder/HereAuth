@@ -51,7 +51,7 @@ class User{
 	/** @type Effect|bool|null */
 	private $revInvis = null;
 	/** @type string|null */
-	private $origNametag = null;
+	private $origNametag = null, $newNametag = null;
 	/** @type Position|null */
 	public $origPos = null;
 
@@ -338,6 +338,7 @@ class User{
 		$this->origNametag = $nt = $this->getPlayer()->getNameTag();
 		$nt = $this->main->getConfig()->getNested("Appearance.PrependNametag", TextFormat::GRAY . "[") .
 			$nt . $this->main->getConfig()->getNested("Appearance.AppendNametag", "]");
+		$this->newNametag = $nt;
 		$this->getPlayer()->setNameTag($nt);
 	}
 
@@ -357,9 +358,11 @@ class User{
 
 	protected function revertAppearance(){
 		$this->makeVisible();
-		if($this->origNametag !== null){
-			$this->getPlayer()->setNameTag($this->origNametag);
-			$this->origNametag = null;
+		$pos = strpos($nt = $this->player->getNameTag(), $this->newNametag);
+		if($this->origNametag !== null and $this->newNametag !== null and $pos !== false){
+			$newNametag = substr_replace($nt, $this->origNametag, $pos, strlen($this->newNametag));
+			$this->getPlayer()->setNameTag($newNametag);
+			$this->origNametag = $this->newNametag = null;
 		}
 	}
 
