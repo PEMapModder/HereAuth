@@ -248,6 +248,8 @@ Registration:
 Login:
   # Kick the player if he can't login in this number of attempts.
   MaxAttempts: 5
+  # Number of seconds to block the player's IP address if MaxAttempts is exceeded
+  MaxAttemptsBlock: 600
   # Kick the player if he can't login in this period. Unit: seconds
   Timeout: 120
 

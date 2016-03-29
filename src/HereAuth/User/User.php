@@ -203,6 +203,13 @@ class User{
 				$left = $chances - $this->loginAttempts;
 				if($left <= 0){
 					$this->getPlayer()->kick("Failed to login in $chances attempts", false);
+					$event->setCancelled();
+					$event->setMessage("");
+					$blockSecs = $this->main->getConfig()->getNested("Login.MaxAttemptsBlock", 600);
+					if($blockSecs > 0){
+						$this->main->getServer()->getNetwork()->blockAddress($this->player->getAddress(), $blockSecs);
+					}
+					return;
 				}
 				$msg = $this->getMain()->getMessages()->getNested("Login.WrongPass", "wrong pass");
 				$msg = str_replace('$CHANCES', $left, $msg);
