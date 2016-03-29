@@ -10,7 +10,7 @@ HereAuth [![Build Status](https://travis-ci.org/PEMapModder/HereAuth.svg?branch=
 * [Latest release candidate build](compile/HereAuth_RC.phar)
 
 #### Latest Dev build number
-`212`
+`213`
 
 #### Latest Beta build number
 `174`
@@ -86,7 +86,7 @@ the Free Software Foundation, either version 3 of the License, or
 Open this phar directly with PHP binaries to automatically extract the config files.
 
 ## Code Statistics
-* 70 PHP source files
-* 5232 lines of PHP code
-  * minus 1050 lines of license header
-  * Total: 4182
+* 71 PHP source files
+* 5256 lines of PHP code
+  * minus 1065 lines of license header
+  * Total: 4191

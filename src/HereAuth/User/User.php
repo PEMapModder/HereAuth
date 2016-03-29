@@ -17,6 +17,7 @@ namespace HereAuth\User;
 
 use HereAuth\Event\HereAuthAuthenticationEvent;
 use HereAuth\Event\HereAuthLoginEvent;
+use HereAuth\Event\HereAuthLogoutEvent;
 use HereAuth\Event\HereAuthMultiFactorAuthEvent;
 use HereAuth\Event\HereAuthRegistrationCreationEvent;
 use HereAuth\Event\HereAuthRegistrationEvent;
@@ -302,6 +303,7 @@ class User{
 	}
 
 	public function logout($message = "You have logged out"){
+		$this->main->getServer()->getPluginManager()->callEvent(new HereAuthLogoutEvent($this));
 		if(!$this->accountInfo->passwordHash){
 			return false;
 		}

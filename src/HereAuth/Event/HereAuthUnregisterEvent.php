@@ -22,6 +22,8 @@ use pocketmine\event\Cancellable;
 use pocketmine\Player;
 
 class HereAuthUnregisterEvent extends HereAuthEvent implements Cancellable{
+	public static $handlerList = null;
+
 	/** @type CommandSender */
 	private $doer;
 	/** @type string */
