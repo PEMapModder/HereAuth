@@ -15,6 +15,7 @@
 
 namespace HereAuth\Command;
 
+use HereAuth\Event\HereAuthUnregisterEvent;
 use HereAuth\HereAuth;
 use pocketmine\command\CommandSender;
 
@@ -29,6 +30,10 @@ class UnregisterCommand extends HereAuthCommand{
 			return "Usage: " . $this->getUsage();
 		}
 		$user = $this->getMain()->getUserByExactName($name = $args[0]);
+		$this->getMain()->getServer()->getPluginManager()->callEvent($ev = new HereAuthUnregisterEvent($this->getMain(), $sender, $name, $user));
+		if($ev->isCancelled()){
+			return $ev->getCancelMessage();
+		}
 		if($user !== null){
 			$user->resetAccount(function ($success) use ($sender, $name){
 				$sender->sendMessage($success ? "Account $name has been unregistered." : "Account $name does not exist.");
