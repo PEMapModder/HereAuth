@@ -7,6 +7,7 @@ Login:
   # This message is shown when a player has typed the password wrongly.
   # $CHANCES will be replaced by the number of chances left.
   WrongPass: "Wrong password! Please try again. You have $CHANCES more chance(s)."
+  Completion: "You have been authenticated."
 # Messages related to registration
 Register:
   # This message is shown if the player is required to register without doing /register first

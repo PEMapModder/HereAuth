@@ -177,7 +177,7 @@ class User{
 		$this->accountInfo->lastSkinHash = HereAuth::hash($this->getPlayer()->getSkinData(), $this->getPlayer()->getSkinName());
 		$this->accountInfo->lastIp = $this->getPlayer()->getAddress();
 		if($this->accountInfo->passwordHash){
-			$this->player->sendMessage("You have been authenticated.");
+			$this->player->sendMessage($this->getMain()->getMessages()->getNested("Login.Completion", "login"));
 		}
 		$this->player->getInventory()->sendContents($this->player);
 		$this->player->getInventory()->sendArmorContents($this->player);
