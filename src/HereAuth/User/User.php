@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2016 PEMapModder
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software: you can redistributeY it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -177,7 +177,7 @@ class User{
 		$this->accountInfo->lastSkinHash = HereAuth::hash($this->getPlayer()->getSkinData(), $this->getPlayer()->getSkinName());
 		$this->accountInfo->lastIp = $this->getPlayer()->getAddress();
 		if($this->accountInfo->passwordHash){
-			$this->player->sendMessage("You have been authenticated.");
+			$this->player->sendMessage($this->getMain()->getMessages()->getNested("Login.Completion", "login"));
 		}
 		$this->player->getInventory()->sendContents($this->player);
 		$this->player->getInventory()->sendArmorContents($this->player);
