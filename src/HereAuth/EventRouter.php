@@ -15,6 +15,7 @@
 
 namespace HereAuth;
 
+use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\EventPriority;
@@ -53,7 +54,6 @@ class EventRouter implements Listener{
 		$this->registerHandler(DataPacketSendEvent::class, "onSend", EventPriority::HIGH, true);
 		$events = [
 			"DropItem",
-			"Touch",
 			"Pick",
 			"Eat",
 		];
@@ -72,6 +72,10 @@ class EventRouter implements Listener{
 		}
 		if($main->getConfig()->getNested("Blocking.Move.Locomotion", true) or $main->getConfig()->getNested("Blocking.Move.Rotation", true)){
 			$this->registerHandler(PlayerMoveEvent::class, "onMove", EventPriority::LOW, true);
+		}
+		if($main->getConfig()->getNested("Blocking.Touch", true)){
+			$this->registerHandler(PlayerInteractEvent::class, "onTouch", EventPriority::LOW, true);
+			$this->registerHandler(BlockBreakEvent::class, "onBreak", EventPriority::LOW, true);
 		}
 	}
 
@@ -152,6 +156,13 @@ class EventRouter implements Listener{
 	}
 
 	public function onTouch(PlayerInteractEvent $event){
+		$user = $this->main->getUserByPlayer($event->getPlayer());
+		if($user === null or !$user->isPlaying()){
+			$event->setCancelled();
+		}
+	}
+
+	public function onBreak(BlockBreakEvent $event){
 		$user = $this->main->getUserByPlayer($event->getPlayer());
 		if($user === null or !$user->isPlaying()){
 			$event->setCancelled();
