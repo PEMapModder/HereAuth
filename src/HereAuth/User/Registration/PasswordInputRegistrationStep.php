@@ -42,26 +42,27 @@ final class PasswordInputRegistrationStep implements PasswordRegistrationStep{
 	public static function validatePassword(User $user, $value){
 		$length = strlen($value);
 		$config = $user->getMain()->getConfig();
+		$messages = $user->getMain()->getMessages();
 		$minLength = $config->getNested("Registration.MinLength", 4);
 		if($length < $minLength){
-			$user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordUnderflow", "too short"));
+			$user->getPlayer()->sendMessage($messages->getNested("Register.PasswordUnderflow", "too short"));
 			return false;
 		}
 		$maxLength = $config->getNested("Registration.MaxLength", -1);
 		if($maxLength !== -1 and $length > $maxLength){
-			$user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordOverflow", "too long"));
+			$user->getPlayer()->sendMessage($messages->getNested("Register.PasswordOverflow", "too long"));
 			return false;
 		}
 		if($config->getNested("Registration.BanPureLetters", false) and preg_match('/^[a-z]+$/i', $value)){
-			$user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordPureLetters", "only letters"));
+			$user->getPlayer()->sendMessage($messages->getNested("Register.PasswordPureLetters", "only letters"));
 			return false;
 		}
 		if($config->getNested("Registration.BanPureNumbers", false) and preg_match('/^[0-9]+$/', $value)){
-			$user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordPureNumbers", "only numbers"));
+			$user->getPlayer()->sendMessage($messages->getNested("Register.PasswordPureNumbers", "only numbers"));
 			return false;
 		}
 		if($config->getNested("Registration.DisallowSlashes", true) and $value{0} === "/"){
-			$user->getPlayer()->sendMessage($config->getNested("Messages.Register.PasswordSlashes", "do not start with slashes"));
+			$user->getPlayer()->sendMessage($messages->getNested("Register.PasswordSlashes", "do not start with slashes"));
 			return false;
 		}
 		return true;
