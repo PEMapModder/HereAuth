@@ -45,6 +45,10 @@ abstract class HereAuthCommand extends Command implements PluginIdentifiableComm
 		return $this->main;
 	}
 
+	public function getMessage(string $key, string $default) : string{
+		return $this->main->getMessages()->getNested($key, $default);
+	}
+
 	/**
 	 * @return HereAuth
 	 */

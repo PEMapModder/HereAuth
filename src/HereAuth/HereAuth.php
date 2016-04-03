@@ -147,7 +147,8 @@ class HereAuth extends PluginBase implements Listener{
 		new RemindLoginTask($this);
 		$this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new CheckImportThreadTask($this), 20, 20);
 
-		$this->registerAccountReader("serverauth-mysql", ServerAuthMySQLAccountReader::class, <<<EOU
+		$this->registerAccountReader("serverauth-mysql", ServerAuthMySQLAccountReader::class,
+			$this->getMessages()->getNested("Commands.Import.Help.ServerAuth.MySQL", <<<EOU
 Usage: /import [,overwrite] serverauth-mysql [parameters...]
 You can specify these parameters: (default to config.yml MySQL settings)
 ,h <MySQL host address>
@@ -158,16 +159,18 @@ You can specify these parameters: (default to config.yml MySQL settings)
 ,sk <path to MySQL socket file>
 E.g: /import serverauth-mysql ,h example.com ,u "my name" ,p ""
 EOU
-		);
-		$this->registerAccountReader("serverauth-yaml", ServerAuthYAMLAccountReader::class, <<<EOU
+			));
+		$this->registerAccountReader("serverauth-yaml", ServerAuthYAMLAccountReader::class,
+			$this->getMessages()->getNested("Commands.Import.Help.ServerAuth.YAML", <<<EOU
 Usage: /import [,overwrite] serverauth-yaml [parameters...]
 You can specify these parameters:
 ,i <path to ServerAuth data folder>
 ,hash <special hash algorithm used by ServerAuth>
 E.g: /import serverauth-yaml ,i /root/plugins/ServerAuth
 EOU
-		);
-		$this->registerAccountReader("simpleauth-mysql", SimpleAuthMySQLAccountReader::class, <<<EOU
+			));
+		$this->registerAccountReader("simpleauth-mysql", SimpleAuthMySQLAccountReader::class,
+			$this->getMessages()->getNested("Commands.Import.Help.SimpleAuth.MySQL", <<<EOU
 Usage: /import [,overwrite] simpleauth-mysql [parameters...]
 You can specify these parameters. Default to config.yml MySQL settings.
 ,h <MySQL host address>
@@ -178,21 +181,23 @@ You can specify these parameters. Default to config.yml MySQL settings.
 ,sk <path to MySQL socket file>
 E.g: /import simpleauth-mysql ,h example.com ,u "my name" ,p ""
 EOU
-		);
-		$this->registerAccountReader("simpleauth-sqlite", SimpleAuthSQLite3AccountReader::class, <<<EOU
+			));
+		$this->registerAccountReader("simpleauth-sqlite", SimpleAuthSQLite3AccountReader::class,
+			$this->getMessages()->getNested("Commands.Import.Help.SimpleAuth.SQLite", <<<EOU
 Usage: /import [,overwrite] simpleauth-sqlite [parameters...]
 You can specify these parameters:
 ,i <path to SimpleAuth data folder>
 E.g: /import simpleauth-sqlite ,i /root/plugins/SimpleAuth
 EOU
-		);
-		$this->registerAccountReader("simpleauth-yaml", SimpleAuthYAMLAccountReader::class, <<<EOU
+			));
+		$this->registerAccountReader("simpleauth-yaml", SimpleAuthYAMLAccountReader::class,
+			$this->getMessages()->getNested("Commands.Import.Help.SimpleAuth.YAML", <<<EOU
 Usage: /import [,overwrite] simpleauth-yaml [parameters...]
 You can specify these parameters:
 ,i <path to SimpleAuth data folder>
 E.g: /import simpleauth-yaml ,i /root/plugins/SimpleAuth
 EOU
-		);
+			));
 
 		foreach($this->getServer()->getOnlinePlayers() as $player){
 			$this->startUser($player);

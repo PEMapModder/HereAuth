@@ -34,3 +34,33 @@ Register:
 Chat:
   # This is to warn that the player is typing his password unnecessarily
   DirectPass: "Don't tell other players your password!"
+
+# Command description, usage and response
+Commands:
+  ChangePassword:
+    Description: Change your password
+    Usage: /chpw <new password>
+    Success: Your password has been changed.
+    DoubleCheckFailure: Your password is different this time! Aborted.
+    RequestRepeat: Please run this command again to confirm.
+  Import:
+    Description: Import accounts from database of another plugin
+    Usage: Type `/import` for detailed usage
+    Concurrent: An import task is already in progress!
+    Help:
+      ServerAuth:
+        MySQL: 'Usage: /import [,overwrite] serverauth-mysql [parameters...]\nYou can specify these parameters: (default to config.yml MySQL settings)\n,h <MySQL host address>\n,u <MySQL username>\n,p <MySQL password>\n,s <MySQL schema/database name>\n,port <MySQL port>\n,sk <path to MySQL socket file>\nE.g: /import serverauth-mysql ,h example.com ,u "my name" ,p ""'
+        YAML: 'Usage: /import [,overwrite] serverauth-yaml [parameters...]\nYou can specify these parameters:\n,i <path to ServerAuth data folder>\n,hash <special hash algorithm used by ServerAuth>\nE.g: /import serverauth-yaml ,i /root/plugins/ServerAuth'
+      SimpleAuth:
+        MySQL: 'Usage: /import [,overwrite] simpleauth-mysql [parameters...]\nYou can specify these parameters. Default to config.yml MySQL settings.\n,h <MySQL host address>\n,u <MySQL username>\n,p <MySQL password>\n,s <MySQL schema/database name>\n,port <MySQL port>\n,sk <path to MySQL socket file>\nE.g: /import simpleauth-mysql ,h example.com ,u "my name" ,p ""'
+        SQLite: 'Usage: /import [,overwrite] simpleauth-sqlite [parameters...]\nYou can specify these parameters:\n,i <path to SimpleAuth data folder>\nE.g: /import simpleauth-sqlite ,i /root/plugins/SimpleAuth'
+        YAML: 'Usage: /import [,overwrite] simpleauth-yaml [parameters...]\nYou can specify these parameters:\n,i <path to SimpleAuth data folder>\nE.g: /import simpleauth-yaml ,i /root/plugins/SimpleAuth'
+    Main:
+      Header: "The following account readers are available:"
+      Footer: "Use `/import help <reader name>` for detailed usage per reader"
+  Logout:
+    Description: Lock your account using your password
+    Success: You have logged out of your account
+  Opt:
+    Description: Change/View HereAuth options for yourself
+    Usage: "/opt <type> <value>, or /opt [page]"

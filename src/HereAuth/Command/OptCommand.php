@@ -23,7 +23,9 @@ use pocketmine\utils\TextFormat;
 
 class OptCommand extends HereAuthUserCommand{
 	public function __construct(HereAuth $main){
-		parent::__construct($main, "auth", "Change/View HereAuth options for yourself", "/opt <type> <value>, or /opt [page]", "opt");
+		parent::__construct($main, "auth",
+			$this->getMessage("Commands.Opt.Description", "Change/View HereAuth options for yourself"),
+			$this->getMessage("Commands.Opt.Usage", "/opt <type> <value>, or /opt [page]"), "opt");
 	}
 
 	protected function onRun(array $args, User $user){

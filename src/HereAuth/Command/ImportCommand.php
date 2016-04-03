@@ -21,7 +21,9 @@ use pocketmine\utils\TextFormat;
 
 class ImportCommand extends HereAuthCommand{
 	public function __construct(HereAuth $main){
-		parent::__construct($main, "import", "Import accounts from database of another plugin", "Type `/import` for detailed usage");
+		parent::__construct($main, "import",
+			$this->getMessage("Commands.Import.Description", "Import accounts from database of another plugin"),
+			$this->getMessage("Commands.Import.Usage", "Type `/import` for detailed usage"));
 		$this->setPermission("hereauth.import.command");
 	}
 
@@ -47,7 +49,7 @@ class ImportCommand extends HereAuthCommand{
 				}
 
 				if($this->getMain()->getImportThread() !== null){
-					$sender->sendMessage(TextFormat::RED . "An import task is already in progress!");
+					$sender->sendMessage(TextFormat::RED . $this->getMessage("Commands.Import.Concurrent", "An import task is already in progress!"));
 					return false;
 				}
 
@@ -66,9 +68,9 @@ class ImportCommand extends HereAuthCommand{
 			}
 			$sender->sendMessage(TextFormat::RED . "Account reader \"$name\" not registered!");
 		}
-		$sender->sendMessage(TextFormat::AQUA . "The following account readers are available:");
+		$sender->sendMessage(TextFormat::AQUA . $this->getMessage("Commands.Import.Main.Header", "The following account readers are available:"));
 		$sender->sendMessage(TextFormat::DARK_PURPLE . implode(", ", array_keys($this->getMain()->getAccountReaders())));
-		$sender->sendMessage(TextFormat::AQUA . "Use `/import help <reader name>` for detailed usage per reader");
+		$sender->sendMessage(TextFormat::AQUA . $this->getMessage("Commands.Import.Main.Footer", "Use `/import help <reader name>` for detailed usage per reader"));
 		return true;
 	}
 }
