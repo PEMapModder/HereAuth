@@ -21,6 +21,7 @@ use pocketmine\utils\TextFormat;
 
 class ImportCommand extends HereAuthCommand{
 	public function __construct(HereAuth $main){
+		$this->main = $main;
 		parent::__construct($main, "import",
 			$this->getMessage("Commands.Import.Description", "Import accounts from database of another plugin"),
 			$this->getMessage("Commands.Import.Usage", "Type `/import` for detailed usage"));

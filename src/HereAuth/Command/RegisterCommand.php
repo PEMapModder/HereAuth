@@ -20,6 +20,7 @@ use HereAuth\User\User;
 
 class RegisterCommand extends HereAuthUserCommand{
 	public function __construct(HereAuth $main){
+		$this->main = $main;
 		parent::__construct($main, "register", "Register your account", "/register", "reg", "r");
 		$this->setPermission("hereauth.register");
 	}

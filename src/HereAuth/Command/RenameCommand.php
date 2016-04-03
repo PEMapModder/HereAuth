@@ -21,6 +21,7 @@ use pocketmine\command\CommandSender;
 
 class RenameCommand extends HereAuthCommand{
 	public function __construct(HereAuth $main){
+		$this->main = $main;
 		parent::__construct($main, "rename", "Rename an account", "/rename <old name> <new name>");
 		$this->setPermission("hereauth.rename");
 	}

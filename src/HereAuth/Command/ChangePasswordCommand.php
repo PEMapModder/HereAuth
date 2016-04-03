@@ -21,6 +21,7 @@ use HereAuth\User\User;
 
 class ChangePasswordCommand extends HereAuthUserCommand{
 	public function __construct(HereAuth $main){
+		$this->main = $main;
 		parent::__construct($main, "changepassword",
 			$this->getMessage("Commands.ChangePassword.Description", "Change your password"),
 			$this->getMessage("Commands.ChangePassword.Usage", "/chpw <new password>"),

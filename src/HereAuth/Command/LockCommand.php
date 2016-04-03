@@ -20,6 +20,7 @@ use HereAuth\User\User;
 
 class LockCommand extends HereAuthUserCommand{
 	public function __construct(HereAuth $main){
+		$this->main = $main;
 		parent::__construct($main, "lock",
 			$this->getMessage("Commands.Logout.Description", "Lock your account using your password"), "/lock", "logout");
 		$this->setPermission("hereauth.lock");

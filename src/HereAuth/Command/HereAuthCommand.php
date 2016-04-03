@@ -22,7 +22,7 @@ use pocketmine\command\PluginIdentifiableCommand;
 
 abstract class HereAuthCommand extends Command implements PluginIdentifiableCommand{
 	/** @type HereAuth */
-	private $main;
+	protected $main;
 
 	/**
 	 * HereAuthCommand constructor.

@@ -21,6 +21,7 @@ use pocketmine\command\CommandSender;
 
 class UnregisterCommand extends HereAuthCommand{
 	public function __construct(HereAuth $main){
+		$this->main = $main;
 		parent::__construct($main, "unregister", "Unregister an account", "/unregister <account full name>", "unreg");
 		$this->setPermission("hereauth.unregister");
 	}
