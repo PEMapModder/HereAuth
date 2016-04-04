@@ -10,6 +10,7 @@ install:
 - cd pm
 - wget -q -O PocketMine-MP.phar http://pmt.mcpe.me/pmb/dl.php?branch=master
 - mkdir plugins
+- wget -O plugins/PluginChecker.php https://gist.githubusercontent.com/PEMapModder/af032e15cde357fd378dff7ca3897782/raw/d82e74bb5ff5264133230f8c724e1c4d573174a6/PluginChecker.php
 
 before_script:
 - cd $TRAVIS_BUILD_DIR
@@ -17,8 +18,6 @@ before_script:
 - cp compile/HereAuth_Dev.phar ../pm/plugins
 
 script:
-- cd $TRAVIS_BUILD_DIR && chmod +x lint.sh && ./lint.sh
-- cd ../pm && ((echo stop; echo) | php PocketMine-MP.phar --no-wizard --debug.level=2 --disable-readline)
-
-after_script:
+- cd $TRAVIS_BUILD_DIR && chmod +x lint.sh && ./lint.sh && cd ../pm;
+- (echo stop; echo) | php PocketMine-MP.phar --no-wizard --debug.level=2 --disable-readline --pluginchecker.target=HereAuth | tee stdout.log; grep 'PluginCheck passed' < stdout.log
 - curl -T plugins/HereAuth_Dev.phar https://transfer.sh/HereAuth-Travis.phar
