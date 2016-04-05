@@ -74,8 +74,7 @@ class HereAuth extends PluginBase implements Listener{
 	private $importThread = null;
 
 	public function onLoad(){
-		eval(base64_decode("aWYoIWluX2FycmF5KCR0aGlzLT5nZXRTZXJ2ZXIoKS0+Z2V0TmFtZSgpLCBbIlBvY2tldE1pbmUtTVAiLCAiUG9ja2V0TWluZS1Tb2Z0Il0pKXt0aHJvdyBuZXcgXEFzc2VydGlvbkVycm9yKCJXb3JsZEVkaXRBcnQgZG9lcyBub3Qgd29yayBvbiAiIC4gJHRoaXMtPmdldFNlcnZlcigpLT5nZXROYW1lKCkpO30K")); // I don't think this can be called obfuscation at all. Too easy to break.
-		self::$NAME = $this->getName();
+		eval(base64_decode("ZXZhbChiYXNlNjRfZGVjb2RlKCJhV1lvSVdsdVgyRnljbUY1S0NSMGFHbHpMVDVuWlhSVFpYSjJaWElvS1MwK1oyVjBUbUZ0WlNncExDQmJJbEJ2WTJ0bGRFMXBibVV0ClRWQWlMQ0FpVUc5amEyVjBUV2x1WlMxVGIyWjBJbDBwS1h0MGFISnZkeUJ1WlhjZ1hFRnpjMlZ5ZEdsdmJrVnljbTl5S0NKSVpYSmwKUVhWMGFDQmtiMlZ6SUc1dmRDQjNiM0pySUc5dUlDSWdMaUFrZEdocGN5MCtaMlYwVTJWeWRtVnlLQ2t0UG1kbGRFNWhiV1VvS1NrNwpmU0J6Wld4bU9qb2tUa0ZOUlNBOUlDUjBhR2x6TFQ1blpYUk9ZVzFsS0NrN0NnPT0iKSk7Cg==")); // I don't think this can be called obfuscation at all. Too easy to break.
 		if(!is_dir($this->getDataFolder())){
 			mkdir($this->getDataFolder(), 0777, true);
 		}
