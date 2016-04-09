@@ -10,7 +10,7 @@ HereAuth [![Build Status](https://travis-ci.org/PEMapModder/HereAuth.svg?branch=
 * [Latest release candidate build](compile/HereAuth_RC.phar)
 
 #### Latest Dev build number
-`226`
+`228`
 
 #### Latest Beta build number
 `227`

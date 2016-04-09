@@ -240,7 +240,7 @@ Registration:
   ExtraFields:
 #  - Message: "[HereAuth] Please enter your email."
 #    FieldName: email
-#    RegExp: "/^[A-z0-9_\-]+[@][A-z0-9_\-]+([.][A-z0-9_\-]+)+[A-z.]{2,4}$/"
+#    RegExp: "/^[A-z0-9_\\-]+[@][A-z0-9_\\-]+([.][A-z0-9_\\-]+)+[A-z.]{2,4}$/"
 #    ErrorMessage: This is not a valid email address!
   ## Delete the # on the above three lines to enable. You can also duplicate it to make another field.
 
