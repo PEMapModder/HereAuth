@@ -75,7 +75,7 @@ class HereAuth extends PluginBase implements Listener{
 
 	public function onLoad(){
 		if(!in_array($n = $this->getServer()->getName(), ["PocketMine-MP", "PocketMine-Soft"])){
-			$this->getLogger()->warning("HereAuth uses sophisticated threading mechanism. It has not been tested on $n. It may have errors or even make other plugins misbehave if used on $n.");
+			$this->getLogger()->warning("HereAuth uses a sophisticated threading mechanism. It has not been tested on $n. It may have errors or even make other plugins misbehave if used on $n.");
 		}
 		self::$NAME = $this->getName();
 		if(!is_dir($this->getDataFolder())){
@@ -221,7 +221,7 @@ EOU
 	public function startUser(Player $player){
 		$this->database->loadFor($player->getName(), $player->getId());
 		if($player->spawned){
-			$player->sendMessage("[HereAuth] Your account data are being loaded. Please wait patiently; it shouldn't take long.");
+			$player->sendMessage("[HereAuth] Your account data is being loaded. Please wait patiently; it shouldn't take long.");
 		}
 	}
 
