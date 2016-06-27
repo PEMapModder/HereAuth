@@ -13,11 +13,11 @@ DefaultSettings:
     # IP (Internet Protocol) address identifies the network that the player connects from. People
     #   from the same network (e.g. having the same Wi-Fi) have the same IP address. Also, two
     #   players with dynamic IP may have overlapping IP address record (but it is a rare case).
-    IPAuth: false
+    IPAuth: true
     # Automatically authenticate if the player has the same UUID as the last login
     # UUID is the combination of IP address and client ID (and username too).
     # Client ID is a value that can be easily stolen, so using it alone is not reliable.
-    UUIDAuth: false
+    UUIDAuth: true
   # Mask some data about the player before authenticating
   Masking:
     # If the player cannot be automatically authenticated, teleport him to another location (e.g. spawn).
@@ -38,9 +38,9 @@ DefaultSettings:
   # Apart from checking the password (or through AutoAuth), also check these:
   MultiAuth:
     # Player must use the same skin as the last login
-    Skin: false
+    Skin: true
     # Players may be unable to login without realizing that they have dynamic IP if you enable this.
-    IP: false
+    IP: true
   # If the player has not been online for this number of days, turn off multi-factor auth for him.
   # Put -1 for "forever".
   MultiAuthTimeout: 14
@@ -259,7 +259,7 @@ Appearance:
   # This uses the "potion effect invisibility" style of invisibility, where modded players may be able to see the player
   #   and would be able to click on the player (but the player can be protected with the Blocking.Damage config)
   #   but without potion effect bubbles
-  Invisible: false
+  Invisible: true
   # Add text before player nametag
   PrependNametag: "§c["
   # Add text after player nametag
