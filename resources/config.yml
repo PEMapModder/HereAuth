@@ -54,7 +54,7 @@ Blocking:
     # Move from one place to one place.
     Locomotion: true
     # Rotate head
-    Rotation: true
+    Rotation: false
   # Get hurt
   Damage: true
   # Touch other entities
@@ -90,8 +90,8 @@ BlockPasswordChat: true
 RemindLogin:
   # Messages to send to players
   Message:
-    Register: Please register by typing password into chat
-    Login: Please login by typing password into chat
+    Register: §aPlease register by typing password into chat
+    Login: $aPlease login by typing password into chat
   # Type of message.
   # Options: chat, popup, tip, none
   Type: popup
