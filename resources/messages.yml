@@ -3,37 +3,37 @@
 # Messages related to login
 Login:
   # This message is shown when a player has to type password to login.
-  Query: "§cPlease type your password directly into chat."
+  Query: "§ePlease type your password directly into chat. If you did not register please change your username."
   # This message is shown when a player has typed the password wrongly.
   # $CHANCES will be replaced by the number of chances left.
-  WrongPass: "Wrong password! Please try again. You have $CHANCES more chance(s)."
+  WrongPass: "§cWrong password! Please try again. You have $CHANCES more chance(s)."
   Completion: "§aYou have been authenticated."
 # Messages related to registration
 Register:
   # This message is shown if the player is required to register without doing /register first
-  ImplicitRegister: §6Welcome to §aGame§bCraft §bPE 
+  ImplicitRegister: §6Welcome to §a§lBlui§9§oCraft! §r§6To play, please register/login.
   # This is to ask the player for the first password input.
-  PasswordInput: "Please type your password directly into chat."
+  PasswordInput: "§ePlease type a password directly into chat. You will have to type this password everytime you login."
   # This is to notify that the password is too short. Remember to change the "4" if you changed the config above too.
-  PasswordUnderflow: §aYour password is too short. Please type a longer password (at least 4 characters).
+  PasswordUnderflow: §cYour password is too short. Please type a longer password (at least 4 characters).
   # This is to notify that the password is too long. Remember to edit this if you enabled it.
-  PasswordOverflow: §aYour password is too long. Please type a shorter password (at most 16 characters).
+  PasswordOverflow: §cYour password is too long. Please type a shorter password (at most 16 characters).
   # This is to notify that the password must contain something more than letters.
-  PasswordPureLetters: §aYour password only contains English letters. It is insecure. Maybe add some numbers into it?
+  PasswordPureLetters: §cYour password only contains English letters. It is insecure. Maybe add some numbers into it?
   # This is to notify that the password must contain something more than numbers.
-  PasswordPureNumbers: §aYour password only contains numbers. It is insecure. Maybe add some letters into it?
+  PasswordPureNumbers: §cYour password only contains numbers. It is insecure. Maybe add some letters into it?
   # This is to notify that the password must not start with slashes
   PasswordSlashes: §cYour password must not start with slashes! Remember, type your password into chat DIRECTLY.
   # This is to ask the player to confirm the second password input.
-  PasswordConfirm: §6Please type your password again to confirm.
+  PasswordConfirm: §bPlease type your password again to confirm.
   # This is the message when the player typed the password wrongly the second time.
   PasswordMismatch: §cThe two passwords you typed are not the same! Please type again. You can type a different password this time.
-  Completion: §6Congratulations! Your account has been registered.
+  Completion: §aCongratulations! Your account has been registered.
 
 # Messages related to chatting
 Chat:
   # This is to warn that the player is typing his password unnecessarily
-  DirectPass: "§cDon't tell other players your password!"
+  DirectPass: "§6You have already been logged in"
 
 # Command description, usage and response
 Commands:
