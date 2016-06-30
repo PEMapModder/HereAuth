@@ -13,11 +13,11 @@ DefaultSettings:
     # IP (Internet Protocol) address identifies the network that the player connects from. People
     #   from the same network (e.g. having the same Wi-Fi) have the same IP address. Also, two
     #   players with dynamic IP may have overlapping IP address record (but it is a rare case).
-    IPAuth: true
+    IPAuth: false
     # Automatically authenticate if the player has the same UUID as the last login
     # UUID is the combination of IP address and client ID (and username too).
     # Client ID is a value that can be easily stolen, so using it alone is not reliable.
-    UUIDAuth: true
+    UUIDAuth: false
   # Mask some data about the player before authenticating
   Masking:
     # If the player cannot be automatically authenticated, teleport him to another location (e.g. spawn).
@@ -38,9 +38,9 @@ DefaultSettings:
   # Apart from checking the password (or through AutoAuth), also check these:
   MultiAuth:
     # Player must use the same skin as the last login
-    Skin: true
+    Skin: false
     # Players may be unable to login without realizing that they have dynamic IP if you enable this.
-    IP: true
+    IP: false
   # If the player has not been online for this number of days, turn off multi-factor auth for him.
   # Put -1 for "forever".
   MultiAuthTimeout: 14
@@ -90,11 +90,11 @@ BlockPasswordChat: true
 RemindLogin:
   # Messages to send to players
   Message:
-    Register: §aPlease register by typing password into chat
-    Login: $aPlease login by typing password into chat
+    Register: §ePlease register by typing password into chat
+    Login: §ePlease login by typing password into chat
   # Type of message.
   # Options: chat, popup, tip, none
-  Type: popup
+  Type: tip
   # Frequency interval, in seconds, of how often to send the message
   # Value is rounded down to 0.05 second
   Interval: 0.5
@@ -103,7 +103,7 @@ RemindLogin:
 ForceRegister:
   # If this is set to false, players have to execute /register to register.
   Enabled: true
-  Reminder: "[HereAuth] Protip: type '/register' in chat to register so that other people can't impersonate you."
+  Reminder: "Protip: type '/register' in chat to register so that other people can't impersonate you."
 
 # The place to store data
 Database:
