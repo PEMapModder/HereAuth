@@ -74,8 +74,8 @@ class EventRouter implements Listener{
 			$this->registerHandler(PlayerMoveEvent::class, "onMove", EventPriority::LOW, true);
 		}
 		if($main->getConfig()->getNested("Blocking.Touch", true)){
-			$this->registerHandler(PlayerInteractEvent::class, "onTouch", EventPriority::HIGHEST, true);
-			$this->registerHandler(BlockBreakEvent::class, "onBreak", EventPriority::HIGHEST, true);
+			$this->registerHandler(PlayerInteractEvent::class, "onTouch", EventPriority::LOW, true);
+			$this->registerHandler(BlockBreakEvent::class, "onBreak", EventPriority::LOW, true);
 		}
 	}
 
