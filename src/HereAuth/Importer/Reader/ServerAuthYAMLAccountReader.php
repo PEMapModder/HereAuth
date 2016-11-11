@@ -50,7 +50,7 @@ class ServerAuthYAMLAccountReader extends AccountReader{
 			if(!is_file($file) or !preg_match('@^[A-Za-z0-9_]{3,16}\.yml$@', $name)){
 				continue;
 			}
-			$name = substr($file, 0, -4);
+			$name = substr($name, 0, -4);
 			$data = yaml_parse_file($file);
 			$ai = AccountInfo::defaultInstance($name, $this->defaultOpts);
 			$ai->passwordHash = "{IMPORTED}";
