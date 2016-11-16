@@ -33,7 +33,7 @@ final class PasswordInputRegistrationStep implements PasswordRegistrationStep{
 
 	public function onSubmit($value){
 		if($this->validatePassword($this->user, $value)){
-			$this->user->getRegistration()->setTempHash(HereAuth::hash($value, $this->user->getPlayer()));
+			$this->user->getRegistration()->setTempHash(HereAuth::newHash($value, $this->user->getPlayer()));
 			return true;
 		}
 		return false;

@@ -15,7 +15,7 @@
 
 namespace HereAuth\MultiHash;
 
-use HereAuth\HereAuth;
+use pocketmine\Player;
 
 class SimpleAuthImportedHash implements ImportedHash{
 	public function getName(){
@@ -23,6 +23,17 @@ class SimpleAuthImportedHash implements ImportedHash{
 	}
 
 	public function hash($password, $salt, $suffix){
-		return bin2hex(HereAuth::hash($password, $salt));
+		return bin2hex(SimpleAuthImportedHash::hashAlgo($password, $salt));
+	}
+
+	/**
+	 * @param string        $password
+	 * @param string|Player $player
+	 *
+	 * @return string
+	 */
+	public static function hashAlgo($password, $player){
+		$salt = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
+		return hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true);
 	}
 }

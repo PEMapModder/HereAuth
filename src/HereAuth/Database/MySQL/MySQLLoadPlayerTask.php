@@ -44,6 +44,9 @@ class MySQLLoadPlayerTask extends AsyncQueryTask{
 			return;
 		}
 		$row["hash"] = rtrim($row["hash"], "\0");
+		if(MySQLDatabase::USER_VERSION_INITIAL === (int) $row["lastVersion"]){
+			// fixme
+		}
 		$this->setResult($row);
 	}
 

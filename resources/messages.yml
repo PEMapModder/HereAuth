@@ -39,7 +39,7 @@ Chat:
 Commands:
   ChangePassword:
     Description: Change your password
-    Usage: /chpw <new password>
+    Usage: /chpw <old password> <new password>
     Success: Your password has been changed.
     DoubleCheckFailure: Your password is different this time! Aborted.
     RequestRepeat: Please run this command again to confirm.

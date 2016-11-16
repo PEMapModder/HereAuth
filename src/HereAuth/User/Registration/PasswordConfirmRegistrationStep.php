@@ -36,7 +36,7 @@ final class PasswordConfirmRegistrationStep implements PasswordRegistrationStep{
 	}
 
 	public function onSubmit($value){
-		$hash = HereAuth::hash($value, $this->user->getPlayer());
+		$hash = HereAuth::newHash($value, $this->user->getPlayer());
 		$tempHash = $this->user->getRegistration()->getTempHash();
 		$this->user->getRegistration()->setTempHash("");
 		if($hash !== $tempHash){

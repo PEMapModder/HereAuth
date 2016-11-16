@@ -93,7 +93,7 @@ class Registration{
 	public function handle($value){
 		/** @noinspection PhpInternalEntityUsedInspection */
 		if(!($this->current() instanceof PasswordRegistrationStep)){
-			if(HereAuth::hash($value, $this->user->getPlayer()) === $this->user->getAccountInfo()->passwordHash){
+			if(HereAuth::newHash($value, $this->user->getPlayer()) === $this->user->getAccountInfo()->passwordHash){
 				$this->user->getPlayer()->sendMessage("[HereAuth] If the message above is asking you to enter your password, it is not a message from HereAuth! Please beware your password being stolen!");
 				return;
 			}

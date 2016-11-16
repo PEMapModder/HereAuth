@@ -15,6 +15,7 @@
 
 namespace HereAuth\User;
 
+use HereAuth\Database\MySQL\MySQLDatabase;
 use HereAuth\HereAuth;
 use HereAuth\Utils\Invokable;
 use pocketmine\Player;
@@ -42,7 +43,7 @@ class AccountInfo implements \Serializable{
 	public $multiHash;
 
 	public function testPassword(HereAuth $main, $password){
-		$hash = HereAuth::hash($password, $this->name);
+		$hash = HereAuth::newHash($password, $this->name);
 		if(strlen($this->passwordHash) === strlen($hash)){
 			return $hash === $this->passwordHash;
 		}
@@ -54,14 +55,14 @@ class AccountInfo implements \Serializable{
 			if($type === "nonhash:salt"){
 				continue;
 			}
-			$array = explode(";", $type);
+			$array = explode(";", $type, 2);
 			$name = $array[0];
 			$suffix = $array[1] ?? "";
-			$iHash = $main->getImportedHash($name);
-			if($iHash === null){
+			$ihash = $main->getImportedHash($name);
+			if($ihash === null){
 				continue;
 			}
-			if($iHash->hash($password, $salt, $suffix) === $value){
+			if($ihash->hash($password, $salt, $suffix) === $value){
 				$this->multiHash = [];
 				$this->passwordHash = $hash;
 				return true;
@@ -142,8 +143,9 @@ class AccountInfo implements \Serializable{
 		$lastSkin = $this->binEscape($this->lastSkinHash);
 		$opts = $escapeFunc(serialize($this->opts));
 		$multiHash = $escapeFunc(json_encode($this->multiHash));
-		$output = "INSERT INTO `$tableName` (name, hash, register, login, ip, secret, uuid, skin, opts, multihash) VALUES";
-		$output .= "($name, $hash, $this->registerTime, $this->lastLogin, $lastIp, $lastSecret, $lastUuid, $lastSkin, $opts, $multiHash)";
+		$lastVersion = MySQLDatabase::CURRENT_USER_VERSION;
+		$output = "INSERT INTO `$tableName` (name, nhash, register, login, ip, secret, uuid, skin, opts, multihash, lastVersion) VALUES";
+		$output .= "($name, $hash, $this->registerTime, $this->lastLogin, $lastIp, $lastSecret, $lastUuid, $lastSkin, $opts, $multiHash, $lastVersion)";
 		if($overwrite){
 			$output .= "ON DUPLICATE KEY UPDATE register=CASE WHEN register=-1 THEN VALUES(register) ELSE register END,";
 			$output .= "hash=VALUES(hash), login=$this->lastLogin, ip=VALUES(ip), secret=VALUES(secret), uuid=VALUES(uuid),";
@@ -155,7 +157,7 @@ class AccountInfo implements \Serializable{
 	public static function fromDatabaseRow($row){
 		$info = new self;
 		$info->name = $row["name"];
-		$info->passwordHash = $row["hash"];
+		$info->passwordHash = $row["newHash"];
 		$info->registerTime = (int) $row["register"];
 		$info->lastLogin = (int) $row["login"];
 		$info->lastIp = $row["ip"];

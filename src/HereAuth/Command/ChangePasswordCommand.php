@@ -24,7 +24,7 @@ class ChangePasswordCommand extends HereAuthUserCommand{
 		$this->main = $main;
 		parent::__construct($main, "changepassword",
 			$this->getMessage("Commands.ChangePassword.Description", "Change your password"),
-			$this->getMessage("Commands.ChangePassword.Usage", "/chpw <new password>"),
+			$this->getMessage("Commands.ChangePassword.Usage", "/chpw <old password> <new password>"),
 			"chpw", "changepw", "chgpw");
 		$this->setPermission("hereauth.changepw");
 	}
@@ -38,7 +38,7 @@ class ChangePasswordCommand extends HereAuthUserCommand{
 			return "Usage: " . $this->getUsage();
 		}
 		$password = $args[0];
-		$hash = HereAuth::hash($password, $user->getPlayer());
+		$hash = HereAuth::newHash($password, $user->getPlayer());
 		$firstHash = $user->getChangepwHash();
 		if($firstHash !== null){
 			$user->setChangepwHash(null);
@@ -48,6 +48,8 @@ class ChangePasswordCommand extends HereAuthUserCommand{
 			}
 			return $this->getMessage("Commands.ChangePassword.DoubleCheckFailure", "Your password is different this time! Aborted.");
 		}
+
+		// fixme
 		if(!PasswordInputRegistrationStep::validatePassword($user, $password)){
 			return false;
 		}

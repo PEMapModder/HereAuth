@@ -36,6 +36,7 @@ use HereAuth\Logger\StreamAuditLogger;
 use HereAuth\MultiHash\ImportedHash;
 use HereAuth\MultiHash\RenamedHash;
 use HereAuth\MultiHash\SaltlessArgumentedImportedHash;
+use HereAuth\MultiHash\SimpleAuthImportedHash;
 use HereAuth\Task\CheckImportThreadTask;
 use HereAuth\Task\CheckUserTimeoutTask;
 use HereAuth\Task\RemindLoginTask;
@@ -400,12 +401,23 @@ EOU
 	/**
 	 * @param string        $password
 	 * @param string|Player $player
+	 * @return bool|string
+	 */
+	public static function newHash($password, $player){
+		$salt = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
+		return password_hash($password . $salt, PASSWORD_BCRYPT);
+	}
+
+	/**
+	 * @deprecated SimpleAuth hash, use {@link HereAuth#newHash} instead.
+	 *
+	 * @param string        $password
+	 * @param string|Player $player
 	 *
 	 * @return string
 	 */
 	public static function hash($password, $player){
-		$salt = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
-		return hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true);
+		return SimpleAuthImportedHash::hashAlgo($password, $player);
 	}
 
 	public function page($lines, &$pageNumber, &$maxPages){

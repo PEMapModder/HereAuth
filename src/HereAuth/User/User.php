@@ -22,6 +22,7 @@ use HereAuth\Event\HereAuthMultiFactorAuthEvent;
 use HereAuth\Event\HereAuthRegistrationCreationEvent;
 use HereAuth\Event\HereAuthRegistrationEvent;
 use HereAuth\HereAuth;
+use HereAuth\MultiHash\SimpleAuthImportedHash;
 use HereAuth\User\Registration\Registration;
 use pocketmine\entity\Effect;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
@@ -136,7 +137,7 @@ class User{
 			}
 		}
 		if($this->accountInfo->opts->multiSkin and $this->accountInfo->lastSkinHash !== null){
-			$nowHash = HereAuth::hash($this->player->getSkinData(), $this->player->getSkinId());
+			$nowHash = SimpleAuthImportedHash::hashAlgo($this->player->getSkinData(), $this->player->getSkinId());
 			if($nowHash !== $this->accountInfo->lastSkinHash){
 				$ev->addFailureEntry("Incorrect skin", "skin", "$nowHash instead of {$this->accountInfo->lastSkinHash}");
 			}
@@ -174,7 +175,7 @@ class User{
 		$this->accountInfo->lastUuid = $this->getPlayer()->getUniqueId()->toBinary();
 		$this->accountInfo->lastLogin = time();
 		$this->accountInfo->lastSecret = $this->getPlayer()->getClientSecret();
-		$this->accountInfo->lastSkinHash = HereAuth::hash($this->getPlayer()->getSkinData(), $this->getPlayer()->getSkinId());
+		$this->accountInfo->lastSkinHash = SimpleAuthImportedHash::hashAlgo($this->getPlayer()->getSkinData(), $this->getPlayer()->getSkinId());
 		$this->accountInfo->lastIp = $this->getPlayer()->getAddress();
 		if($this->accountInfo->passwordHash){
 			$this->player->sendMessage($this->getMain()->getMessages()->getNested("Login.Completion", "login"));
@@ -191,7 +192,7 @@ class User{
 
 	public function onMessage(PlayerCommandPreprocessEvent $event){
 		$message = $event->getMessage();
-		$hash = HereAuth::hash($message, $this->getPlayer());
+		$hash = HereAuth::newHash($message, $this->getPlayer());
 		if($this->state === self::STATE_PENDING_LOGIN){
 			if($this->accountInfo->testPassword($this->main, $message) and $this->callLogin(HereAuthLoginEvent::METHOD_PASSWORD)){
 				$this->main->getAuditLogger()->logLogin(strtolower($this->player->getName()), $this->player->getAddress(), "password");

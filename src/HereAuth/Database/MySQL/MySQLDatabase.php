@@ -21,6 +21,11 @@ use HereAuth\Importer\Writer\MySQLAccountWriter;
 use HereAuth\User\AccountInfo;
 
 class MySQLDatabase implements Database{
+	const USER_VERSION_INITIAL = 1;
+	const USER_VERSION_PW_HASH = 2;
+
+	const CURRENT_USER_VERSION = MySQLDatabase::USER_VERSION_PW_HASH;
+
 	/** @type HereAuth */
 	private $main;
 	/** @type MySQLCredentials */
@@ -37,7 +42,7 @@ class MySQLDatabase implements Database{
 		$db = self::createMysqliInstance($this->crd);
 		$db->query("CREATE TABLE IF NOT EXISTS `$this->mainTable` (
 			name VARCHAR(63) PRIMARY KEY,
-			hash BINARY(64),
+			nhash VARCHAR(255),
 			register INT UNSIGNED,
 			login INT UNSIGNED,
 			ip VARCHAR(50),
@@ -45,10 +50,29 @@ class MySQLDatabase implements Database{
 			uuid BINARY(16),
 			skin BINARY(64),
 			opts VARCHAR(1024),
-			multihash VARCHAR(1024)
+			multihash VARCHAR(1024),
+			lastVersion SMALLINT UNSIGNED DEFAULT 1
 		)");
 		if(isset($db->error) and $db->error){
 			throw new \RuntimeException($db->error);
+		}
+		$hasNhash = $hasLv = false;
+		$result = $db->query("DESCRIBE `$this->mainTable`");
+		while(is_array($row = $result->fetch_assoc())){
+			if($row["Field"] === "nhash"){
+				$hasNhash = true;
+			}
+			if($row["Field"] === "lastVersion"){
+				$hasLv = true;
+			}
+		}
+		$result->close();
+		if(!$hasLv){
+			$db->query("ALTER TABLE `$this->mainTable` ADD COLUMN lastVersion SMALLINT UNSIGNED DEFAULT 1");
+		}
+		if(!$hasNhash){
+			$db->query("ALTER TABLE `$this->mainTable` ADD COLUMN nhash VARCHAR(255)");
+			$db->query("UPDATE `$this->mainTable` SET nhash = HEX(hash), lastVersion = 1");
 		}
 		$db->close();
 	}
