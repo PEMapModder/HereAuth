@@ -23,7 +23,7 @@ abstract class AsyncQueryTask extends AsyncTask{
 	/** @type MySQLCredentials */
 	private $credentials;
 
-	protected function __construct(MySQLCredentials $credentials){
+	public function __construct(MySQLCredentials $credentials){
 		$this->credentials = $credentials;
 	}
 
