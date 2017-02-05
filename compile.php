@@ -3,7 +3,7 @@
 /*
  * NOWHERE Plugin Workspace Framework
  *
- * Copyright (C) 2015-2016 PEMapModder
+ * Copyright (C) 2015-2017 PEMapModder
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -77,7 +77,7 @@ function parsePerms(SimpleXMLElement $element, array $parents){
 	];
 }
 
-$info = json_decode(file_get_contents("compile/info.json"));
+$info = json_decode(file_get_contents("nowhere.json"));
 $NAME = $info->name;
 
 $CLASS = "Dev";
