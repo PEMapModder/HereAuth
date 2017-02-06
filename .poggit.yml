@@ -1,8 +1,7 @@
 --- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/PEMapModder/HereAuth
-branches:
-- master
 projects:
   HereAuth:
     path: ""
     model: nowhere
+    icon: hereauth.png
 ...
