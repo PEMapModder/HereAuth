@@ -56,12 +56,7 @@ class ImporterThread extends Thread{
 		if(!(class_exists($readerClass, true) and class_exists($writerClass, true))){
 			throw new \RuntimeException("Unknown reader/writer class");
 		}
-		class_exists(AccountInfo::class, true); // TODO hack
-		class_exists(FormattedArgumentMap::class, true); // TODO hack
-		class_exists(MySQLDatabase::class, true); // TODO hack
-		class_exists(\InvalidKeyException::class, true); // TODO hack
-		class_exists(StringUtils::class, true); // TODO hack
-		class_exists(MySQLEscapeInvokable::class, true); // TODO hack
+
 		$this->readerClass = $readerClass;
 		$this->readerArgs = serialize($readerArgs);
 		$this->writerClass = $writerClass;
@@ -74,6 +69,8 @@ class ImporterThread extends Thread{
 	}
 
 	public function run(){
+		$this->registerClassLoader();
+
 		$reader = $this->reader;
 		$wc = $this->writerClass;
 		try{
