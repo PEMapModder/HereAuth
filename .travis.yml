@@ -8,7 +8,7 @@ install:
 - cd ..
 - mkdir pm
 - cd pm
-- wget -q -O PocketMine-MP.phar http://pmt.mcpe.me/pmb/dl.php?branch=master
+- wget -q -O PocketMine-MP.phar https://poggit.pmmp.io/get.pmmp/master
 - mkdir plugins
 - wget -O plugins/PluginChecker.php https://gist.githubusercontent.com/PEMapModder/af032e15cde357fd378dff7ca3897782/raw/d82e74bb5ff5264133230f8c724e1c4d573174a6/PluginChecker.php
 
