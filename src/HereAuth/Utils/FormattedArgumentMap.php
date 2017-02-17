@@ -50,8 +50,6 @@ class FormattedArgumentMap{
 	 * switches and opts respectively.
 	 *
 	 * @param string[] $input
-	 *
-	 * @return FormattedArgumentMap
 	 */
 	public function __construct($input){
 		$this->plain = [];

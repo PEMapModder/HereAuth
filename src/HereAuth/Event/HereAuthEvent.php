@@ -23,10 +23,8 @@ abstract class HereAuthEvent extends PluginEvent{
 		parent::__construct($main);
 	}
 
-	/**
-	 * @return HereAuth
-	 */
-	public function getMain(){
+	public function getMain() : HereAuth{
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return $this->getPlugin();
 	}
 }

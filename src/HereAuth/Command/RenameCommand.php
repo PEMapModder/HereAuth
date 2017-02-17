@@ -47,7 +47,7 @@ class RenameCommand extends HereAuthCommand{
 //			$this->getMain()->getDataBase()->saveData($info, false);
 //			return "Account $args[0] is changed to $args[1]";
 //		}
-		$this->getMain()->getDataBase()->renameAccount($args[0], $args[1], function ($result) use ($args, $sender){
+		$this->getMain()->getDataBase()->renameAccount($args[0], $args[1], function($result) use ($args, $sender){
 			if($result === Database::RENAME_SOURCE_ABSENT){
 				$sender->sendMessage("'$args[0]' is not a registered account on this server");
 			}elseif($result === Database::RENAME_TARGET_PRESENT){

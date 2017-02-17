@@ -322,7 +322,7 @@ class User{
 
 	public function resetAccount($callback = null){
 		if(!is_callable($callback)){
-			$callback = function (){
+			$callback = function(){
 			};
 		}
 		$this->accountInfo = AccountInfo::defaultInstance($this->getPlayer(), $this->getMain());
