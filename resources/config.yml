@@ -54,7 +54,7 @@ Blocking:
     # Move from one place to one place.
     Locomotion: true
     # Rotate head
-    Rotation: true
+    Rotation: false
   # Get hurt
   Damage: true
   # Touch other entities
@@ -90,11 +90,11 @@ BlockPasswordChat: true
 RemindLogin:
   # Messages to send to players
   Message:
-    Register: Please register by typing password into chat
-    Login: Please login by typing password into chat
+    Register: §ePlease register by typing password into chat
+    Login: §ePlease login by typing password into chat
   # Type of message.
   # Options: chat, popup, tip, none
-  Type: popup
+  Type: tip
   # Frequency interval, in seconds, of how often to send the message
   # Value is rounded down to 0.05 second
   Interval: 0.5
@@ -103,7 +103,7 @@ RemindLogin:
 ForceRegister:
   # If this is set to false, players have to execute /register to register.
   Enabled: true
-  Reminder: "[HereAuth] Protip: type '/register' in chat to register so that other people can't impersonate you."
+  Reminder: "Protip: type '/register' in chat to register so that other people can't impersonate you."
 
 # The place to store data
 Database:
@@ -259,7 +259,7 @@ Appearance:
   # This uses the "potion effect invisibility" style of invisibility, where modded players may be able to see the player
   #   and would be able to click on the player (but the player can be protected with the Blocking.Damage config)
   #   but without potion effect bubbles
-  Invisible: false
+  Invisible: true
   # Add text before player nametag
   PrependNametag: "§c["
   # Add text after player nametag
