@@ -33,8 +33,8 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\inventory\PlayerInventory;
-use pocketmine\network\protocol\ContainerSetContentPacket;
-use pocketmine\network\protocol\Info;
+use pocketmine\network\mcpe\protocol\ContainerSetContentPacket;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\Player;
 use pocketmine\plugin\MethodEventExecutor;
 
@@ -145,6 +145,9 @@ class EventRouter implements Listener{
 		$player = $event->getPlayer();
 		if(($user = $this->main->getUserByPlayer($player)) !== null){
 			$user->onMessage($event);
+		}elseif($user === null){
+			$event->setCancelled();
+			$player->sendMessage("We are still loading your account. Please wait...");
 		}
 	}
 
@@ -253,7 +256,7 @@ class EventRouter implements Listener{
 		$player = $event->getPlayer();
 		$user = $this->main->getUserByPlayer($player);
 		$pk = $event->getPacket();
-		if($pk::NETWORK_ID === Info::CONTAINER_SET_CONTENT_PACKET){
+		if($pk::NETWORK_ID === ProtocolInfo::CONTAINER_SET_CONTENT_PACKET){
 			/** @type ContainerSetContentPacket $pk */
 			if($user !== null and $user->isPlaying()){
 				return;

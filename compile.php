@@ -91,7 +91,7 @@ if(isset($opts["beta"])){
 }
 
 $VERSION = $info->version->major . "." . $info->version->minor . "-" . $CLASS . "#" . $BUILD_NUMBER;
-file_put_contents("compile/info.json", json_encode($info, JSON_BIGINT_AS_STRING | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+file_put_contents("nowhere.json", json_encode($info, JSON_BIGINT_AS_STRING | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
 $permissions = [];
 if(is_file("permissions.xml")){

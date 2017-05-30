@@ -51,7 +51,7 @@ class AccountOpts extends stdClass implements Serializable{
 		$opts->maskLoc = $main->getConfig()->getNested("DefaultSettings.Masking.Location.Enabled", false);
 		$opts->maskLocPos = $main->getConfig()->getNested("DefaultSettings.Masking.Location.Value", "?spawn?@?current?");
 		if(!preg_match(/** @lang RegExp */
-			'#^((\?spawn\?)|((\-)?[0-9]+,(\-)?[0-9]+,(\-)?[0-9]+))@[^/\\\\]+$#', $opts->maskLocPos)
+			'#^((\?spawn\?)|((-)?[0-9]+,(-)?[0-9]+,(-)?[0-9]+))@[^/\\\\]+$#', $opts->maskLocPos)
 		){
 			$main->getLogger()->alert("Incorrect syntax for location-masking position (DefaultSettings.Masking.Location.Value)! Assuming as \"?spawn?@?current?\".");
 			$opts->maskLocPos = "?spawn?@?current?";
@@ -70,7 +70,7 @@ class AccountOpts extends stdClass implements Serializable{
 			return $player->getLocation();
 		}
 		if(!preg_match(/** @lang RegExp */
-			'#^((\?spawn\?)|((\-)?[0-9]+,(\-)?[0-9]+,(\-)?[0-9]+))@([^/\\\\]+)$#', $this->maskLocPos, $match)
+			'#^((\?spawn\?)|((-)?[0-9]+,(-)?[0-9]+,(-)?[0-9]+))@([^/\\\\]+)$#', $this->maskLocPos, $match)
 		){
 			$warnings[] = "Invalid location format";
 			return $player->getLocation();

@@ -152,7 +152,8 @@ class HereAuth extends PluginBase implements Listener{
 		$this->getServer()->getScheduler()->scheduleDelayedRepeatingTask(new CheckImportThreadTask($this), 20, 20);
 
 		$this->registerAccountReader("serverauth-mysql", ServerAuthMySQLAccountReader::class,
-			$this->getMessages()->getNested("Commands.Import.Help.ServerAuth.MySQL", <<<EOU
+			$this->getMessages()->getNested("Commands.Import.Help.ServerAuth.MySQL", /** @lang text */
+				<<<EOU
 Usage: /import [,overwrite] serverauth-mysql [parameters...]
 You can specify these parameters: (default to config.yml MySQL settings)
 ,h <MySQL host address>
@@ -165,7 +166,8 @@ E.g: /import serverauth-mysql ,h example.com ,u "my name" ,p ""
 EOU
 			));
 		$this->registerAccountReader("serverauth-yaml", ServerAuthYAMLAccountReader::class,
-			$this->getMessages()->getNested("Commands.Import.Help.ServerAuth.YAML", <<<EOU
+			$this->getMessages()->getNested("Commands.Import.Help.ServerAuth.YAML", /** @lang text */
+				<<<EOU
 Usage: /import [,overwrite] serverauth-yaml [parameters...]
 You can specify these parameters:
 ,i <path to ServerAuth data folder>
@@ -174,7 +176,8 @@ E.g: /import serverauth-yaml ,i /root/plugins/ServerAuth
 EOU
 			));
 		$this->registerAccountReader("simpleauth-mysql", SimpleAuthMySQLAccountReader::class,
-			$this->getMessages()->getNested("Commands.Import.Help.SimpleAuth.MySQL", <<<EOU
+			$this->getMessages()->getNested("Commands.Import.Help.SimpleAuth.MySQL", /** @lang text */
+				<<<EOU
 Usage: /import [,overwrite] simpleauth-mysql [parameters...]
 You can specify these parameters. Default to config.yml MySQL settings.
 ,h <MySQL host address>
@@ -187,7 +190,8 @@ E.g: /import simpleauth-mysql ,h example.com ,u "my name" ,p ""
 EOU
 			));
 		$this->registerAccountReader("simpleauth-sqlite", SimpleAuthSQLite3AccountReader::class,
-			$this->getMessages()->getNested("Commands.Import.Help.SimpleAuth.SQLite", <<<EOU
+			$this->getMessages()->getNested("Commands.Import.Help.SimpleAuth.SQLite", /** @lang text */
+				<<<EOU
 Usage: /import [,overwrite] simpleauth-sqlite [parameters...]
 You can specify these parameters:
 ,i <path to SimpleAuth data folder>
@@ -195,7 +199,8 @@ E.g: /import simpleauth-sqlite ,i /root/plugins/SimpleAuth
 EOU
 			));
 		$this->registerAccountReader("simpleauth-yaml", SimpleAuthYAMLAccountReader::class,
-			$this->getMessages()->getNested("Commands.Import.Help.SimpleAuth.YAML", <<<EOU
+			$this->getMessages()->getNested("Commands.Import.Help.SimpleAuth.YAML", /** @lang text */
+				<<<EOU
 Usage: /import [,overwrite] simpleauth-yaml [parameters...]
 You can specify these parameters:
 ,i <path to SimpleAuth data folder>
@@ -432,8 +437,9 @@ EOU
 	 *
 	 * @return HereAuth|null
 	 */
-	public static function getInstance(Server $server){
+	public static function getInstance(Server $server) : HereAuth{
 		$me = $server->getPluginManager()->getPlugin(self::$NAME);
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return ($me !== null and $me->isEnabled()) ? $me : null;
 	}
 }

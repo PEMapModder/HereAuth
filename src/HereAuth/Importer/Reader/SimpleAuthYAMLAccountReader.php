@@ -29,7 +29,7 @@ class SimpleAuthYAMLAccountReader extends AccountReader{
 		$folder = rtrim($folder, DIRECTORY_SEPARATOR) . "/";
 		$dir = $folder . "players/";
 		$this->setStatus("Indexing accounts");
-		$alphas = array_filter(scandir($dir), function ($alpha) use ($dir){
+		$alphas = array_filter(scandir($dir), function($alpha) use ($dir){
 			return $alpha !== "." and strlen(rtrim($alpha, DIRECTORY_SEPARATOR)) === 1 and is_dir($dir . $alpha);
 		});
 		$alphaCnt = count($alphas);

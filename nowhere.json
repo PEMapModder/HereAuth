@@ -3,12 +3,11 @@
     "author": "PEMapModder",
     "main": "HereAuth\\HereAuth",
     "api": [
-        "2.0.0",
-        "3.0.0-ALPHA5"
+       "3.0.0-ALPHA5"
     ],
     "version": {
         "major": 1,
         "minor": 0
     },
-    "nextBuild": 230
+    "nextBuild": 231
 }

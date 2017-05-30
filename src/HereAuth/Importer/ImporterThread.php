@@ -15,15 +15,10 @@
 
 namespace HereAuth\Importer;
 
-use HereAuth\Database\MySQL\MySQLDatabase;
-use HereAuth\Database\MySQL\MySQLEscapeInvokable;
 use HereAuth\HereAuth;
 use HereAuth\Importer\Reader\AccountReader;
 use HereAuth\Importer\Writer\AccountWriter;
-use HereAuth\User\AccountInfo;
 use HereAuth\User\AccountOpts;
-use HereAuth\Utils\FormattedArgumentMap;
-use HereAuth\Utils\StringUtils;
 use pocketmine\Thread;
 
 class ImporterThread extends Thread{
