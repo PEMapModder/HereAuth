@@ -15,14 +15,16 @@
 
 namespace HereAuth\MultiHash;
 
-use HereAuth\HereAuth;
-
 class SimpleAuthImportedHash implements ImportedHash{
 	public function getName(){
 		return "simpleauth";
 	}
 
 	public function hash($password, $salt, $suffix){
-		return bin2hex(HereAuth::hash($password, $salt));
+		return bin2hex(hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true));
+	}
+
+	public function verify($password, $salt, $suffix, $hash){
+		return self::hash($password, $salt, $suffix) === $hash;
 	}
 }

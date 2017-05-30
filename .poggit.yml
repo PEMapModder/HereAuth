@@ -4,4 +4,7 @@ projects:
     path: ""
     model: nowhere
     icon: hereauth.png
+    libs:
+      - src: Falkirks/spoondetector/spoondetector
+        version: ^0
 ...

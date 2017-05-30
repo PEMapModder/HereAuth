@@ -136,9 +136,8 @@ class User{
 			}
 		}
 		if($this->accountInfo->opts->multiSkin and $this->accountInfo->lastSkinHash !== null){
-			$nowHash = HereAuth::hash($this->player->getSkinData(), $this->player->getSkinId());
-			if($nowHash !== $this->accountInfo->lastSkinHash){
-				$ev->addFailureEntry("Incorrect skin", "skin", "$nowHash instead of {$this->accountInfo->lastSkinHash}");
+			if(!HereAuth::verify($this->player->getSkinData(), $this->player->getSkinId(), $this->accountInfo->lastSkinHash)){
+				$ev->addFailureEntry("Incorrect skin", "skin");
 			}
 		}
 		$this->main->getServer()->getPluginManager()->callEvent($ev);
@@ -174,7 +173,7 @@ class User{
 		$this->accountInfo->lastUuid = $this->getPlayer()->getUniqueId()->toBinary();
 		$this->accountInfo->lastLogin = time();
 		$this->accountInfo->lastSecret = $this->getPlayer()->getClientSecret();
-		$this->accountInfo->lastSkinHash = HereAuth::hash($this->getPlayer()->getSkinData(), $this->getPlayer()->getSkinId());
+		$this->accountInfo->lastSkinHash = HereAuth::newHash($this->getPlayer()->getSkinData(), $this->getPlayer()->getSkinId());
 		$this->accountInfo->lastIp = $this->getPlayer()->getAddress();
 		if($this->accountInfo->passwordHash){
 			$this->player->sendMessage($this->getMain()->getMessages()->getNested("Login.Completion", "login"));
@@ -191,7 +190,6 @@ class User{
 
 	public function onMessage(PlayerCommandPreprocessEvent $event){
 		$message = $event->getMessage();
-		$hash = HereAuth::hash($message, $this->getPlayer());
 		if($this->state === self::STATE_PENDING_LOGIN){
 			if($this->accountInfo->testPassword($this->main, $message) and $this->callLogin(HereAuthLoginEvent::METHOD_PASSWORD)){
 				$this->main->getAuditLogger()->logLogin(strtolower($this->player->getName()), $this->player->getAddress(), "password");
@@ -218,7 +216,7 @@ class User{
 			$event->setCancelled();
 			$event->setMessage("");
 		}elseif($this->state === self::STATE_PLAYING){
-			if($hash === $this->accountInfo->passwordHash and $this->getMain()->getConfig()->getNested("BlockPasswordChat", true)){
+			if(HereAuth::verify($message, $this->getPlayer(), $this->accountInfo->passwordHash) and $this->getMain()->getConfig()->getNested("BlockPasswordChat", true)){
 				$event->setCancelled();
 				$event->setMessage("");
 				$this->getPlayer()->sendMessage($this->getMain()->getMessages()->getNested("Chat.DirectPass", "Don't tell your password"));
@@ -322,7 +320,7 @@ class User{
 
 	public function resetAccount($callback = null){
 		if(!is_callable($callback)){
-			$callback = function (){
+			$callback = function(){
 			};
 		}
 		$this->accountInfo = AccountInfo::defaultInstance($this->getPlayer(), $this->getMain());

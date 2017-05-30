@@ -48,6 +48,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\Utils;
+use spoondetector\SpoonDetector;
 
 class HereAuth extends PluginBase implements Listener{
 	/** @type string */
@@ -86,6 +87,7 @@ class HereAuth extends PluginBase implements Listener{
 	public function onEnable(){
 		$new = false;
 		$configPaths = [];
+		SpoonDetector::printSpoon($this, 'spoon.txt');
 		if(!is_file($configPath = $this->getDataFolder() . "config.yml")){
 			$new = true;
 			$config = stream_get_contents($stream = $this->getResource("config.yml"));
@@ -403,9 +405,14 @@ EOU
 	 *
 	 * @return string
 	 */
-	public static function hash($password, $player){
+	public static function newHash($password, $player){
 		$salt = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
-		return hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true);
+		return password_hash($password . $salt, PASSWORD_BCRYPT);
+	}
+
+	public static function verify($password, $player, $hash) : bool{
+		$salt = $player instanceof Player ? strtolower($player->getName()) : strtolower($player);
+		return password_verify($password . $salt, $hash);
 	}
 
 	public function page($lines, &$pageNumber, &$maxPages){

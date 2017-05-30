@@ -23,6 +23,10 @@ class RenamedHash implements ImportedHash{
 	}
 
 	public function hash($password, $salt, $suffix){
-		return HereAuth::hash($password, $suffix);
+		return HereAuth::newHash($password, $suffix);
+	}
+
+	public function verify($password, $salt, $suffix, $hash){
+		return HereAuth::verify($password, $suffix, $hash);
 	}
 }

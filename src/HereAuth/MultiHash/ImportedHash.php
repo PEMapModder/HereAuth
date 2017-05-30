@@ -29,4 +29,6 @@ interface ImportedHash{
 	 * @return string
 	 */
 	public function hash($password, $salt, $suffix);
+
+	public function verify($password, $salt, $suffix, $hash);
 }

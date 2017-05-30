@@ -36,15 +36,14 @@ final class PasswordConfirmRegistrationStep implements PasswordRegistrationStep{
 	}
 
 	public function onSubmit($value){
-		$hash = HereAuth::hash($value, $this->user->getPlayer());
 		$tempHash = $this->user->getRegistration()->getTempHash();
 		$this->user->getRegistration()->setTempHash("");
-		if($hash !== $tempHash){
+		if(!HereAuth::verify($value, $this->user->getPlayer(), $tempHash)){
 			$this->user->getPlayer()->sendMessage($this->user->getMain()->getMessages()->getNested("Register.PasswordMismatch", "Incorrect password"));
 			$this->user->getRegistration()->rewind();
 			return false;
 		}
-		$this->user->getAccountInfo()->passwordHash = $hash;
+		$this->user->getAccountInfo()->passwordHash = $tempHash;
 		return true;
 	}
 }

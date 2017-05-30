@@ -42,9 +42,8 @@ class AccountInfo implements \Serializable{
 	public $multiHash;
 
 	public function testPassword(HereAuth $main, $password){
-		$hash = HereAuth::hash($password, $this->name);
-		if(strlen($this->passwordHash) === strlen($hash)){
-			return $hash === $this->passwordHash;
+		if($this->passwordHash{0} !== "{"){
+			return HereAuth::verify($password, $this->name, $this->passwordHash);
 		}
 		$salt = strtolower($this->name);
 		if(isset($this->multiHash["nonhash:salt"])){
@@ -61,9 +60,9 @@ class AccountInfo implements \Serializable{
 			if($iHash === null){
 				continue;
 			}
-			if($iHash->hash($password, $salt, $suffix) === $value){
+			if($iHash->verify($password, $salt, $suffix, $value)){
 				$this->multiHash = [];
-				$this->passwordHash = $hash;
+				$this->passwordHash = HereAuth::newHash($password, $this->name);
 				return true;
 			}
 		}

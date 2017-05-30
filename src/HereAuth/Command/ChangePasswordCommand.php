@@ -20,6 +20,8 @@ use HereAuth\User\Registration\PasswordInputRegistrationStep;
 use HereAuth\User\User;
 
 class ChangePasswordCommand extends HereAuthUserCommand{
+	private $main;
+
 	public function __construct(HereAuth $main){
 		$this->main = $main;
 		parent::__construct($main, "changepassword",
@@ -38,11 +40,11 @@ class ChangePasswordCommand extends HereAuthUserCommand{
 			return "Usage: " . $this->getUsage();
 		}
 		$password = $args[0];
-		$hash = HereAuth::hash($password, $user->getPlayer());
+		$hash = HereAuth::newHash($password, $user->getPlayer());
 		$firstHash = $user->getChangepwHash();
 		if($firstHash !== null){
 			$user->setChangepwHash(null);
-			if($firstHash === $hash){
+			if(HereAuth::verify($password, $user->getPlayer(), $firstHash)){
 				$user->getAccountInfo()->passwordHash = $hash;
 				return $this->getMessage("Commands.ChangePassword.Success", "Your password has been changed.");
 			}
