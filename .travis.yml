@@ -5,7 +5,5 @@ dist: trusty
 
 install:
 - wget -O - https://poggit.pmmp.io/res/travisInstall.sh | bash -s -
-
 script:
-- cd $TRAVIS_BUILD_DIR && chmod +x lint.sh && ./lint.sh
 - wget -O - https://poggit.pmmp.io/res/travisScript.sh | bash -s - HereAuth
