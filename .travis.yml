@@ -15,4 +15,5 @@ before_script:
 
 script:
 - cd $TRAVIS_BUILD_DIR && chmod +x lint.sh && ./lint.sh
-- cd ../pm; (echo stop; echo) | php PocketMine-MP.phar --no-wizard --debug.level=2 --disable-readline --pluginchecker.target=HereAuth | tee stdout.log; grep 'PluginCheck passed' < stdout.log
+- cd ../pm; ((echo stop; echo) | php PocketMine-MP.phar --no-wizard --debug.level=2 --disable-readline --pluginchecker.target=HereAuth | tee stdout.log) || true
+- grep 'PluginCheck passed' < stdout.log || (cat stdout.log >&2 && false)
