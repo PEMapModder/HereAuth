@@ -20,8 +20,6 @@ use HereAuth\User\Registration\PasswordInputRegistrationStep;
 use HereAuth\User\User;
 
 class ChangePasswordCommand extends HereAuthUserCommand{
-	private $main;
-
 	public function __construct(HereAuth $main){
 		$this->main = $main;
 		parent::__construct($main, "changepassword",
