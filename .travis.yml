@@ -2,23 +2,17 @@ language: php
 php: ["7.0"]
 sudo: false
 dist: trusty
+
 install:
 - pecl install channel://pecl.php.net/pthreads-3.1.6
 - pecl install channel://pecl.php.net/weakref-0.3.2
 - echo | pecl install channel://pecl.php.net/yaml-2.0.0RC7
-- cd ..
-- mkdir pm
-- cd pm
-- wget -q -O PocketMine-MP.phar https://poggit.pmmp.io/get.pmmp/master
-- mkdir plugins
-- wget -O plugins/PluginChecker.php https://gist.githubusercontent.com/PEMapModder/af032e15cde357fd378dff7ca3897782/raw/d82e74bb5ff5264133230f8c724e1c4d573174a6/PluginChecker.php
+- cd .. && mkdir pm && cd pm && wget -q -O PocketMine-MP.phar https://poggit.pmmp.io/get.pmmp/master
+- mkdir plugins && wget -O plugins/PluginChecker.phar https://poggit.pmmp.io/res/PluginChecker.phar
 
 before_script:
-- cd $TRAVIS_BUILD_DIR
-- php compile.php
-- cp compile/HereAuth_Dev.phar ../pm/plugins
+- php "$TRAVIS_BUILD_DIR"/cpPoggitBuild.php "$TRAVIS_BUILD_DIR"/../pm/plugins/HereAuth.phar
 
 script:
-- cd $TRAVIS_BUILD_DIR && chmod +x lint.sh && ./lint.sh && cd ../pm;
-- (echo stop; echo) | php PocketMine-MP.phar --no-wizard --debug.level=2 --disable-readline --pluginchecker.target=HereAuth | tee stdout.log; grep 'PluginCheck passed' < stdout.log
-- curl -T plugins/HereAuth_Dev.phar https://transfer.sh/HereAuth-Travis.phar
+- cd $TRAVIS_BUILD_DIR && chmod +x lint.sh && ./lint.sh
+- cd ../pm; (echo stop; echo) | php PocketMine-MP.phar --no-wizard --debug.level=2 --disable-readline --pluginchecker.target=HereAuth | tee stdout.log; grep 'PluginCheck passed' < stdout.log
