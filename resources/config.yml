@@ -173,12 +173,11 @@ AuditLogger:
 
   # What to log?
   # These should be file names relative to LogFolder mentioned above, or start with a / for absolute paths
-  # Put /dev/null (${IS_WINDOWS} only) if you don't want to log that entry.
   Log:
     # Log registering
     # Columns: time, name, IP
     # You usually don't need to do this, since the same data are saved in Database as well
-    Register: /dev/null
+    Register: false
     # Log successful logins. Regisitering and players who didn't register (and don't need to register) are not included.
     # Columns: time, name, IP, login method (secret, uuid, ip, password)
     Login: logins.log
@@ -186,7 +185,7 @@ AuditLogger:
     # This usually happens when a player crashed, and this (>99.9% of the time) does not reflect two different players
     #   joining with the same username.
     # Columns: time, name, old IP, new IP
-    Push: /dev/null
+    Push: push.log
     # Log "bump" incidents, where a player cannot join because another player (from another device) of the same username
     #   is already online on the server
     # This may reflect chances of account occupying, where a player cannot join because someone else is online with his

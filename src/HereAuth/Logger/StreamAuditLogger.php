@@ -34,10 +34,13 @@ class StreamAuditLogger implements AuditLogger{
 		if(!is_dir($dir)){
 			mkdir($dir, 0777, true);
 		}
+		$isWin = Utils::getOS() === "win";
 		foreach($entries = ["register", "login", "push", "bump", "invalid", "timeout", "factor"] as $entry){
-			$value = $main->getConfig()->getNested("AuditLogger.Log." . ucfirst($entry), ($isWin = Utils::getOS() === "win") ? "/NUL" : "/dev/null");
+			$value = $main->getConfig()->getNested("AuditLogger.Log." . ucfirst($entry), $isWin ? "/NUL" : "/dev/null");
 			if($value === "/NUL" and !$isWin or $value === "/dev/null" and $isWin){
 				$main->getLogger()->warning("Your OS is " . ($isWin ? "Windows" : "not Windows") . ", where $value is not a special file! HereAuth will attempt to create that file!");
+			}elseif(!$value){
+				$value = $isWin ? "/NUL" : "/dev/null";
 			}
 			if($value{0} !== "/"){
 				$value = $dir . $value;

@@ -88,12 +88,7 @@ class HereAuth extends PluginBase implements Listener{
 		$configPaths = [];
 		if(!is_file($configPath = $this->getDataFolder() . "config.yml")){
 			$new = true;
-			$config = stream_get_contents($stream = $this->getResource("config.yml"));
-			fclose($stream);
-			$config = Utils::getOS() === "win" ?
-				str_replace(["/dev/null", '${IS_WINDOWS}'], ["/NUL", "Windows"], $config) :
-				str_replace('${IS_WINDOWS}', "non-Windows", $config);
-			file_put_contents($configPath, $config);
+			$this->saveResource("config.yml");
 			$configPaths[] = $configPath;
 		}
 		if(!is_file($messagesPath = $this->getDataFolder() . "messages.yml")){
