@@ -16,6 +16,7 @@
 namespace HereAuth;
 
 use HereAuth\Command\ChangePasswordCommand;
+use HereAuth\Command\HereAuthVersionCommand;
 use HereAuth\Command\ImportCommand;
 use HereAuth\Command\LockCommand;
 use HereAuth\Command\OptCommand;
@@ -47,7 +48,6 @@ use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 use pocketmine\utils\Config;
-use pocketmine\utils\Utils;
 use spoondetector\SpoonDetector;
 
 class HereAuth extends PluginBase implements Listener{
@@ -55,8 +55,6 @@ class HereAuth extends PluginBase implements Listener{
 	private static $NAME = "HereAuth";
 	/** @type Config */
 	private $messages;
-//	/** @type Config */
-//	private $http;
 	/** @type User[] */
 	private $users = [];
 	/** @type EventRouter */
@@ -90,22 +88,13 @@ class HereAuth extends PluginBase implements Listener{
 		SpoonDetector::printSpoon($this, 'spoon.txt');
 		if(!is_file($configPath = $this->getDataFolder() . "config.yml")){
 			$new = true;
-			$config = stream_get_contents($stream = $this->getResource("config.yml"));
-			fclose($stream);
-			$config = Utils::getOS() === "win" ?
-				str_replace(["/dev/null", '${IS_WINDOWS}'], ["/NUL", "Windows"], $config) :
-				str_replace('${IS_WINDOWS}', "non-Windows", $config);
-			file_put_contents($configPath, $config);
+			$this->saveResource("config.yml");
 			$configPaths[] = $configPath;
 		}
 		if(!is_file($messagesPath = $this->getDataFolder() . "messages.yml")){
 			$this->saveResource("messages.yml");
 			$configPaths[] = $messagesPath;
 		}
-//		if(!is_file($messagesPath = $this->getDataFolder() . "http.yml")){
-//			$this->saveResource("http.yml");
-//			$configPaths[] = $messagesPath;
-//		}
 		if(count($configPaths) > 0){
 			$action = $new ? "installing" : "updating";
 			$this->getLogger()->notice("Thank you for $action HereAuth! New config file(s) have been generated at the following location(s):");
@@ -115,7 +104,6 @@ class HereAuth extends PluginBase implements Listener{
 			$this->getLogger()->info("You may want to edit the config file(s) to customize HereAuth for your server.");
 		}
 		$this->messages = new Config($this->getDataFolder() . "messages.yml");
-//		$this->http = new Config($this->getDataFolder() . "http.yml");
 		$this->fridge = new Fridge($this);
 		$this->addImportedHash(new RenamedHash);
 		$this->addImportedHash(new SaltlessArgumentedImportedHash);
@@ -140,6 +128,7 @@ class HereAuth extends PluginBase implements Listener{
 		$this->auditLogger = new StreamAuditLogger($this);
 		$this->router = new EventRouter($this);
 		$this->getServer()->getCommandMap()->registerAll("ha", [
+			new HereAuthVersionCommand($this),
 			new RegisterCommand($this),
 			new UnregisterCommand($this),
 			new ChangePasswordCommand($this),

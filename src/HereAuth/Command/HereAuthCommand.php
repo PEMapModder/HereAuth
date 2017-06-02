@@ -38,10 +38,7 @@ abstract class HereAuthCommand extends Command implements PluginIdentifiableComm
 		parent::__construct($name, $desc, $usage, $aliases);
 	}
 
-	/**
-	 * @return HereAuth
-	 */
-	public function getMain(){
+	public function getMain():HereAuth{
 		return $this->main;
 	}
 
@@ -56,7 +53,7 @@ abstract class HereAuthCommand extends Command implements PluginIdentifiableComm
 		return $this->main;
 	}
 
-	public function execute(CommandSender $sender, $commandLabel, array $args){
+	public final function execute(CommandSender $sender, $commandLabel, array $args){
 		try{
 			if(!$this->testPermission($sender)){
 				return false;

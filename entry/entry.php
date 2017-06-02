@@ -23,7 +23,7 @@ if(!defined("STDIN")){
 	define("STDIN", fopen("php://stdin", "r"));
 }
 
-spl_autoload_register(function ($class){
+spl_autoload_register(function($class){
 	$holder = Phar::running() . "/entry/";
 	$file = $holder . str_replace("\\", "/", $class) . ".php";
 	if(is_file($file)){
