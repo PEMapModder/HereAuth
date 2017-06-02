@@ -1,13 +1,13 @@
 {
-    "name": "HereAuth",
-    "author": "PEMapModder",
-    "main": "HereAuth\\HereAuth",
-    "api": [
-        "3.0.0-ALPHA5"
-    ],
-    "version": {
-        "major": 1,
-        "minor": 0
-    },
-    "nextBuild": 231
+	"name": "HereAuth",
+	"author": "PEMapModder",
+	"main": "HereAuth\\HereAuth",
+	"api": [
+		"3.0.0-ALPHA5"
+	],
+	"version": {
+		"major": 1,
+		"minor": 0
+	},
+	"nextBuild": 231
 }

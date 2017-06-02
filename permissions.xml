@@ -1,49 +1,50 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <permissions>
-	<hereauth description="Root permission node for HereAuth permissions" default="op">
-		<auth description="Allows usage all of the /auth command (for self)" default="true">
-			<autoauth description="Allows changing options related to AutoAuth" default="true">
-				<clientsecret description="Allows toggling client secret AutoAuth" default="true"/>
-				<ip description="Allows toggling IP AutoAuth" default="true"/>
-				<uuid description="Allows toggling UUID AutoAuth" default="true"/>
-			</autoauth>
-			<masking description="Allows changing all masking options" default="true">
-				<location description="Allows changing all location masking options" default="true">
-					<toggle description="Allows toggling location masking" default="true"/>
-					<target description="Allows changing location masking target" default="true"/>
-				</location>
-				<inventory description="Allows toggling inventory masking" default="true"/>
-			</masking>
-			<multiauth description="Allows toggling all multi-factor auth options" default="true">
-				<skin description="Allows toggling skin MFA options" default="true"/>
-				<ip description="Allows toggling IP MFA options" default="true"/>
-				<timeout description="Allows changing MFA timeout to anything" default="true">
-					<small description="Allows changing MFA timeout to a small number (defined in config.yml)"
-					       default="true"/>
-					<medium description="Allows changing MFA timeout to a medium number (defined in config.yml)"
-					        default="true"/>
-					<big description="Allows changing MFA timeout to infinity or a big number (defined in config.yml)"
-					     default="true"/>
-				</timeout>
-			</multiauth>
-		</auth>
-		<rename description="Allows renaming another player's account with /rename" default="op"/>
-		<!--<renameme description="Allows renaming own account with /renameme" default="false"/>-->
-		<register description="Allows using the /register command if not registered" default="true"/>
-		<unregister description="Allows using the /unregister command to unregister another player's account"
-		            default="op"/>
-		<!--<unregisterme description="Allows using the /unregisterme command to unregister own account" default="false"/>-->
-		<lock description="Allows using the /lock command" default="true"/>
-		<changepw description="Allows using the /chpw command to change password" default="true"/>
-		<import description="Allows using the /import command to import (and override) data from any external incompatible database"
-		        default="op">
-			<command description="Allows using the /import command"/>
-			<!--<provider description="Allows importing data from any external database" default="op">-->
-			<!--<simpleauth description="Allows importing data from SimpleAuth" default="op"/>-->
-			<!--<serverauth description="Allows importing data from ServerAuth" default="op"/>-->
-			<!--</provider>-->
-			<merge description="Allows importing data without overriding current data" default="op"/>
-			<overwrite description="Allows importing data with current ata being overriden" default="op"/>
-		</import>
-	</hereauth>
+    <hereauth description="Root permission node for HereAuth permissions" default="op">
+        <auth description="Allows usage all of the /auth command (for self)" default="true">
+            <autoauth description="Allows changing options related to AutoAuth" default="true">
+                <clientsecret description="Allows toggling client secret AutoAuth" default="true"/>
+                <ip description="Allows toggling IP AutoAuth" default="true"/>
+                <uuid description="Allows toggling UUID AutoAuth" default="true"/>
+            </autoauth>
+            <masking description="Allows changing all masking options" default="true">
+                <location description="Allows changing all location masking options" default="true">
+                    <toggle description="Allows toggling location masking" default="true"/>
+                    <target description="Allows changing location masking target" default="true"/>
+                </location>
+                <inventory description="Allows toggling inventory masking" default="true"/>
+            </masking>
+            <multiauth description="Allows toggling all multi-factor auth options" default="true">
+                <skin description="Allows toggling skin MFA options" default="true"/>
+                <ip description="Allows toggling IP MFA options" default="true"/>
+                <timeout description="Allows changing MFA timeout to anything" default="true">
+                    <small description="Allows changing MFA timeout to a small number (defined in config.yml)"
+                           default="true"/>
+                    <medium description="Allows changing MFA timeout to a medium number (defined in config.yml)"
+                            default="true"/>
+                    <big description="Allows changing MFA timeout to infinity or a big number (defined in config.yml)"
+                         default="true"/>
+                </timeout>
+            </multiauth>
+        </auth>
+        <rename description="Allows renaming another player's account with /rename" default="op"/>
+        <!--<renameme description="Allows renaming own account with /renameme" default="false"/>-->
+        <register description="Allows using the /register command if not registered" default="true"/>
+        <unregister description="Allows using the /unregister command to unregister another player's account"
+                    default="op"/>
+        <!--<unregisterme description="Allows using the /unregisterme command to unregister own account" default="false"/>-->
+        <lock description="Allows using the /lock command" default="true"/>
+        <changepw description="Allows using the /chpw command to change password" default="true"/>
+        <import description="Allows using the /import command to import (and override) data from any external incompatible database"
+                default="op">
+            <command description="Allows using the /import command"/>
+            <!--<provider description="Allows importing data from any external database" default="op">-->
+            <!--<simpleauth description="Allows importing data from SimpleAuth" default="op"/>-->
+            <!--<serverauth description="Allows importing data from ServerAuth" default="op"/>-->
+            <!--</provider>-->
+            <merge description="Allows importing data without overriding current data" default="op"/>
+            <overwrite description="Allows importing data with current ata being overriden" default="op"/>
+        </import>
+        <version description="Allows checking HereAuth version" default="true"/>
+    </hereauth>
 </permissions>
