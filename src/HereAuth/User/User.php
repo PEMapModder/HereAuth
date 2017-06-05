@@ -50,6 +50,8 @@ class User{
 	private $loadTime;
 	/** @type Effect|bool|null */
 	private $revInvis = null;
+	/** @var bool|null */
+	private $originalImmobility;
 	/** @type string|null */
 	private $origNametag = null, $newNametag = null;
 	/** @type Position|null */
@@ -335,6 +337,12 @@ class User{
 		if($this->main->getConfig()->getNested("Appearance.Invisible", false)){
 			$this->makeInvisible();
 		}
+		if($this->main->getConfig()->getNested("Blocking.Move.Locomotion", true) and $this->main->getConfig()->getNested("Blocking.Move.Rotation", true)){
+			$originalImmobility = $this->player->isImmobile();
+			if(!$originalImmobility){
+				$this->player->setImmobile($this->originalImmobility = false);
+			}
+		}
 		$this->origNametag = $nt = $this->getPlayer()->getNameTag();
 		$nt = $this->main->getConfig()->getNested("Appearance.PrependNametag", TextFormat::GRAY . "[") .
 			$nt . $this->main->getConfig()->getNested("Appearance.AppendNametag", "]");
@@ -358,6 +366,10 @@ class User{
 
 	protected function revertAppearance(){
 		$this->makeVisible();
+		if(isset($this->originalImmobility)){
+			$this->player->setImmobile($this->originalImmobility);
+			unset($this->originalImmobility);
+		}
 		$pos = strpos($nt = $this->player->getNameTag(), $this->newNametag);
 		if($this->origNametag !== null and $this->newNametag !== null and $pos !== false){
 			$newNametag = substr_replace($nt, $this->origNametag, $pos, strlen($this->newNametag));
