@@ -70,7 +70,7 @@ class EventRouter implements Listener{
 		if($main->getConfig()->getNested("Blocking.Damage", true) or $main->getConfig()->getNested("Blocking.Attack", true)){
 			$this->registerHandler(EntityDamageEvent::class, "onDamage", EventPriority::LOW, true);
 		}
-		if($main->getConfig()->getNested("Blocking.Move.Locomotion", true) or $main->getConfig()->getNested("Blocking.Move.Rotation", true)){
+		if($main->getConfig()->getNested("Blocking.Move.Locomotion", true) xor $main->getConfig()->getNested("Blocking.Move.Rotation", true)){
 			$this->registerHandler(PlayerMoveEvent::class, "onMove", EventPriority::LOW, true);
 		}
 		if($main->getConfig()->getNested("Blocking.Touch", true)){

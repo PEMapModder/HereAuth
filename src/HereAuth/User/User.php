@@ -340,7 +340,8 @@ class User{
 		if($this->main->getConfig()->getNested("Blocking.Move.Locomotion", true) and $this->main->getConfig()->getNested("Blocking.Move.Rotation", true)){
 			$originalImmobility = $this->player->isImmobile();
 			if(!$originalImmobility){
-				$this->player->setImmobile($this->originalImmobility = false);
+				$this->player->setImmobile(true);
+				$this->originalImmobility = false;
 			}
 		}
 		$this->origNametag = $nt = $this->getPlayer()->getNameTag();
