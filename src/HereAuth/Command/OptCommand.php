@@ -144,7 +144,7 @@ class OptCommand extends HereAuthUserCommand{
 		$output = "Your HereAuth options:\n";
 		$mlp = $opts->maskLocPos;
 		if(!preg_match(/** @lang RegExp */
-			'#^((\?spawn\?)|((-)?[0-9]+,(-)?[0-9]+,(-)?[0-9]+))@([^/\\\\]+)$#', $mlp, $match)
+			'#^((\?spawn\?)|((\-)?[0-9]+,(\-)?[0-9]+,(\-)?[0-9]+))@([^/\\\\]+)$#', $mlp, $match)
 		){
 			$maskLocString = "none";
 		}else{

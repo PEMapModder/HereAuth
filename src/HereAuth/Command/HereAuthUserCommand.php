@@ -20,7 +20,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
 abstract class HereAuthUserCommand extends HereAuthCommand{
-	public function testPermissionSilent(CommandSender $target){
+	public function testPermissionSilent(CommandSender $target) : bool{
 		if(!parent::testPermissionSilent($target)){
 			return false;
 		}
