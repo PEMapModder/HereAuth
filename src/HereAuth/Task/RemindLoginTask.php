@@ -40,7 +40,7 @@ class RemindLoginTask extends PluginTask{
 		$main->getServer()->getScheduler()->scheduleDelayedRepeatingTask($this, $period, $period);
 	}
 
-	public function onRun($currentTick){
+	public function onRun(int $currentTick){
 		$reg = $this->main->getConfig()->getNested("RemindLogin.Message.Register", "Register please");
 		$log = $this->main->getConfig()->getNested("RemindLogin.Message.Login", "Login please");
 		if($this->type === "chat"){

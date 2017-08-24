@@ -26,7 +26,7 @@ class CheckImportThreadTask extends PluginTask{
 		parent::__construct($this->main = $main);
 	}
 
-	public function onRun($currentTick){
+	public function onRun(int $currentTick){
 		$this->main->checkThread();
 	}
 }

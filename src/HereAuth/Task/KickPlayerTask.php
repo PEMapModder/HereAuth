@@ -38,7 +38,7 @@ class KickPlayerTask extends PluginTask{
 		$this->reason = $reason;
 	}
 
-	public function onRun($currentTick){
+	public function onRun(int $currentTick){
 		$player = $this->main->getPlayerById($this->identifier);
 		if($player !== null){
 			$player->kick($this->reason, false);
