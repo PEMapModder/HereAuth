@@ -49,11 +49,11 @@ abstract class HereAuthCommand extends Command implements PluginIdentifiableComm
 	/**
 	 * @return HereAuth
 	 */
-	public function getPlugin(){
+	public function getPlugin() : \pocketmine\plugin\Plugin {
 		return $this->main;
 	}
 
-	public final function execute(CommandSender $sender, $commandLabel, array $args){
+	public final function execute(CommandSender $sender, string $commandLabel, array $args) : bool{
 		try{
 			if(!$this->testPermission($sender)){
 				return false;
