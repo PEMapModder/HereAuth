@@ -19,6 +19,7 @@ use HereAuth\HereAuth;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
+use pocketmine\plugin\Plugin;
 
 abstract class HereAuthCommand extends Command implements PluginIdentifiableCommand{
 	/** @type HereAuth */
@@ -49,11 +50,11 @@ abstract class HereAuthCommand extends Command implements PluginIdentifiableComm
 	/**
 	 * @return HereAuth
 	 */
-	public function getPlugin(){
+	public function getPlugin() : Plugin {
 		return $this->main;
 	}
 
-	public final function execute(CommandSender $sender, $commandLabel, array $args){
+	public final function execute(CommandSender $sender, string $commandLabel, array $args) : bool{
 		try{
 			if(!$this->testPermission($sender)){
 				return false;

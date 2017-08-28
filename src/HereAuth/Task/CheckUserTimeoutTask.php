@@ -27,7 +27,7 @@ class CheckUserTimeoutTask extends PluginTask{
 		$this->main->getServer()->getScheduler()->scheduleRepeatingTask($this, 20);
 	}
 
-	public function onRun($currentTick){
+	public function onRun(int $currentTick){
 		foreach($this->main->getUsers() as $user){
 			if(!$user->isPlaying() and microtime(true) - $user->getLoadTime() >= ($timeout = $this->main->getConfig()->getNested("Login.Timeout", 120))){
 				$this->main->getAuditLogger()->logTimeout(strtolower($user->getPlayer()->getName()), $user->getPlayer()->getAddress());
